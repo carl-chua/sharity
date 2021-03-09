@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 contract Charity {
 
   enum CharityStatus {
-	  UNVERIFIED, VERIFIED
+	  UNVERIFIED, VERIFIED, REJECTED
   }
 
   enum CampaignStatus {
@@ -33,7 +33,7 @@ contract Charity {
 
   address contractOwner;
   uint[] charitiesPendingVerification;
-  mapping(uint => bool) isVerifiedCharity;
+  mapping(address => bool) isVerifiedCharity;
   mapping(uint => charity) charities;
   uint noOfCharities = 1;
 
@@ -69,10 +69,21 @@ contract Charity {
   function verifyCharity(uint charityId) onlyOwner(msg.sender) {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
-    require(isVerifiedCharity[charityId] == false, "Charity has been verified");
+    require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
+    require(isVerifiedCharity[charities[charityId].charityOwner] == false, "Charity has been verified");
 
     charities[charityId].charityStatus = CharityStatus.VERIFIED;
     isVerifiedCharity[charityId] = true;
+    // remove charity from charitiesPendingVerification[]
+  }
+
+  function rejectCharity(uint charityId) onlyOwner(msg.sender) {
+    require(msg.sender == contractOwner, "Caller is not contract owner");
+    require(charityId < noOfCharities, "Invalid charity id");
+    require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
+    require(isVerifiedCharity[charities[charityId].charityOwner] == false, "Charity has been verified");
+
+    charities[charityId].charityStatus = CharityStatus.REJECTED;
     // remove charity from charitiesPendingVerification[]
   }
 
