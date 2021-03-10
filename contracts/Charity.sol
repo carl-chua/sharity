@@ -32,12 +32,12 @@ contract Charity {
   }
 
   address contractOwner;
-  uint[] charitiesPendingVerification;
+  //uint[] charitiesPendingVerification;
   mapping(address => bool) isVerifiedCharity;
   mapping(uint => charity) charities;
   uint noOfCharities = 1;
 
-  uint[] ongoingCampaigns;
+  //uint[] ongoingCampaigns;
   mapping(uint => bool) isOngoingCampaign;
   mapping(uint => campaign) campaigns;
   uint noOfCampaigns = 1;
@@ -62,7 +62,7 @@ contract Charity {
     charityId = noOfCharities++;
     charity memory newCharity = charity(msg.sender, charityName, description, pictureURL, CharityStatus.UNVERIFIED);
     charities[charityId] = newCharity;
-    charitiesPendingVerification.push(charityId);
+    // charitiesPendingVerification.push(charityId);
     return charityId;
   }
 
@@ -87,6 +87,15 @@ contract Charity {
     // remove charity from charitiesPendingVerification[]
   }
 
+  function revokeCharity(uint charityId) onlyOwner(msg.sender) {
+    require(msg.sender == contractOwner, "Caller is not contract owner");
+    require(charityId < noOfCharities, "Invalid charity id");
+    require(charities[charityId].charityStatus == CharityStatus.VERIFIED, "Charity is not a verified charity");
+    require(isVerifiedCharity[charities[charityId].charityOwner] == true, "Charity has been verified");
+
+    charities[charityId].charityStatus = CharityStatus.REJECTED;
+  }
+
   /*
   * This will be the function that charities call to create a campaign.
   * Parameters of this function will include uint targetDonation (of the campaign), uint startDate (of the campaign), uint endDate (of the campaign)
@@ -101,7 +110,7 @@ contract Charity {
     campaignId = noOfCampaigns++;
     campaign memory newCampaign = campaign(campaignName, description, pictureURL, targetDonation, 0, 0, startDate, endDate, CampaignStatus.ONGOING);
     campaigns[campaignId] = newCampaign;
-    ongoingCampaigns.push(campaignId);
+    // ongoingCampaigns.push(campaignId);
     isCampaign[campaignId] = true;
     return campaignId;
   }
@@ -111,7 +120,7 @@ contract Charity {
   * This will be the function that charities call to end an ongoing campaign.
   * Parameters of this function will include uint campaignId
   */
-  function endCampaign(uint campaignId) onlyVerifiedCharity(msg.sender) {
+  function endCampaign(uint campaignId) onlyVerifiedCharity(msg.sender) onlyOwner(msg.sender) {
     require(campaignId < noOfCampaigns, "Invalid campaign id");
     require(isOngoingCampaign[campaignId], "Campaign is not ongoing");
     require(msg.sender = charities[campaigns[campaignId].charityId].charityOwner, "Caller is not owner of charity");
