@@ -54,7 +54,7 @@ contract Charity {
     _;
   }
 
-  function registerCharity(bytes32 charityName, bytes32 description, bytes32 pictureURL) returns (uint charityId) {
+  function registerCharity(bytes32 charityName, bytes32 description, bytes32 pictureURL) public returns (uint charityId) {
     require(charityName != "Charity name cannot be empty");
     require(description != "Description cannot be empty");
     require(pictureURL != "Picture URL cannot be empty");
@@ -66,7 +66,7 @@ contract Charity {
     return charityId;
   }
 
-  function verifyCharity(uint charityId) onlyOwner(msg.sender) {
+  function verifyCharity(uint charityId) public onlyOwner(msg.sender) {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
@@ -77,7 +77,7 @@ contract Charity {
     // remove charity from charitiesPendingVerification[]
   }
 
-  function rejectCharity(uint charityId) onlyOwner(msg.sender) {
+  function rejectCharity(uint charityId) public onlyOwner(msg.sender) {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
@@ -87,7 +87,7 @@ contract Charity {
     // remove charity from charitiesPendingVerification[]
   }
 
-  function revokeCharity(uint charityId) onlyOwner(msg.sender) {
+  function revokeCharity(uint charityId) public onlyOwner(msg.sender) {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.VERIFIED, "Charity is not a verified charity");
@@ -100,7 +100,7 @@ contract Charity {
   * This will be the function that charities call to create a campaign.
   * Parameters of this function will include uint targetDonation (of the campaign), uint startDate (of the campaign), uint endDate (of the campaign)
   */
-  function createCampaign(bytes32 campaignName, bytes32 description, bytes32 pictureURL, uint targetDonation, uint startDate, uint endDate) onlyVerifiedCharity(msg.sender) returns (uint campaignId) {
+  function createCampaign(bytes32 campaignName, bytes32 description, bytes32 pictureURL, uint targetDonation, uint startDate, uint endDate) public onlyVerifiedCharity(msg.sender) returns (uint campaignId) {
     require(campaignName != "Charity name cannot be empty");
     require(description != "Description cannot be empty");
     require(pictureURL != "Picture URL cannot be empty");
@@ -111,7 +111,7 @@ contract Charity {
     campaign memory newCampaign = campaign(campaignName, description, pictureURL, targetDonation, 0, 0, startDate, endDate, CampaignStatus.ONGOING);
     campaigns[campaignId] = newCampaign;
     // ongoingCampaigns.push(campaignId);
-    isCampaign[campaignId] = true;
+    isOngoingCampaign[campaignId] = true;
     return campaignId;
   }
 
@@ -120,7 +120,7 @@ contract Charity {
   * This will be the function that charities call to end an ongoing campaign.
   * Parameters of this function will include uint campaignId
   */
-  function endCampaign(uint campaignId) onlyVerifiedCharity(msg.sender) onlyOwner(msg.sender) {
+  function endCampaign(uint campaignId) public onlyVerifiedCharity(msg.sender) onlyOwner(msg.sender) {
     require(campaignId < noOfCampaigns, "Invalid campaign id");
     require(isOngoingCampaign[campaignId], "Campaign is not ongoing");
     require(msg.sender = charities[campaigns[campaignId].charityId].charityOwner, "Caller is not owner of charity");

@@ -1,0 +1,124 @@
+{
+  "contractName": "Charity",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.0+commit.1d4f565a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/hawayo/Desktop/sharity/contracts/Charity.sol\":\"Charity\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/hawayo/Desktop/sharity/contracts/Charity.sol\":{\"keccak256\":\"0xdcdcddfb558e681ec3930f58b4a0e59894b8f3cde2f1b02150d8044639a488ad\",\"urls\":[\"bzzr://933fcec6a2bdcbaf90f4731aeb1df68151b3380b33e3b61181422d77a27e6c42\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a723058206c34e6838933f5b51fc084246c3f4d91e0396d329321305758c72eeed397c7530029",
+  "deployedBytecode": "0x6080604052600080fdfea165627a7a723058206c34e6838933f5b51fc084246c3f4d91e0396d329321305758c72eeed397c7530029",
+  "sourceMap": "25:21:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;25:21:0;;;;;;;",
+  "deployedSourceMap": "25:21:0:-;;;;;",
+  "source": "pragma solidity ^0.5.0;\n\ncontract Charity {\n\n}",
+  "sourcePath": "/Users/hawayo/Desktop/sharity/contracts/Charity.sol",
+  "ast": {
+    "absolutePath": "/Users/hawayo/Desktop/sharity/contracts/Charity.sol",
+    "exportedSymbols": {
+      "Charity": [
+        2
+      ]
+    },
+    "id": 3,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2,
+        "linearizedBaseContracts": [
+          2
+        ],
+        "name": "Charity",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 3,
+        "src": "25:21:0"
+      }
+    ],
+    "src": "0:46:0"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/Users/hawayo/Desktop/sharity/contracts/Charity.sol",
+      "exportedSymbols": {
+        "Charity": [
+          2
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.5",
+            ".0"
+          ]
+        },
+        "id": 1,
+        "name": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "attributes": {
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            2
+          ],
+          "name": "Charity",
+          "nodes": [
+            null
+          ],
+          "scope": 3
+        },
+        "id": 2,
+        "name": "ContractDefinition",
+        "src": "25:21:0"
+      }
+    ],
+    "id": 3,
+    "name": "SourceUnit",
+    "src": "0:46:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.0+commit.1d4f565a.Emscripten.clang"
+  },
+  "networks": {
+    "3": {
+      "events": {},
+      "links": {},
+      "address": "0x95c5C4d2D96dBD3791Ad06f505be915Cb1E28E1a",
+      "transactionHash": "0x507d31c2468d782d397eee3f330d17917a69094702156844d5a9f28bafb27b4b"
+    }
+  },
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-03-11T16:28:31.594Z",
+  "networkType": "ethereum",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

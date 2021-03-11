@@ -1,0 +1,124 @@
+{
+  "contractName": "Donation",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.0+commit.1d4f565a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/hawayo/Desktop/sharity/contracts/Donation.sol\":\"Donation\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/hawayo/Desktop/sharity/contracts/Donation.sol\":{\"keccak256\":\"0xd703099b55bedbd26cdfa6ce523592655355f7079b8f4eeca35f19353144cc9c\",\"urls\":[\"bzzr://eaf691c5914e33ca9ebe44e692aa17d473ed8a764f3824c82ae409427e630758\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3fe6080604052600080fdfea165627a7a72305820c4d08aa98f0f553e679f9683965f2d329d251a3ab12781230aee6440b9974b8b0029",
+  "deployedBytecode": "0x6080604052600080fdfea165627a7a72305820c4d08aa98f0f553e679f9683965f2d329d251a3ab12781230aee6440b9974b8b0029",
+  "sourceMap": "25:22:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;25:22:0;;;;;;;",
+  "deployedSourceMap": "25:22:0:-;;;;;",
+  "source": "pragma solidity ^0.5.0;\n\ncontract Donation {\n\n}",
+  "sourcePath": "/Users/hawayo/Desktop/sharity/contracts/Donation.sol",
+  "ast": {
+    "absolutePath": "/Users/hawayo/Desktop/sharity/contracts/Donation.sol",
+    "exportedSymbols": {
+      "Donation": [
+        2
+      ]
+    },
+    "id": 3,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2,
+        "linearizedBaseContracts": [
+          2
+        ],
+        "name": "Donation",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 3,
+        "src": "25:22:0"
+      }
+    ],
+    "src": "0:47:0"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/Users/hawayo/Desktop/sharity/contracts/Donation.sol",
+      "exportedSymbols": {
+        "Donation": [
+          2
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.5",
+            ".0"
+          ]
+        },
+        "id": 1,
+        "name": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "attributes": {
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            2
+          ],
+          "name": "Donation",
+          "nodes": [
+            null
+          ],
+          "scope": 3
+        },
+        "id": 2,
+        "name": "ContractDefinition",
+        "src": "25:22:0"
+      }
+    ],
+    "id": 3,
+    "name": "SourceUnit",
+    "src": "0:47:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.0+commit.1d4f565a.Emscripten.clang"
+  },
+  "networks": {
+    "3": {
+      "events": {},
+      "links": {},
+      "address": "0xa611d001A668a69a8a246f6388cb1FaDe356383d",
+      "transactionHash": "0x3208540d6e860ef81bfc102433261c5d7d317c0276544b7fcd829c1a8300713d"
+    }
+  },
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-03-11T16:28:31.594Z",
+  "networkType": "ethereum",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

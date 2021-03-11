@@ -1,5 +1,9 @@
-var SimpleStorage = artifacts.require("./SimpleStorage.sol");
+const Charity = artifacts.require("Charity");
+const Donation = artifacts.require("Donation");
 
-module.exports = function(deployer) {
-  deployer.deploy(SimpleStorage);
-};
+module.exports = async function(deployer, network, accounts) {
+	let deployAccount = accounts[0];
+    let charity = await deployer.deploy(Charity, {from: deployAccount})
+    await deployer.deploy(Donation, Charity.address, {from: deployAccount});
+
+} 
