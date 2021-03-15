@@ -1,9 +1,11 @@
 import React, { Component } from "react";
+import { Switch, Route, useLocation } from "react-router-dom";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
 import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
+import Navbar from "./components/Navbar";
 
 import Charity from "./contracts/Charity.json";
 import Donation from "./contracts/Donation.json";
@@ -56,18 +58,19 @@ class App extends Component {
   };
 
   render() {
+    /*return (
+      <div className="App">
+      {!this.state.web3 || this.state.isError === true 
+        ? <ErrorPage />
+        : <HomePage web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract}/>}
+    </div>
+    );*/
     return (
       <div className="App">
-        {!this.state.web3 || this.state.isError === true ? (
-          <ErrorPage />
-        ) : (
-          <HomePage
-            web3={this.state.web3}
-            accounts={this.state.accounts}
-            charityContract={this.state.charityContract}
-            donationContract={this.state.donationContract}
-          />
-        )}
+        <Navbar />
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+        </Switch>
       </div>
     );
   }

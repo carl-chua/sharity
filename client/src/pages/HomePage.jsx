@@ -5,13 +5,11 @@ class HomePage extends React.Component {
     super(props);
     this.state = {};
   }
-
   render() {
     return (
       <div>
         <div className="tc">
           <h1 className="f2">Hi</h1>
-          {console.log(this.props)}
         </div>
       </div>
     );
