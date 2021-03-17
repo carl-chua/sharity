@@ -5,6 +5,9 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
+import RegisterCharity from "./pages/RegisterCharity";
+import CreateCampaign from "./pages/CreateCampaign";
+
 import Navbar from "./components/Navbar";
 
 import Charity from "./contracts/Charity.json";
@@ -70,6 +73,8 @@ class App extends Component {
         <Navbar />
         <Switch>
           <Route exact path="/" component={HomePage} />
+          <Route exact path="/RegisterCharity" component={RegisterCharity} />
+          <Route exact path="/CreateCampaign" component={CreateCampaign} />
         </Switch>
       </div>
     );
