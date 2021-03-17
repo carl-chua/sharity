@@ -152,7 +152,7 @@ class CreateCampaign extends React.Component {
         <CssBaseline />
         <div className={style.paper}>
           <Typography component="h1" variant="h5">
-            Register Your Charity
+            Create a Campaign
           </Typography>
           <form
             className={style.form}
