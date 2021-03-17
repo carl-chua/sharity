@@ -59,11 +59,19 @@ class RegisterCharity extends React.Component {
         } catch (err) {
             console.log(err)
         }*/
-    alert("Registration successful, please wait for Sharity to verify your registration")
+    alert(
+      "Registration successful, please wait for Sharity to verify your registration"
+    );
     //var newId = getNum();
     var newId = this.state.charityId + 1;
-    this.setState({charityId: newId, name: "", description: "", contact: "", address: "", avatarURL: ""})
-
+    this.setState({
+      charityId: newId,
+      name: "",
+      description: "",
+      contact: "",
+      address: "",
+      avatarURL: "",
+    });
   };
 
   handleUploadStart = () => this.setState({ isUploading: true, progress: 0 });
@@ -101,99 +109,103 @@ class RegisterCharity extends React.Component {
     const style = useStyles;
 
     return (
-      <Container
-        component="main"
-        maxWidth="xs"
-        style={{ marginTop: "30px", backgroundColor: "white" }}
-      >
-        <CssBaseline />
-        <div className={style.paper}>
-          <Typography component="h1" variant="h5">
-            Register Your Charity
-          </Typography>
-          <form
-            className={style.form}
-            noValidate
-            onSubmit={this.handleSubmit}
-            style={{ marginTop: "30px" }}
-          >
-            <Grid container spacing={2}>
-              <label>Upload Avatar:</label>
-              {this.state.isUploading && <p>Progress: {this.state.progress}</p>}
-              {this.state.avatarURL && <img src={this.state.avatarURL} />}
-              <FileUploader
-                accept="image/*"
-                name="avatar"
-                filename={'charity' + this.state.charityId + '.png'}
-                storageRef={firebase.storage().ref("images")}
-                onUploadStart={this.handleUploadStart}
-                onUploadError={this.handleUploadError}
-                onUploadSuccess={this.handleUploadSuccess}
-                onProgress={this.handleProgress}
-              />
-              <Grid item xs={12}>
-                <TextField
-                  name="name"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="name"
-                  value={this.state.name}
-                  onChange={this.handleInputChange}
-                  label="Charity Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="description"
-                  label="Description"
-                  name="description"
-                  value={this.state.description}
-                  onChange={this.handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  name="contact"
-                  label="Contact Number"
-                  id="contact"
-                  value={this.state.contact}
-                  onChange={this.handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  name="address"
-                  label="Address"
-                  id="address"
-                  value={this.state.address}
-                  onChange={this.handleInputChange}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={style.submit}
-              style={{ marginTop: "30px", marginBottom: "20px" }}
+      <div>
+        <Container
+          component="main"
+          maxWidth="xs"
+          style={{ marginTop: "30px", backgroundColor: "white" }}
+        >
+          <CssBaseline />
+          <div className={style.paper}>
+            <Typography component="h1" variant="h5">
+              Register Your Charity
+            </Typography>
+            <form
+              className={style.form}
+              noValidate
+              onSubmit={this.handleSubmit}
+              style={{ marginTop: "30px" }}
             >
-              Submit
-            </Button>
-          </form>
-        </div>
-      </Container>
+              <Grid container spacing={2}>
+                <label>Upload Avatar:</label>
+                {this.state.isUploading && (
+                  <p>Progress: {this.state.progress}</p>
+                )}
+                {this.state.avatarURL && <img src={this.state.avatarURL} />}
+                <FileUploader
+                  accept="image/*"
+                  name="avatar"
+                  filename={"charity" + this.state.charityId + ".png"}
+                  storageRef={firebase.storage().ref("images")}
+                  onUploadStart={this.handleUploadStart}
+                  onUploadError={this.handleUploadError}
+                  onUploadSuccess={this.handleUploadSuccess}
+                  onProgress={this.handleProgress}
+                />
+                <Grid item xs={12}>
+                  <TextField
+                    name="name"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="name"
+                    value={this.state.name}
+                    onChange={this.handleInputChange}
+                    label="Charity Name"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="description"
+                    label="Description"
+                    name="description"
+                    value={this.state.description}
+                    onChange={this.handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    name="contact"
+                    label="Contact Number"
+                    id="contact"
+                    value={this.state.contact}
+                    onChange={this.handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    name="address"
+                    label="Address"
+                    id="address"
+                    value={this.state.address}
+                    onChange={this.handleInputChange}
+                  />
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={style.submit}
+                style={{ marginTop: "30px", marginBottom: "20px" }}
+              >
+                Submit
+              </Button>
+            </form>
+          </div>
+        </Container>
+      </div>
     );
   }
 }

@@ -54,7 +54,7 @@ export default function Navbar() {
             marginRight: "18px",
           }}
         >
-          Organisations
+          All Charities
         </Link>
         <ColorButton
           style={{
