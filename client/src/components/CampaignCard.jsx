@@ -1,73 +1,107 @@
 import React from "react";
-import { Row, Col, Card, Progress } from "antd";
-import "antd/dist/antd.css";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+
+import LinearWithValueLabel from "./LinearWithValueLabel";
+
+const useStyles = makeStyles({
+  root: {
+    maxWidth: 345,
+  },
+  media: {
+    height: 180,
+    filter: "brightness(60%)",
+  },
+});
 
 export default function CampaignCard({ data }) {
-  return (
-    <Card
-      onClick={() => console.log("hi")}
-      loading={!data}
-      hoverable
-      style={{ width: 230 }}
-      bodyStyle={{ padding: 0 }}
-    >
-      <img
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-        height="180"
-        width="100%"
-        style={{ filter: "brightness(60%)" }}
-      />
+  const classes = useStyles();
 
-      <div
-        style={{
-          position: "absolute",
-          top: "20%",
-          height: "180",
-          width: "100%",
-          padding: "5%",
-          color: "white",
-        }}
-      >
-        <Row>
-          <b>${data.currentDonation}</b>
-        </Row>
-        <Row>raised from {data.noOfDonors} donors</Row>
-        <Row>
-          <Progress
-            percent={Math.floor(
-              (100 * data.currentDonation) / data.targetDonation
-            )}
-          />
-        </Row>
-        <Row>
-          <Col span={12} style={{ padding: "0" }}>
-            <b>
-              {Math.floor((100 * data.currentDonation) / data.targetDonation)}%
-            </b>{" "}
-            of <b>${data.targetDonation}</b>
-          </Col>
-          <Col span={12}>
-            <b>{data.endDate - data.startDate}</b> more days
-          </Col>
-        </Row>
-      </div>
-      <Row className="mx-2">
-        <p className="font-weight-bold text-left">{data.campaignName}</p>
-      </Row>
-      <Row className="mx-2">
-        <Col span={4}>
-          <img
-            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-            className="rounded-circle img-fluid"
-          />
-        </Col>
-        <Col span={20}>
-          <p className="font-weight-light">by {data.charityName}</p>
-        </Col>
-      </Row>
-      <Row className="mx-2">
-        <p className="text-left ml-2">{data.description}</p>
-      </Row>
+  return (
+    <Card className={classes.root}>
+      <CardActionArea>
+        <CardMedia
+          className={classes.media}
+          image="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+        />
+        <div
+          style={{
+            position: "absolute",
+            height: "180",
+            width: "100%",
+            top: "20%",
+            color: "white",
+          }}
+        >
+          <Grid container>
+            <Grid item xs={12}>
+              <Box ml={2} textAlign="left" fontWeight="fontWeightBold">
+                ${data.currentDonation}
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box ml={2} textAlign="left" fontSize={13}>
+                raised from <b>{data.noOfDonors}</b> donors
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box ml={2}>
+                <LinearWithValueLabel
+                  progress={Math.floor(
+                    (100 * data.currentDonation) / data.targetDonation
+                  )}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={7}>
+              <Box ml={2} textAlign="left" fontSize={13}>
+                <b>
+                  {Math.floor(
+                    (100 * data.currentDonation) / data.targetDonation
+                  )}
+                  %
+                </b>{" "}
+                of <b>${data.targetDonation}</b>
+              </Box>
+            </Grid>
+            <Grid item xs={5}>
+              <Box fontSize={13}>
+                <b>{data.endDate - data.startDate}</b> more days
+              </Box>
+            </Grid>
+          </Grid>
+        </div>
+        <CardContent>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Box fontSize={17} fontWeight="fontWeightBold" textAlign="left">
+                {data.campaignName}
+              </Box>
+            </Grid>
+            <Grid item xs={3}>
+              <img
+                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                className="rounded-circle img-fluid"
+              />
+            </Grid>
+            <Grid item xs={9}>
+              <Box fontSize={14} fontWeight="fontWeightMedium" textAlign="left">
+                {data.charityName}
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box fontSize={13} fontWeight="fontWeightLight" textAlign="left">
+                {data.description}
+              </Box>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </CardActionArea>
     </Card>
   );
 }

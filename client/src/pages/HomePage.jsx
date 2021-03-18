@@ -1,27 +1,30 @@
-import React from "react";
-import { Row, Col, Tabs, Card, Typography, Avatar, Progress } from "antd";
-import "antd/dist/antd.css";
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Grid from "@material-ui/core/Grid";
+import Card from "@material-ui/core/Card";
+
+import CardMedia from "@material-ui/core/CardMedia";
 import HomePageBanner from "../assets/homepagebanner.jpg";
+import TabPanel from "../components/TabPanel";
 import CampaignCard from "../components/CampaignCard";
+const useStyles = makeStyles({
+  media: {
+    height: 250,
+  },
+});
 
-const { TabPane } = Tabs;
-const { Title } = Typography;
+export default function HomePage() {
+  const classes = useStyles();
+  const [value, setValue] = useState(0);
 
-class HomePage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menu: "Ongoing",
-      isLoading: false,
-    };
-  }
-
-  handleMenuChange = (e) => {
-    console.log("click", e);
-    this.setState({ menu: e.key });
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
-  campaignExample = {
+  const campaignExample = {
     currentDonation: 95474,
     targetDonation: 99999,
     noOfDonors: 848,
@@ -33,66 +36,71 @@ class HomePage extends React.Component {
       "It is very sad when people, in the depths of despair, can no longer find reason or hope to live on and think of ending their................",
   };
 
-  render() {
-    return (
-      <div>
-        <Row justify="center">
-          <Col span={24}>
-            <Card bordered={false} bodyStyle={{ padding: "0" }}>
-              <img src={HomePageBanner} height="250" width="100%"></img>
-              <div
-                style={{
-                  position: "absolute",
-                  top: "30%",
-                  left: "12%",
-                }}
-              >
-                <Title style={{ color: "white" }}>Give the Gift Today!</Title>
-              </div>
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "12%",
-                }}
-              >
-                <Title style={{ color: "white" }} level={3}>
-                  Every little bit counts!
-                </Title>
-              </div>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={18} offset={3}>
-            <Title level={3} style={{ textAlign: "left" }}>
-              Campaigns
-            </Title>
-          </Col>
-        </Row>
-        <Row justify="center">
-          <Col span={18}>
-            <Tabs defaultActiveKey="1">
-              <TabPane tab="Ongoing" key="1">
-                <Row justify="center" gutter={32}>
-                  <Col span={8}>
-                    <CampaignCard data={this.campaignExample} />
-                  </Col>
-                  <Col span={8}></Col>
-                  <Col span={8}></Col>
-                </Row>
-                <Row justify="center"></Row>
-                <Row justify="center"></Row>
-              </TabPane>
-              <TabPane tab="Past" key="2">
-                Content of Tab Pane 2
-              </TabPane>
-            </Tabs>
-          </Col>
-        </Row>
-      </div>
-    );
-  }
+  return (
+    <Grid container spacing={2} justify="center">
+      <Grid item xs={12}>
+        <Card>
+          <CardMedia className={classes.media} image={HomePageBanner} />
+          <div
+            style={{
+              position: "absolute",
+              color: "white",
+              top: "12%",
+              left: "9%",
+            }}
+          >
+            <Box textAlign="left" fontWeight="fontWeightBold" fontSize={40}>
+              Give the Gift Today!
+            </Box>
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              color: "white",
+              top: "18%",
+              left: "9%",
+            }}
+          >
+            <Box textAlign="left" fontWeight="fontWeightBold" fontSize={28}>
+              Every little bit counts!
+            </Box>
+          </div>
+        </Card>
+      </Grid>
+      <Grid item xs={10}>
+        <Box textAlign="left" fontWeight="fontWeightBold" fontSize={26}>
+          Campaigns
+        </Box>
+      </Grid>
+      <Grid item xs={10}>
+        <Tabs
+          value={value}
+          indicatorColor="primary"
+          textColor="primary"
+          onChange={handleChange}
+        >
+          <Tab label="Ongoing" />
+          <Tab label="Past" />
+        </Tabs>
+        <TabPanel value={value} index={0}>
+          <Grid container spacing={3}>
+            {[1, 2, 3, 4, 5].map((card, index) => (
+              <Grid key={index} item xs={4}>
+                <CampaignCard data={campaignExample} />
+              </Grid>
+            ))}
+          </Grid>
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <Grid container spacing={3}>
+            {[1].map((card, index) => (
+              <Grid key={index} item xs={4}>
+                <CampaignCard data={campaignExample} />
+              </Grid>
+            ))}
+          </Grid>
+        </TabPanel>
+      </Grid>
+    </Grid>
+  );
 }
-
-export default HomePage;
