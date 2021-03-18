@@ -13,6 +13,8 @@ contract Charity {
   struct charity {
 	  address charityOwner;
     bytes32 charityName;
+    bytes32 charityAddress;
+    bytes32 contactNumber;
     bytes32 description;
     bytes32 pictureURL;
     CharityStatus charityStatus;
@@ -35,13 +37,21 @@ contract Charity {
   //uint[] charitiesPendingVerification;
   mapping(address => bool) isVerifiedCharity;
   mapping(uint => charity) charities;
-  mapping(address => uint) charityAddress;
-  uint noOfCharities = 1;
+  mapping(address => uint) charityAddressMap;
+  uint noOfCharities = 0;
 
   //uint[] ongoingCampaigns;
   mapping(uint => bool) isOngoingCampaign;
   mapping(uint => campaign) campaigns;
-  uint noOfCampaigns = 1;
+  uint noOfCampaigns = 0;
+
+  event charityRegistered (uint charityId);
+  event charityVerified (uint charityId);
+  event charityRejected (uint charityId);
+  event charityRevoked (uint charityId);
+  event campaignCreated(uint charityId, uint campaignId);
+  event campaignEnded(uint campaignId);
+
 
   modifier onlyOwner(address caller) {
     require(caller == contractOwner, "Caller is not contract owner");
@@ -55,16 +65,17 @@ contract Charity {
     _;
   }
 
-  function registerCharity(bytes32 charityName, bytes32 description, bytes32 pictureURL) public returns (uint charityId) {
+  function registerCharity(bytes32 charityName, bytes32 charityAddress, bytes32 contactNumber, bytes32 description, bytes32 pictureURL) public returns (uint charityId) {
     require(charityName != "Charity name cannot be empty");
     require(description != "Description cannot be empty");
     require(pictureURL != "Picture URL cannot be empty");
 
     charityId = noOfCharities++;
-    charity memory newCharity = charity(msg.sender, charityName, description, pictureURL, CharityStatus.UNVERIFIED);
+    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED);
     charities[charityId] = newCharity;
-    charityAddress[msg.sender] = charityId;
+    charityAddressMap[msg.sender] = charityId;
     isVerifiedCharity[charities[charityId].charityOwner] = false;
+    emit charityRegistered(charityId);
     // charitiesPendingVerification.push(charityId);
     return charityId;
   }
@@ -77,6 +88,7 @@ contract Charity {
 
     charities[charityId].charityStatus = CharityStatus.VERIFIED;
     isVerifiedCharity[charities[charityId].charityOwner] = true;
+    emit charityVerified(charityId);
     // remove charity from charitiesPendingVerification[]
   }
 
@@ -87,6 +99,7 @@ contract Charity {
     require(isVerifiedCharity[charities[charityId].charityOwner] == false, "Charity has been verified");
 
     charities[charityId].charityStatus = CharityStatus.REJECTED;
+    emit charityRejected(charityId);
     // remove charity from charitiesPendingVerification[]
   }
 
@@ -97,6 +110,7 @@ contract Charity {
     require(isVerifiedCharity[charities[charityId].charityOwner] == true, "Charity has been verified");
 
     charities[charityId].charityStatus = CharityStatus.REJECTED;
+    emit charityRevoked(charityId);
   }
 
   /*
@@ -111,10 +125,12 @@ contract Charity {
     require(startDate < endDate, "Start date must be earlier than end date");
 
     campaignId = noOfCampaigns++;
-    campaign memory newCampaign = campaign(charityAddress[msg.sender], campaignName, description, pictureURL, targetDonation, 0, 0, startDate, endDate, CampaignStatus.ONGOING);
+    uint charityId = charityAddressMap[msg.sender];
+    campaign memory newCampaign = campaign(charityId, campaignName, description, pictureURL, targetDonation, 0, 0, startDate, endDate, CampaignStatus.ONGOING);
     campaigns[campaignId] = newCampaign;
     // ongoingCampaigns.push(campaignId);
     isOngoingCampaign[campaignId] = true;
+    emit campaignCreated(charityId, campaignId);
     return campaignId;
   }
 
@@ -130,6 +146,7 @@ contract Charity {
 
     campaigns[campaignId].campaignStatus = CampaignStatus.ENDED;
     isOngoingCampaign[campaignId] = false;
+    emit campaignEnded(campaignId);
     // remove campaign from ongoingCampaigns[]
   }
 
