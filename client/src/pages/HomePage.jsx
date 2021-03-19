@@ -18,6 +18,7 @@ const useStyles = makeStyles({
 
 export default function HomePage() {
   const classes = useStyles();
+  const [campaigns, setCampaigns] = useState();
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {

@@ -7,6 +7,7 @@ import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
 import RegisterCharity from "./pages/RegisterCharity";
 import CreateCampaign from "./pages/CreateCampaign";
+import TransactionHistory from "./pages/TransactionHistory";
 
 import Navbar from "./components/Navbar";
 
@@ -75,6 +76,11 @@ class App extends Component {
           <Route exact path="/" component={HomePage} />
           <Route exact path="/RegisterCharity" component={RegisterCharity} />
           <Route exact path="/CreateCampaign" component={CreateCampaign} />
+          <Route
+            exact
+            path="/TransactionHistory"
+            component={TransactionHistory}
+          />
         </Switch>
       </div>
     );
