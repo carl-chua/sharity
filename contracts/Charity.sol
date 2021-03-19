@@ -51,6 +51,8 @@ contract Charity {
   event charityRevoked (uint charityId);
   event campaignCreated(uint charityId, uint campaignId);
   event campaignEnded(uint campaignId);
+  event updateCurrentDonation(uint newAmount);
+  event updateCampaignDonors(uint newNumber);
 
 
   modifier onlyOwner(address caller) {
@@ -284,7 +286,44 @@ contract Charity {
     require(campaignId < noOfCampaigns, "Invalid campaign id");
     return campaigns[campaignId].campaignStatus;
   }
-
-
+  
+  // boolean to check campaign status
+  function isStatusComplete(uint campaignId) public view returns (bool) {
+    require(campaignId < noOfCampaigns, "Invalid campaign id");
+    if(campaigns[campaignId].campaignStatus == CampaignStatus.ENDED) {
+        return true;
+    }
+    return false;
+  }
+  
+  // boolean to check if campaign is valid
+  function checkValidCampaign(uint campaignId) public view returns (bool) {
+      if(campaignId < noOfCampaigns) {
+          return true;
+      }
+      return false;
+  }
+    
+  /*
+  * This will be the function that updates the campaign's currentDonation
+  * Parameters of this function will include uint campaignId and uint newDonation
+  */
+  function updateCampaignCurrentDonation(uint campaignId, uint newDonation) public {
+      require(campaignId < noOfCampaigns, "Invalid campaign id");
+      uint newAmount = campaigns[campaignId].currentDonation + newDonation;
+      campaigns[campaignId].currentDonation = newAmount;
+      emit updateCurrentDonation(newAmount);
+  }
+  
+  /*
+  * This will be the function that updates the campaign's noOfDonors
+  * Parameters of this function will include uint campaignId
+  */
+  function addCampaignDonor(uint campaignId) public {
+      require(campaignId < noOfCampaigns, "Invalid campaign id");
+      uint newNumber = campaigns[campaignId].noOfDonors + 1;
+      campaigns[campaignId].noOfDonors = newNumber;
+      emit updateCampaignDonors(newNumber);
+  }
 
 }
