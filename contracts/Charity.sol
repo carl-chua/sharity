@@ -197,6 +197,14 @@ contract Charity {
     return charities[charityId].charityStatus;
   }
 
+  /* 
+  * This will be the getter function that everyone can call to get the total amounts of the charities.
+  * There will be no parameters fot this function
+  */
+  function getCharityAmount() public view returns (uint) {
+    return noOfCharities;
+  }
+
   /*
   * This will be the getter function that everyone can call to check the campaign's charityId.
   * Parameters of this function will include uint campaignId
@@ -285,6 +293,14 @@ contract Charity {
   function getCampaignStatus(uint campaignId) public view returns (CampaignStatus) {
     require(campaignId < noOfCampaigns, "Invalid campaign id");
     return campaigns[campaignId].campaignStatus;
+  }
+
+  /* 
+  * This will be the getter function that everyone can call to get the total amounts of the campaigns.
+  * There will be no parameters fot this function
+  */
+  function getCampaignAmount() public view returns (uint) {
+    return noOfCampaigns;
   }
   
   // boolean to check campaign status
