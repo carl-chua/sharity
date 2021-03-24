@@ -69,6 +69,8 @@ contract Charity {
 
   function registerCharity(bytes32 charityName, bytes32 charityAddress, bytes32 contactNumber, bytes32 description, bytes32 pictureURL) public returns (uint charityId) {
     require(charityName != "Charity name cannot be empty");
+    require(charityAddress != "Charity address cannot be empty");
+    require(contactNumber != "Charity number cannot be empty");
     require(description != "Description cannot be empty");
     require(pictureURL != "Picture URL cannot be empty");
 
