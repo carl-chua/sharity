@@ -3,15 +3,15 @@ pragma solidity ^0.5.0;
 contract Charity {
 
   enum CharityStatus {
-	  UNVERIFIED, VERIFIED, REJECTED
+    UNVERIFIED, VERIFIED, REJECTED
   }
 
   enum CampaignStatus {
-	  ONGOING, ENDED
+    ONGOING, ENDED
   }
 
   struct charity {
-	  address charityOwner;
+    address charityOwner;
     bytes32 charityName;
     bytes32 charityAddress;
     bytes32 contactNumber;
@@ -201,10 +201,94 @@ contract Charity {
 
   /* 
   * This will be the getter function that everyone can call to get the total amounts of the charities.
-  * There will be no parameters fot this function
+  * There will be no parameters for this function
   */
   function getCharityAmount() public view returns (uint) {
     return noOfCharities;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the total amounts of verified charities
+  * There will be no parameters for this function
+  */
+  function getVerifiedCharityAmount() public view returns (uint) {
+    uint noOfVerifiedCharities = 0;
+    for (uint i = 0; i < noOfCharities; i++) {
+      if (charities[i].charityStatus == CharityStatus.VERIFIED) {
+        noOfVerifiedCharities++;
+      }
+    }
+    return noOfVerifiedCharities;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the total amounts of unverified charities
+  * There will be no parameters for this function
+  */
+  function getUnverifiedCharityAmount() public view returns (uint) {
+    uint noOfUnverifiedCharities = 0;
+    for (uint i = 0; i < noOfCharities; i++) {
+      if (charities[i].charityStatus == CharityStatus.UNVERIFIED) {
+        noOfUnverifiedCharities++;
+      }
+    }
+    return noOfUnverifiedCharities;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the total amounts of rejected charities
+  * There will be no parameters for this function
+  */
+  function getRejectedCharityAmount() public view returns (uint) {
+    uint noOfRejectedCharities = 0;
+    for (uint i = 0; i < noOfCharities; i++) {
+      if (charities[i].charityStatus == CharityStatus.REJECTED) {
+        noOfRejectedCharities++;
+      }
+    }
+    return noOfRejectedCharities;
+  }
+
+  /*
+  * This will be the function that everyone can call to get the total amounts of campaigns hold by the given charities
+  * Parameters of this function will include uint charityId
+  */
+  function getCampaignAmountByCharity(uint charityId) public view returns (uint) {
+    uint noOfCampaignByCharity = 0;
+    for (uint i = 0; i < noOfCampaigns; i++) {
+      if (campaigns[i].charityId == charityId) {
+        noOfCampaignByCharity++;
+      }
+    }
+    return noOfCampaignByCharity;
+  }
+
+  /*
+  * This will be the function that everyone can call to get the total amounts of active campaigns hold by the given charities
+  * Parameters of this function will include uint charityId
+  */
+  function getActiveCampaignAmountByCharity(uint charityId) public view returns (uint) {
+    uint noOfActiveCampaignByCharity = 0;
+    for (uint i = 0; i < noOfCampaigns; i++) {
+      if (campaigns[i].charityId == charityId && isOngoingCampaign[i] == true) {
+        noOfActiveCampaignByCharity++;
+      }
+    }
+    return noOfActiveCampaignByCharity;
+  }
+
+  /*
+  * This will be the function that everyone can call to get the total amounts of ended campaigns hold by the given charities
+  * Parameters of this function will include uint charityId
+  */
+  function getEndedCampaignAmountByCharity(uint charityId) public view returns (uint) {
+    uint noOfEndedCampaignByCharity = 0;
+    for (uint i = 0; i < noOfCampaigns; i++) {
+      if (campaigns[i].charityId == charityId && isOngoingCampaign[i] == false) {
+        noOfEndedCampaignByCharity++;
+      }
+    }
+    return noOfEndedCampaignByCharity;
   }
 
   /*
@@ -342,6 +426,14 @@ contract Charity {
       uint newNumber = campaigns[campaignId].noOfDonors + 1;
       campaigns[campaignId].noOfDonors = newNumber;
       emit updateCampaignDonors(newNumber);
+  }
+
+  /*
+  * This will be the function to get contract's owner
+  * There will be no parameters for this function
+  */
+  function getContractOwner() public view returns (address) {
+    return contractOwner;
   }
 
 }
