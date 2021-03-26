@@ -26,6 +26,7 @@ const useStyles = makeStyles({
 
 class AllCharities extends React.Component {
   constructor(props) {
+      console.log(props)
     super(props);
     this.state = {
       charities: "",
@@ -41,6 +42,7 @@ class AllCharities extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this.props.charityContract)
     const getCharities = async () => {
       const charityContract = this.props.charityContract;
       const accounts = this.props.accounts;
