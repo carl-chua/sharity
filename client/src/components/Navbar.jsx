@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "2px 4px",
     display: "flex",
     alignItems: "center",
+    height: 35,
     width: 300,
     backgroundColor: "#EAECEF",
   },
@@ -143,16 +144,18 @@ export default function Navbar() {
           width: "35%",
         }}
       >
-        <Paper component="form" className={classes.root}>
-          <IconButton
-            style={{ outline: "none" }}
-            className={classes.iconButton}
-            aria-label="search"
-          >
-            <img src={searchLogo} alt="searchLogo" />
-          </IconButton>
-          <InputBase className={classes.input} placeholder="Search" />
-        </Paper>
+        <div>
+          <Paper component="form" className={classes.root}>
+            <IconButton
+              style={{ outline: "none" }}
+              className={classes.iconButton}
+              aria-label="search"
+            >
+              <img src={searchLogo} alt="searchLogo" />
+            </IconButton>
+            <InputBase className={classes.input} placeholder="Search" />
+          </Paper>
+        </div>
         <h3 style={{ fontStyle: "italic", fontSize: "28px" }}>Sharity</h3>
       </div>
       <div>{renderButtonsComponent()}</div>

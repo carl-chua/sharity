@@ -10,6 +10,7 @@ import CreateCampaign from "./pages/CreateCampaign";
 import AllCharities from "./pages/AllCharities";
 import CharityPage from "./pages/CharityPage";
 import TransactionHistory from "./pages/TransactionHistory";
+import CampaignPage from "./pages/CampaignPage";
 
 import Navbar from "./components/Navbar";
 
@@ -148,6 +149,20 @@ class App extends Component {
                 path="/TransactionHistory"
                 render={(props) => (
                   <TransactionHistory
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+
+              <Route
+                exact
+                path="/Campaign"
+                render={(props) => (
+                  <CampaignPage
                     web3={this.state.web3}
                     accounts={this.state.accounts}
                     charityContract={this.state.charityContract}
