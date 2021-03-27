@@ -15,6 +15,7 @@ module.exports = {
       network_id: 5777,
     },
     ropsten: {
+      network_id: 3,
       provider: function () {
         return new HDWalletProvider(
           MNEMONIC,
@@ -27,7 +28,7 @@ module.exports = {
         //   0
         // );
       },
-      network_id: 3,
+      
     },
   },
   compilers: {
