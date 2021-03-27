@@ -27,12 +27,14 @@ class RegisterCharity extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  /*componentDidMount() {
-    const getNumber = async() => {
-        this.state.charityId = await this.props.charityContract.methods.getNoOfCharities().call();
-    }
-    getNumber()
-  }*/
+  componentDidMount() {
+    const getNumber = async () => {
+      this.state.charityId = await this.props.charityContract.methods
+        .getNoOfCharities()
+        .call();
+    };
+    getNumber();
+  }
 
   handleInputChange(event) {
     const target = event.target;
@@ -46,23 +48,36 @@ class RegisterCharity extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     console.log(this.state);
-    /*try {
-            this.props.charityContract.methods.registerCharity(this.state.name, this.state.description, this.state.avatarURL,this.state.contact, this.state.address).send({from: this.props.accounts[0]})
-            .on("receipt", (receipt) => {
-                console.log(receipt)
-                alert("Registration successful, please wait for Sharity to verify your registration")
-            })
-            .on("error", error => {
-                console.log(error.message);
-                alert("Registration unsuccessful, please register again. Error Occured: " + error.message)
-            });
-        } catch (err) {
-            console.log(err)
-        }*/
+    try {
+      this.props.charityContract.methods
+        .registerCharity(
+          this.state.name,
+          this.state.description,
+          this.state.avatarURL,
+          this.state.contact,
+          this.state.address
+        )
+        .send({ from: this.props.accounts[0] })
+        .on("receipt", (receipt) => {
+          console.log(receipt);
+          alert(
+            "Registration successful, please wait for Sharity to verify your registration"
+          );
+        })
+        .on("error", (error) => {
+          console.log(error.message);
+          alert(
+            "Registration unsuccessful, please register again. Error Occured: " +
+              error.message
+          );
+        });
+    } catch (err) {
+      console.log(err);
+    }
     alert(
       "Registration successful, please wait for Sharity to verify your registration"
     );
-    //var newId = getNum();
+    // var newId = getNum();
     var newId = this.state.charityId + 1;
     this.setState({
       charityId: newId,
