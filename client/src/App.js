@@ -35,12 +35,11 @@ class App extends Component {
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-
       console.log(accounts);
-
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
       const deployedNetworkCharity = Charity.networks[networkId];
+      console.log(Charity.networks);
       const charityInstance = new web3.eth.Contract(
         Charity.abi,
         deployedNetworkCharity && deployedNetworkCharity.address
