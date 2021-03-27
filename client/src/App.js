@@ -7,6 +7,8 @@ import ErrorPage from "./pages/ErrorPage";
 import HomePage from "./pages/HomePage";
 import RegisterCharity from "./pages/RegisterCharity";
 import CreateCampaign from "./pages/CreateCampaign";
+import AllCharities from "./pages/AllCharities";
+import CharityPage from "./pages/CharityPage";
 import TransactionHistory from "./pages/TransactionHistory";
 
 import Navbar from "./components/Navbar";
@@ -67,26 +69,96 @@ class App extends Component {
   };
 
   render() {
-    /*return (
-      <div className="App">
-      {!this.state.web3 || this.state.isError === true 
-        ? <ErrorPage />
-        : <HomePage web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract}/>}
-    </div>
-    );*/
     return (
-      <div className="App" style={{ overflowY: "hidden" }}>
-        <Navbar />
-        <Switch>
-          <Route exact path="/" component={HomePage} />
-          <Route exact path="/RegisterCharity" component={RegisterCharity} />
-          <Route exact path="/CreateCampaign" component={CreateCampaign} />
-          <Route
-            exact
-            path="/TransactionHistory"
-            component={TransactionHistory}
-          />
-        </Switch>
+      <div className="App">
+        {!this.state.web3 || this.state.isError === true ? (
+          <ErrorPage />
+        ) : (
+          <div>
+            <Navbar />
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={(props) => (
+                  <HomePage
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+              <Route
+                exact
+                path="/RegisterCharity"
+                render={(props) => (
+                  <RegisterCharity
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+              <Route
+                exact
+                path="/CreateCampaign"
+                render={(props) => (
+                  <CreateCampaign
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+              <Route
+                exact
+                path="/AllCharities"
+                render={(props) => (
+                  <AllCharities
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+              <Route
+                exact
+                path="/CharityPage"
+                render={(props) => (
+                  <CharityPage
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+
+              <Route
+                exact
+                path="/TransactionHistory"
+                render={(props) => (
+                  <TransactionHistory
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+            </Switch>
+          </div>
+        )}
       </div>
     );
   }
