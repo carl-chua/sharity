@@ -30,15 +30,15 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.0+commit.1d4f565a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"name\":\"x\",\"type\":\"uint256\"}],\"name\":\"set\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"get\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/C/Users/carlc/Desktop/Y3S2/IS4302 Blockchain and Distributed Ledger Technologies/sharity/contracts/SimpleStorage.sol\":\"SimpleStorage\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/carlc/Desktop/Y3S2/IS4302 Blockchain and Distributed Ledger Technologies/sharity/contracts/SimpleStorage.sol\":{\"keccak256\":\"0x512df1603c5f878921707d236bc53d974afe05b4d9de4b6094249bac5ab60efe\",\"urls\":[\"bzzr://d272f84b7bf105be585f9e22fce5b88f411e22c8dfb23c8c4a8a754318e22585\"]}},\"version\":1}",
-  "bytecode": "0x608060405234801561001057600080fd5b5060ec8061001f6000396000f3fe6080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146085575b600080fd5b348015605957600080fd5b50608360048036036020811015606e57600080fd5b810190808035906020019092919050505060ad565b005b348015609057600080fd5b50609760b7565b6040518082815260200191505060405180910390f35b8060008190555050565b6000805490509056fea165627a7a723058204a1b1e8f05a01cb9af8d7583900879edeee69086406125dfe3f38327b4b3707a0029",
-  "deployedBytecode": "0x6080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146085575b600080fd5b348015605957600080fd5b50608360048036036020811015606e57600080fd5b810190808035906020019092919050505060ad565b005b348015609057600080fd5b50609760b7565b6040518082815260200191505060405180910390f35b8060008190555050565b6000805490509056fea165627a7a723058204a1b1e8f05a01cb9af8d7583900879edeee69086406125dfe3f38327b4b3707a0029",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.0+commit.1d4f565a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"name\":\"x\",\"type\":\"uint256\"}],\"name\":\"set\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"get\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/hawayo/Desktop/sharity/contracts/SimpleStorage.sol\":\"SimpleStorage\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/hawayo/Desktop/sharity/contracts/SimpleStorage.sol\":{\"keccak256\":\"0x512df1603c5f878921707d236bc53d974afe05b4d9de4b6094249bac5ab60efe\",\"urls\":[\"bzzr://d272f84b7bf105be585f9e22fce5b88f411e22c8dfb23c8c4a8a754318e22585\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060ec8061001f6000396000f3fe6080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146085575b600080fd5b348015605957600080fd5b50608360048036036020811015606e57600080fd5b810190808035906020019092919050505060ad565b005b348015609057600080fd5b50609760b7565b6040518082815260200191505060405180910390f35b8060008190555050565b6000805490509056fea165627a7a72305820ce6de17469b49daa70b189829dc1ccb656d959363c58929ef1471c8c4a324f510029",
+  "deployedBytecode": "0x6080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146085575b600080fd5b348015605957600080fd5b50608360048036036020811015606e57600080fd5b810190808035906020019092919050505060ad565b005b348015609057600080fd5b50609760b7565b6040518082815260200191505060405180910390f35b8060008190555050565b6000805490509056fea165627a7a72305820ce6de17469b49daa70b189829dc1ccb656d959363c58929ef1471c8c4a324f510029",
   "sourceMap": "66:176:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;66:176:3;;;;;;;",
   "deployedSourceMap": "66:176:3:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;113:53;;8:9:-1;5:2;;;30:1;27;20:12;5:2;113:53:3;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;113:53:3;;;;;;;;;;;;;;;;;;;;170:70;;8:9:-1;5:2;;;30:1;27;20:12;5:2;170:70:3;;;;;;;;;;;;;;;;;;;;;;;113:53;160:1;147:10;:14;;;;113:53;:::o;170:70::-;206:4;225:10;;218:17;;170:70;:::o",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.21 <0.7.0;\n\ncontract SimpleStorage {\n  uint storedData;\n\n  function set(uint x) public {\n    storedData = x;\n  }\n\n  function get() public view returns (uint) {\n    return storedData;\n  }\n}\n",
-  "sourcePath": "C:/Users/carlc/Desktop/Y3S2/IS4302 Blockchain and Distributed Ledger Technologies/sharity/contracts/SimpleStorage.sol",
+  "sourcePath": "/Users/hawayo/Desktop/sharity/contracts/SimpleStorage.sol",
   "ast": {
-    "absolutePath": "/C/Users/carlc/Desktop/Y3S2/IS4302 Blockchain and Distributed Ledger Technologies/sharity/contracts/SimpleStorage.sol",
+    "absolutePath": "/Users/hawayo/Desktop/sharity/contracts/SimpleStorage.sol",
     "exportedSymbols": {
       "SimpleStorage": [
         1425
@@ -294,7 +294,7 @@
   },
   "legacyAST": {
     "attributes": {
-      "absolutePath": "/C/Users/carlc/Desktop/Y3S2/IS4302 Blockchain and Distributed Ledger Technologies/sharity/contracts/SimpleStorage.sol",
+      "absolutePath": "/Users/hawayo/Desktop/sharity/contracts/SimpleStorage.sol",
       "exportedSymbols": {
         "SimpleStorage": [
           1425
@@ -603,8 +603,8 @@
       "transactionHash": "0xb1154a27808fca6698b46db884a8fe642ad54bb1da3cffdd93c5022aa6ffcf86"
     }
   },
-  "schemaVersion": "3.3.4",
-  "updatedAt": "2021-03-25T06:19:24.113Z",
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-03-26T08:05:50.586Z",
   "devdoc": {
     "methods": {}
   },
