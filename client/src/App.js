@@ -25,10 +25,15 @@ class App extends Component {
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
+      // This checks whether you are logged in.
       const web3 = await getWeb3();
+
+      console.log(web3);
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
+
+      console.log(accounts);
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
@@ -70,7 +75,7 @@ class App extends Component {
     </div>
     );*/
     return (
-      <div className="App">
+      <div className="App" style={{ overflowY: "hidden" }}>
         <Navbar />
         <Switch>
           <Route exact path="/" component={HomePage} />

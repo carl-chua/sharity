@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { InputBase, IconButton, Paper, Button } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import searchLogo from "../assets/Search logo.svg";
 import { Link } from "react-router-dom";
+import MetaMaskOnboarding from "@metamask/onboarding";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,37 +38,85 @@ const ColorButton = withStyles((theme) => ({
 
 export default function Navbar() {
   const classes = useStyles();
+  const forwarderOrigin = "http://localhost:3000";
+  const onboarding = new MetaMaskOnboarding({ forwarderOrigin });
+
+  const [metamaskInstalled, setMetamaskInstalled] = useState(false);
+
+  useEffect(() => {
+    const { ethereum } = window;
+    setMetamaskInstalled(Boolean(ethereum && ethereum.isMetaMask));
+  }, []);
+
+  useEffect(() => {}, []);
+
+  function handleClickInstallMetaMask() {
+    onboarding.startOnboarding();
+  }
 
   function renderButtonsComponent() {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <Link
+    if (metamaskInstalled === false) {
+      return (
+        <div
           style={{
-            textDecoration: "none",
-            color: "#3B21CB",
-            marginRight: "18px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
-          All Charities
-        </Link>
-        <ColorButton
+          <Link
+            style={{
+              textDecoration: "none",
+              color: "#3B21CB",
+              marginRight: "18px",
+            }}
+          >
+            All Charities
+          </Link>
+          <ColorButton
+            style={{
+              width: "210px",
+              outline: "none",
+            }}
+            variant="contained"
+            color="primary"
+            onClick={handleClickInstallMetaMask}
+          >
+            Install MetaMask
+          </ColorButton>
+        </div>
+      );
+    } else {
+      return (
+        <div
           style={{
-            width: "210px",
-            outline: "none",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
           }}
-          variant="contained"
-          color="primary"
         >
-          CONNECT TO A WALLET
-        </ColorButton>
-      </div>
-    );
+          <Link
+            style={{
+              textDecoration: "none",
+              color: "#3B21CB",
+              marginRight: "18px",
+            }}
+          >
+            All Charities
+          </Link>
+          <ColorButton
+            style={{
+              width: "210px",
+              outline: "none",
+            }}
+            variant="contained"
+            color="primary"
+          >
+            CONNECT TO A WALLET
+          </ColorButton>
+        </div>
+      );
+    }
   }
 
   return (
