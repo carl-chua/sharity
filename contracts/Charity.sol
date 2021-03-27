@@ -203,7 +203,7 @@ contract Charity {
   * This will be the getter function that everyone can call to get the total amounts of the charities.
   * There will be no parameters for this function
   */
-  function getCharityAmount() public view returns (uint) {
+  function getNoOfCharities() public view returns (uint) {
     return noOfCharities;
   }
 
@@ -385,7 +385,7 @@ contract Charity {
   * This will be the getter function that everyone can call to get the total amounts of the campaigns.
   * There will be no parameters fot this function
   */
-  function getCampaignAmount() public view returns (uint) {
+  function getNoOfCampaigns() public view returns (uint) {
     return noOfCampaigns;
   }
   
