@@ -37,12 +37,14 @@ class CreateCampaign extends React.Component {
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
   }
 
-  /*componentDidMount() {
-    const getNumber = async() => {
-        this.state.campaignId = await this.props.charityContract.methods.getNoOfCampaigns().call();
-    }
-    getNumber()
-  }*/
+  componentDidMount() {
+    const getNumber = async () => {
+      this.state.campaignId = await this.props.charityContract.methods
+        .getNoOfCampaigns()
+        .call();
+    };
+    getNumber();
+  }
 
   handleInputChange(event) {
     const target = event.target;
@@ -81,32 +83,51 @@ class CreateCampaign extends React.Component {
       );
       console.log(parsedEndDate);
       console.log(parsedStartDate);
-      /*this.props.charityContract.methods.registerCharity(this.state.name, this.state.description, this.state.avatarURL, this.state.target, parsedStartDate, parsedEndDate).send({from: this.props.accounts[0]})
-            .on("receipt", (receipt) => {
-                console.log(receipt)
-                alert("Campaign creation successful, please view/edit details within the campaigns page")
-            })
-            .on("error", error => {
-                console.log(error.message);
-                alert("Campaign creation unsuccessful, please create again. Error Occured: " + error.message)
-            });*/
+      this.props.charityContract.methods
+        .createCampaign(
+          this.props.web3.utils.toHex(this.state.name),
+          this.props.web3.utils.toHex(this.state.description),
+          this.props.web3.utils.toHex(this.state.avatarURL),
+          this.state.target,
+          parsedStartDate,
+          parsedEndDate
+        )
+        .send({ from: this.props.accounts[0] })
+        .on("receipt", (receipt) => {
+          console.log(receipt);
+          var newId = this.state.campaignId + 1;
+          this.setState({
+            campaignId: newId,
+            name: "",
+            description: "",
+            target: "",
+            startDate: String(new Date()),
+            endDate: String(new Date()),
+            avatarURL: "",
+          });
+          alert(
+            "Campaign creation successful, please view/edit details within the campaigns page"
+          );
+        })
+        .on("error", (error) => {
+          console.log(error.message);
+          this.setState({
+            campaignId: this.state.campaignId,
+            name: "",
+            description: "",
+            target: "",
+            startDate: String(new Date()),
+            endDate: String(new Date()),
+            avatarURL: "",
+          });
+          alert(
+            "Campaign creation unsuccessful, please create again. Error Occured: " +
+              error.message
+          );
+        });
     } catch (err) {
       console.log(err);
     }
-    alert(
-      "Campaign Created successful, please wait for Sharity to verify your registration"
-    );
-    //var newId = getNum();
-    var newId = this.state.campaignId + 1;
-    this.setState({
-      campaignId: newId,
-      name: "",
-      description: "",
-      target: "",
-      startDate: String(new Date()),
-      endDate: String(new Date()),
-      avatarURL: "",
-    });
   };
 
   handleUploadStart = () => this.setState({ isUploading: true, progress: 0 });

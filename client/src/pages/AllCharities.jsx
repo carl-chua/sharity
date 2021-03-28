@@ -14,6 +14,8 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "../components/TabPanel";
 import { Redirect } from "react-router-dom";
+import { Link } from 'react-router-dom';
+
 
 const useStyles = makeStyles({
   root: {
@@ -26,12 +28,11 @@ const useStyles = makeStyles({
 
 class AllCharities extends React.Component {
   constructor(props) {
-      console.log(props)
     super(props);
     this.state = {
       charities: "",
       owner: false,
-      redirect: null
+      selectedCharityId: ''
     };
     this.redirectCharity = this.redirectCharity.bind(this)
 
@@ -41,34 +42,49 @@ class AllCharities extends React.Component {
     this.setState({ redirect: "/Charity", selectedCharityId: id});
   }
 
-  componentDidMount() {
-    console.log(this.props.charityContract)
+  componentDidMount = async() => {
+    var verifiedCharities = [];
+      var pendingCharities = [];
+      var rejectedCharities = [];
+
     const getCharities = async () => {
       const charityContract = this.props.charityContract;
       const accounts = this.props.accounts;
-      const owner = await charityContract.methods.contractOwner().call();
+      const owner = await charityContract.methods.getContractOwner().call();
       if (accounts[0] === owner) {
           this.setState({owner: true})
+          //console.log("owner")
       }
-      var verifiedCharities = [];
-      var pendingCharities = [];
-      var rejectedCharities = [];
+      
       const length = await charityContract.methods.getNoOfCharities().call();
+      console.log("No of charities" + length)
       for (var i = 0; i < length; i++) {
-        const charity = await charityContract.methods.charities(i).call();
-        if (charity.charityStatus === 0) {
+        var charity = {};
+        charity.id = i;
+        charity.name = await charityContract.methods.getCharityName(i).call();
+        charity.name = this.props.web3.utils.toUtf8(charity.name)
+        charity.description = await charityContract.methods.getCharityDescription(i).call();
+        charity.description = this.props.web3.utils.toUtf8(charity.description)
+        charity.pictureURL = await charityContract.methods.getCharityPictureURL(i).call();
+        charity.pictureURL = this.props.web3.utils.toUtf8(charity.pictureURL)
+        charity.status = await charityContract.methods.getCharityStatus(i).call();
+        console.log("status: " + charity.status)
+        if (charity.status === '0') {
           charity.id = i;
           pendingCharities.push(charity);
         }
-        if (charity.charityStatus === 1) {
+        if (charity.status === '1') {
           charity.id = i;
           verifiedCharities.push(charity);
         }
-        if (charity.charityStatus === 2) {
+        if (charity.status === '2') {
           charity.id = i;
           rejectedCharities.push(charity);
         }
       }
+    };
+
+    await getCharities();
 
       var verifiedCharitiesCards = verifiedCharities.map((charity) => {
         const classes = useStyles;
@@ -82,13 +98,13 @@ class AllCharities extends React.Component {
                   title="charity avatar"
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
+                  <Typography gutterBottom component="span">
                     {charity.name}
                   </Typography>
+                  <br></br>
                   <Typography
-                    variant="body2"
                     color="textSecondary"
-                    component="p"
+                    component="span"
                   >
                     {charity.description}
                   </Typography>
@@ -104,8 +120,13 @@ class AllCharities extends React.Component {
       
       var pendingCharitiesCards = pendingCharities.map((charity) => {
         const classes = useStyles;
+        console.log(charity.pictureURL)
         return (
           <Grid key={charity.id} item xs={4}>
+            <Link to={{
+            pathname:  `/CharityPage/${charity.id}`,
+            state: { id: charity.id}
+          }}>
             <Card className={classes.root}>
               <CardActionArea>
                 <CardMedia
@@ -114,22 +135,19 @@ class AllCharities extends React.Component {
                   title="charity avatar"
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
+                  <Typography gutterBottom component="span">
                     {charity.name}
                   </Typography>
                   <Typography
-                    variant="body2"
                     color="textSecondary"
-                    component="p"
+                    component="span"
                   >
                     {charity.description}
                   </Typography>
                 </CardContent>
-                <CardActions>
-                    <Button size="small" onclick={this.redirectCharity(charity.id)} >View More</Button>
-                </CardActions>
               </CardActionArea>
             </Card>
+            </Link>
           </Grid>
         );
       });
@@ -146,13 +164,12 @@ class AllCharities extends React.Component {
                   title="charity avatar"
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
+                  <Typography gutterBottom component="span">
                     {charity.name}
                   </Typography>
                   <Typography
-                    variant="body2"
                     color="textSecondary"
-                    component="p"
+                    component="span"
                   >
                     {charity.description}
                   </Typography>
@@ -162,25 +179,18 @@ class AllCharities extends React.Component {
           </Grid>
         );
       });
-
+      console.log(pendingCharities.length)
+      console.log(pendingCharitiesCards)
       this.setState({
         verifiedCharities: verifiedCharitiesCards,
         pendingCharities: pendingCharitiesCards,
         rejectedCharities: rejectedCharitiesCards,
       });
-    };
 
-    getCharities();
   }
 
   render() {
-    if (this.state.redirect) {
-        return <Redirect to={{
-            pathname: "/Charity",
-            state: { charityId: this.state.charityId }
-          }}/>
-    }
-    var view = () => {
+    /*var view = () => {
       if (this.state.owner === true) {
         return (
           <Grid item xs={10}>
@@ -189,17 +199,17 @@ class AllCharities extends React.Component {
               <Tab label="Pending" />
               <Tab label="Rejected" />
             </Tabs>
-            <TabPanel value={0} index={0}>
+            <TabPanel value={1} index={0}>
               <Grid container spacing={3}>
                 {this.state.verifiedCharities}
               </Grid>
             </TabPanel>
-            <TabPanel value={0} index={1}>
+            <TabPanel value={2} index={1}>
               <Grid container spacing={3}>
                 {this.state.pendingCharities}
               </Grid>
             </TabPanel>
-            <TabPanel value={0} index={2}>
+            <TabPanel value={3} index={2}>
               <Grid container spacing={3}>
                 {this.state.rejectedCharities}
               </Grid>
@@ -219,8 +229,31 @@ class AllCharities extends React.Component {
             </TabPanel>
           </Grid>
         );
+      };
+    */
+
+    var view = () => {
+      if (this.state.owner === true) {
+        return (
+          <div>
+                {this.state.verifiedCharities}
+              
+                {this.state.pendingCharities}
+              
+                {this.state.rejectedCharities}
+                </div>
+              
+        );
+      } else {
+        return (
+          <div>
+                {this.state.verifiedCharities}
+              
+              
+                </div>
+        );
       }
-    };
+    }
 
     return (
       <Grid container spacing={2} justify="center">
@@ -229,7 +262,10 @@ class AllCharities extends React.Component {
             All Charities
           </Box>
         </Grid>
-        {view}
+        {this.state.verifiedCharities}
+        {this.state.pendingCharities}
+        {this.state.rejectedCharities}
+
       </Grid>
     );
   }

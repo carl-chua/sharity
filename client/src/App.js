@@ -35,11 +35,9 @@ class App extends Component {
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-      console.log(accounts);
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
       const deployedNetworkCharity = Charity.networks[networkId];
-      console.log(Charity.networks);
       const charityInstance = new web3.eth.Contract(
         Charity.abi,
         deployedNetworkCharity && deployedNetworkCharity.address
@@ -142,6 +140,7 @@ class App extends Component {
                   />
                 )}
               />
+              <Route exact path="/CharityPage/:id" render={(props) => <CharityPage web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />} />
 
               <Route
                 exact
