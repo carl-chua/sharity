@@ -47,22 +47,24 @@ class RegisterCharity extends React.Component {
     });
   }
 
+  
   handleSubmit = (e) => {
     e.preventDefault();
     console.log(this.state);
+    //web3.utils.hexToAscii(val)
     try {
       this.props.charityContract.methods
         .registerCharity(
-          this.state.name,          
-          this.state.address,
-          this.state.contact,
-          this.state.description,
-          this.state.avatarURL
+          this.props.web3.utils.toHex(this.state.name),          
+          this.props.web3.utils.toHex(this.state.address),
+          this.props.web3.utils.toHex(this.state.contact),
+          this.props.web3.utils.toHex(this.state.description),
+          this.props.web3.utils.toHex(this.state.avatarURL)
         )
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {
           console.log(receipt);
-          var newId = this.state.charityId + 1;
+          var newId = parseInt(this.state.charityId) + 1;
           console.log(newId);
           this.setState({
             charityId: newId,
@@ -72,6 +74,8 @@ class RegisterCharity extends React.Component {
             address: "",
             avatarURL: "",
           });
+          console.log(this.state);
+
           alert(
             "Registration successful, please wait for Sharity to verify your registration"
           );
@@ -85,6 +89,8 @@ class RegisterCharity extends React.Component {
             address: "",
             avatarURL: "",
           });
+          console.log(this.state);
+
           alert(
             "Registration unsuccessful, please register again. Error Occured: " +
               error.message

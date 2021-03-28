@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import CampaignCard from "../components/CampaignCard";
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
+import { useLocation, Link } from "react-router-dom";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -27,50 +28,77 @@ class CharityPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      charityId: this.props.location.state.id,
+      charityId: parseInt(window.location.href.substring(window.location.href.length - 1)),
       owner: false,
-      charity: "",
+      name: "",
+      description: "",
       status: "",
       currentCampaigns: "",
       pastCampaigns: "",
-    };
+    };    
   }
 
-  componentDidMount() {
-    const getCharities = async () => {
+  componentDidMount = async() => {
+    console.log(this.state)
+    var currentCampaigns = [];
+    var pastCampaigns = [];
       const charityContract = this.props.charityContract;
       const accounts = this.props.accounts;
-      const owner = await charityContract.methods.contractOwner().call();
+      const owner = await charityContract.methods.getContractOwner().call();
+      console.log(owner)
       if (accounts[0] === owner) {
         this.setState({ owner: true });
       }
-      const charity = await charityContract.methods
-        .charities(this.state.charityId)
+      const charityStatus = await charityContract.methods
+        .getCharityStatus(this.state.charityId)
         .call();
-        if (charity.charityStatus === 0) {
-            this.state.setState({status: "PENDING"});
+        if (parseInt(charityStatus) === 0) {
+            this.setState({status: "PENDING"});
         }
-        if (charity.charityStatus === 1) {
-          this.state.setState({status: "VERIFIED"});
+        if (parseInt(charityStatus) === 1) {
+          this.setState({status: "VERIFIED"});
         }
-        if (charity.charityStatus === 2) {
-          this.state.setState({status: "REJECTED"});
+        if (parseInt(charityStatus) === 2) {
+          this.setState({status: "REJECTED"});
         }
-      const length = await charityContract.methods.noOfCampaigns().call();
-      var currentCampaigns = [];
-      var pastCampaigns = [];
+        const charityName = await charityContract.methods
+        .getCharityName(this.state.charityId)
+        .call();
+        this.setState({name: this.props.web3.utils.toUtf8(charityName)})
+        const charityDescription = await charityContract.methods
+        .getCharityDescription(this.state.charityId)
+        .call();
+        this.setState({description: this.props.web3.utils.toUtf8(charityDescription)})
+      const length = await charityContract.methods.getNoOfCampaigns().call();
+      console.log(length)
       for (var i = 0; i < length; i++) {
-        const campaign = await charityContract.methods.campaigns(i).call();
-        if (campaign.charityId === this.state.charityId && campaign.campaignStatus === 0) {
+        const campaign = [];
+        campaign.charityId = await charityContract.methods.getCampaignCharity(i).call();
+        campaign.name = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignName(i).call());
+        campaign.description = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignDescription(i).call());
+        campaign.targetDonation = await charityContract.methods.getCampaignTargetDonation(i).call();
+        campaign.pictureURL = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignPictureURL(i).call());
+        campaign.startDate = await charityContract.methods.getCampaignStartDate(i).call();
+        campaign.endDate = await charityContract.methods.getCampaignEndDate(i).call();
+        campaign.status = await charityContract.methods.getCampaignStatus(i).call();
+        campaign.currentDonation = await charityContract.methods.getCampaignCurrentDonation(i).call();
+        campaign.noOfDonors = await charityContract.methods.getCampaignNoOfDonors(i).call();
+        campaign.charityName = await charityContract.methods.getCharityName(parseInt(campaign.charityId)).call();
+
+        if (parseInt(campaign.charityId) === this.state.charityId && campaign.status === "0") {
             campaign.id = i;
+            console.log(campaign.name)
             currentCampaigns.push(campaign);
         }
-        if (campaign.charityId === this.state.charityId && campaign.campaignStatus === 1) {
+        if (parseInt(campaign.charityId) === this.state.charityId && campaign.status === "1") {
             campaign.id = i;
             pastCampaigns.push(campaign);
         }
+        console.log(campaign)
       }
+    
 
+      console.log(currentCampaigns)
       var currentCampaignsCards = currentCampaigns.map((campaign) => {
         const classes = useStyles;
         const data = {
@@ -110,21 +138,18 @@ class CharityPage extends React.Component {
       });
 
       this.setState({
-        charity: charity,
         currentCampaigns: currentCampaignsCards,
         pastCampaigns: pastCampaignsCards
       });
-    };
-
-    getCharities();
+    
   }
 
   handleVerify = () => {
-    /*try {
+    try {
             this.props.charityContract.methods.verifyCharity(this.state.charityId).send({from: this.props.accounts[0]})
             .on("receipt", (receipt) => {
                 console.log(receipt)
-                alert("Verification successful=")
+                alert("Verification successful")
                 this.refreshPage()
             })
             .on("error", error => {
@@ -133,15 +158,15 @@ class CharityPage extends React.Component {
             });
         } catch (err) {
             console.log(err)
-        }*/
+        }
   }
 
   handleReject = () => {
-    /*try {
+    try {
             this.props.charityContract.methods.rejectCharity(this.state.charityId).send({from: this.props.accounts[0]})
             .on("receipt", (receipt) => {
                 console.log(receipt)
-                alert("Rejection successful=")
+                alert("Rejection successful")
                 this.refreshPage()
             })
             .on("error", error => {
@@ -150,7 +175,7 @@ class CharityPage extends React.Component {
             });
         } catch (err) {
             console.log(err)
-    }*/
+    }
   }
 
   refreshPage = () => {
@@ -174,39 +199,29 @@ class CharityPage extends React.Component {
         marginBottom: 12,
       },
     });
-    const classes = useStyles();
+    const classes = useStyles;
 
     var profile = () => {
       if (this.state.owner === true && this.state.status === "PENDING") {
         return (
-            <Card className={classes.root}>
-            <CardContent>
-                <Typography variant="body2" component="p">
-                {this.state.charity.description}
-                </Typography>
-                <Typography variant="body2" component="p">
-                Status: {this.state.status}
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button size="small" onclick={this.handleVerify}>Verify the Charity</Button>
-                <Button size="small" onclick={this.handleVerify}>Reject the Charity</Button>
-            </CardActions>
-            </Card>
+          <div>
+            <p>{this.state.name}</p>
+            <p>{this.state.description}</p>
+            <p>Status: {this.state.status}</p>
+            <Button size="small" onClick={this.handleVerify}>Verify the Charity</Button>
+            <Button size="small" onClick={this.handleReject}>Reject the Charity</Button>
+          </div>
         );
       }
       else {
         return (
-            <Card className={classes.root}>
-            <CardContent>
-                <Typography variant="body2" component="p">
-                {this.state.charity.description}
-                </Typography>
-                <Typography variant="body2" component="p">
-                Status: {this.state.status}
-                </Typography>
-            </CardContent>
-            </Card>
+          <div>
+
+          <p>{this.state.name}</p>
+          <p>{this.state.description}</p>
+          <p>Status: {this.state.status}</p>
+          </div>
+
         );
       }
     };
@@ -219,7 +234,7 @@ class CharityPage extends React.Component {
             </Tabs>
             <TabPanel value={0} index={0}>
               <Grid container spacing={3}>
-                {profile}
+                {profile()}
               </Grid>
             </TabPanel>
             <TabPanel value={0} index={1}>
@@ -240,10 +255,12 @@ class CharityPage extends React.Component {
       <Grid container spacing={2} justify="center">
         <Grid item xs={10}>
           <Box textAlign="left" fontWeight="fontWeightBold" fontSize={26}>
-            {this.state.charity.charityName}
+            {this.state.charityName}
           </Box>
         </Grid>
-        {view}
+        {view()}
+        {this.state.currentCampaigns}
+
       </Grid>
     );
   }
