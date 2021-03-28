@@ -10,6 +10,7 @@ import CreateCampaign from "./pages/CreateCampaign";
 import AllCharities from "./pages/AllCharities";
 import CharityPage from "./pages/CharityPage";
 import TransactionHistory from "./pages/TransactionHistory";
+import CampaignPage from "./pages/CampaignPage";
 
 import Navbar from "./components/Navbar";
 
@@ -27,15 +28,18 @@ class App extends Component {
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
+      // This checks whether you are logged in.
       const web3 = await getWeb3();
+
+      console.log(web3);
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-      console.log(accounts)
+      console.log(accounts);
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
       const deployedNetworkCharity = Charity.networks[networkId];
-      console.log(Charity.networks)
+      console.log(Charity.networks);
       const charityInstance = new web3.eth.Contract(
         Charity.abi,
         deployedNetworkCharity && deployedNetworkCharity.address
@@ -73,24 +77,98 @@ class App extends Component {
           <div>
             <Navbar />
             <Switch>
-              <Route exact path="/" render={(props) => <HomePage web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />} />
+              <Route
+                exact
+                path="/"
+                render={(props) => (
+                  <HomePage
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
               <Route
                 exact
                 path="/RegisterCharity"
-                render={(props) => <RegisterCharity web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />}
+                render={(props) => (
+                  <RegisterCharity
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
               />
-              <Route exact path="/CreateCampaign" render={(props) => <CreateCampaign web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />} />
+              <Route
+                exact
+                path="/CreateCampaign"
+                render={(props) => (
+                  <CreateCampaign
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
               <Route
                 exact
                 path="/AllCharities"
-                render={(props) => <AllCharities web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />}
+                render={(props) => (
+                  <AllCharities
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
               />
-              <Route exact path="/CharityPage" render={(props) => <CharityPage web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />} />
+              <Route
+                exact
+                path="/CharityPage"
+                render={(props) => (
+                  <CharityPage
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
 
               <Route
                 exact
                 path="/TransactionHistory"
-                render={(props) => <TransactionHistory web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />}
+                render={(props) => (
+                  <TransactionHistory
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
+
+              <Route
+                exact
+                path="/Campaign"
+                render={(props) => (
+                  <CampaignPage
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
               />
             </Switch>
           </div>
