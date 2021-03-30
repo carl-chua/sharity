@@ -18,6 +18,7 @@ contract Charity {
     bytes description;
     bytes pictureURL;
     CharityStatus charityStatus;
+    bool addressWithCharity;
   }
 
   struct campaign {
@@ -37,7 +38,8 @@ contract Charity {
   //uint[] charitiesPendingVerification;
   mapping(uint => bool) isVerifiedCharity;
   mapping(uint => charity) charities;
-  mapping(address => uint) charityAddressMap;
+  mapping(address => uint) charityAddressIdMap;
+  mapping(address => charity) charityAddressMap;
   uint noOfCharities = 0;
 
   //uint[] ongoingCampaigns;
@@ -63,7 +65,7 @@ contract Charity {
 
   // This will be the modifier that checks whether the function call is done by the Charity itself.
   modifier onlyVerifiedCharity(address caller) {
-    require(isVerifiedCharity[charityAddressMap[caller]], "Caller is not a valid charity");
+    require(isVerifiedCharity[charityAddressIdMap[caller]], "Caller is not a valid charity");
     _;
   }
 
@@ -73,11 +75,12 @@ contract Charity {
     require(contactNumber != "Charity number cannot be empty");
     require(description != "Description cannot be empty");
     require(pictureURL != "Picture URL cannot be empty");*/
+    require(charityAddressMap[msg.sender].addressWithCharity == false, "This address has registered another charity already");
 
     charityId = noOfCharities++;
-    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED);
+    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED, true);
     charities[charityId] = newCharity;
-    charityAddressMap[msg.sender] = charityId;
+    charityAddressIdMap[msg.sender] = charityId;
     isVerifiedCharity[charityId] = false;
     emit charityRegistered(charityId);
     // charitiesPendingVerification.push(charityId);
@@ -129,7 +132,7 @@ contract Charity {
     require(startDate < endDate, "Start date must be earlier than end date");*/
 
     campaignId = noOfCampaigns++;
-    uint charityId = charityAddressMap[msg.sender];
+    uint charityId = charityAddressIdMap[msg.sender];
     campaign memory newCampaign = campaign(charityId, campaignName, description, pictureURL, targetDonation, 0, 0, startDate, endDate, CampaignStatus.ONGOING);
     campaigns[campaignId] = newCampaign;
     // ongoingCampaigns.push(campaignId);
@@ -197,6 +200,24 @@ contract Charity {
   function getCharityStatus(uint charityId) public view returns (CharityStatus) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].charityStatus;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the charity contact number.
+  * Parameters of this function will include uint charityId
+  */
+  function getCharityContactNumber(uint charityId) public view returns (bytes memory) {
+    require(charityId < noOfCharities, "Invalid charity id");
+    return charities[charityId].contactNumber;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the charity contact address.
+  * Parameters of this function will include uint charityId
+  */
+  function getCharityContactAddress(uint charityId) public view returns (bytes memory) {
+    require(charityId < noOfCharities, "Invalid charity id");
+    return charities[charityId].charityAddress;
   }
 
   /* 
