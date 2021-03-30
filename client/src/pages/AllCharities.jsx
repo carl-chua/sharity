@@ -90,6 +90,10 @@ class AllCharities extends React.Component {
         const classes = useStyles;
         return (
           <Grid key={charity.id} item xs={4}>
+            <Link to={{
+            pathname:  `/CharityPage/${charity.id}`,
+            state: { id: charity.id}
+          }}>
             <Card className={classes.root}>
               <CardActionArea>
                 <CardMedia
@@ -98,22 +102,19 @@ class AllCharities extends React.Component {
                   title="charity avatar"
                 />
                 <CardContent>
-                  <Typography gutterBottom component="span">
+                  <Typography gutterBottom component="p">
                     {charity.name}
                   </Typography>
-                  <br></br>
                   <Typography
                     color="textSecondary"
-                    component="span"
+                    component="p"
                   >
                     {charity.description}
                   </Typography>
                 </CardContent>
-                <CardActions>
-                    <Button size="small" onclick={this.redirectCharity(charity.id)} >View More</Button>
-                </CardActions>
               </CardActionArea>
             </Card>
+            </Link>
           </Grid>
         );
       });
@@ -135,12 +136,12 @@ class AllCharities extends React.Component {
                   title="charity avatar"
                 />
                 <CardContent>
-                  <Typography gutterBottom component="span">
+                  <Typography gutterBottom component="p">
                     {charity.name}
                   </Typography>
                   <Typography
                     color="textSecondary"
-                    component="span"
+                    component="p"
                   >
                     {charity.description}
                   </Typography>
@@ -156,6 +157,10 @@ class AllCharities extends React.Component {
         const classes = useStyles;
         return (
           <Grid key={charity.id} item xs={4}>
+            <Link to={{
+            pathname:  `/CharityPage/${charity.id}`,
+            state: { id: charity.id}
+          }}>
             <Card className={classes.root}>
               <CardActionArea>
                 <CardMedia
@@ -164,18 +169,19 @@ class AllCharities extends React.Component {
                   title="charity avatar"
                 />
                 <CardContent>
-                  <Typography gutterBottom component="span">
+                  <Typography gutterBottom component="p">
                     {charity.name}
                   </Typography>
                   <Typography
                     color="textSecondary"
-                    component="span"
+                    component="p"
                   >
                     {charity.description}
                   </Typography>
                 </CardContent>
               </CardActionArea>
             </Card>
+            </Link>
           </Grid>
         );
       });
@@ -190,7 +196,7 @@ class AllCharities extends React.Component {
   }
 
   render() {
-    /*var view = () => {
+    var view = () => {
       if (this.state.owner === true) {
         return (
           <Grid item xs={10}>
@@ -230,29 +236,6 @@ class AllCharities extends React.Component {
           </Grid>
         );
       };
-    */
-
-    var view = () => {
-      if (this.state.owner === true) {
-        return (
-          <div>
-                {this.state.verifiedCharities}
-              
-                {this.state.pendingCharities}
-              
-                {this.state.rejectedCharities}
-                </div>
-              
-        );
-      } else {
-        return (
-          <div>
-                {this.state.verifiedCharities}
-              
-              
-                </div>
-        );
-      }
     }
 
     return (

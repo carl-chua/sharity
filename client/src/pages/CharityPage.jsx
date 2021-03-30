@@ -78,6 +78,7 @@ class CharityPage extends React.Component {
         campaign.description = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignDescription(i).call());
         campaign.targetDonation = await charityContract.methods.getCampaignTargetDonation(i).call();
         campaign.pictureURL = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignPictureURL(i).call());
+        console.log()
         campaign.startDate = await charityContract.methods.getCampaignStartDate(i).call();
         campaign.endDate = await charityContract.methods.getCampaignEndDate(i).call();
         campaign.status = await charityContract.methods.getCampaignStatus(i).call();
