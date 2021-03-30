@@ -35,7 +35,7 @@ contract Charity {
 
   address contractOwner = msg.sender;
   //uint[] charitiesPendingVerification;
-  mapping(address => bool) isVerifiedCharity;
+  mapping(uint => bool) isVerifiedCharity;
   mapping(uint => charity) charities;
   mapping(address => uint) charityAddressMap;
   uint noOfCharities = 0;
@@ -63,7 +63,7 @@ contract Charity {
 
   // This will be the modifier that checks whether the function call is done by the Charity itself.
   modifier onlyVerifiedCharity(address caller) {
-    require(isVerifiedCharity[caller], "Caller is not a valid charity");
+    require(isVerifiedCharity[charityAddressMap[caller]], "Caller is not a valid charity");
     _;
   }
 
@@ -78,7 +78,7 @@ contract Charity {
     charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED);
     charities[charityId] = newCharity;
     charityAddressMap[msg.sender] = charityId;
-    isVerifiedCharity[charities[charityId].charityOwner] = false;
+    isVerifiedCharity[charityId] = false;
     emit charityRegistered(charityId);
     // charitiesPendingVerification.push(charityId);
     return charityId;
@@ -88,10 +88,10 @@ contract Charity {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
-    require(isVerifiedCharity[charities[charityId].charityOwner] == false, "Charity has been verified");
+    require(isVerifiedCharity[charityId] == false, "Charity has been verified");
 
     charities[charityId].charityStatus = CharityStatus.VERIFIED;
-    isVerifiedCharity[charities[charityId].charityOwner] = true;
+    isVerifiedCharity[charityId] = true;
     emit charityVerified(charityId);
     // remove charity from charitiesPendingVerification[]
   }
@@ -100,7 +100,7 @@ contract Charity {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
-    require(isVerifiedCharity[charities[charityId].charityOwner] == false, "Charity has been verified");
+    require(isVerifiedCharity[charityId] == false, "Charity has been verified");
 
     charities[charityId].charityStatus = CharityStatus.REJECTED;
     emit charityRejected(charityId);
@@ -111,7 +111,7 @@ contract Charity {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.VERIFIED, "Charity is not a verified charity");
-    require(isVerifiedCharity[charities[charityId].charityOwner] == true, "Charity has been verified");
+    require(isVerifiedCharity[charityId] == true, "Charity has been verified");
 
     charities[charityId].charityStatus = CharityStatus.REJECTED;
     emit charityRevoked(charityId);
