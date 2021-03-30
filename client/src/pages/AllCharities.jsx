@@ -22,7 +22,8 @@ const useStyles = makeStyles({
     maxWidth: 100,
   },
   media: {
-    height: 140,
+    height: 180,
+    filter: "brightness(60%)",
   },
 });
 
@@ -32,22 +33,22 @@ class AllCharities extends React.Component {
     this.state = {
       charities: "",
       owner: false,
-      selectedCharityId: ''
+      selectedCharityId: '',
+      valueOfTab: 0
     };
-    this.redirectCharity = this.redirectCharity.bind(this)
+    this.handleChange = this.handleChange.bind(this)
 
   }
 
-  redirectCharity(id) {
-    this.setState({ redirect: "/Charity", selectedCharityId: id});
-  }
+  handleChange(event, value) {
+    console.log(value)
+    this.setState({ valueOfTab: value});
+  };
 
   componentDidMount = async() => {
     var verifiedCharities = [];
       var pendingCharities = [];
       var rejectedCharities = [];
-
-    const getCharities = async () => {
       const charityContract = this.props.charityContract;
       const accounts = this.props.accounts;
       const owner = await charityContract.methods.getContractOwner().call();
@@ -81,11 +82,8 @@ class AllCharities extends React.Component {
           charity.id = i;
           rejectedCharities.push(charity);
         }
-      }
+      
     };
-
-    await getCharities();
-
       var verifiedCharitiesCards = verifiedCharities.map((charity) => {
         const classes = useStyles;
         return (
@@ -185,8 +183,6 @@ class AllCharities extends React.Component {
           </Grid>
         );
       });
-      console.log(pendingCharities.length)
-      console.log(pendingCharitiesCards)
       this.setState({
         verifiedCharities: verifiedCharitiesCards,
         pendingCharities: pendingCharitiesCards,
@@ -200,22 +196,22 @@ class AllCharities extends React.Component {
       if (this.state.owner === true) {
         return (
           <Grid item xs={10}>
-            <Tabs value={0} indicatorColor="primary" textColor="primary">
+            <Tabs value={this.state.valueOfTab} onChange={this.handleChange} indicatorColor="primary" textColor="primary">
               <Tab label="Verified" />
               <Tab label="Pending" />
               <Tab label="Rejected" />
             </Tabs>
-            <TabPanel value={1} index={0}>
+            <TabPanel value={this.state.valueOfTab} index={0}>
               <Grid container spacing={3}>
                 {this.state.verifiedCharities}
               </Grid>
             </TabPanel>
-            <TabPanel value={2} index={1}>
+            <TabPanel value={this.state.valueOfTab} index={1}>
               <Grid container spacing={3}>
                 {this.state.pendingCharities}
               </Grid>
             </TabPanel>
-            <TabPanel value={3} index={2}>
+            <TabPanel value={this.state.valueOfTab} index={2}>
               <Grid container spacing={3}>
                 {this.state.rejectedCharities}
               </Grid>
@@ -225,10 +221,10 @@ class AllCharities extends React.Component {
       } else {
         return (
           <Grid item xs={10}>
-            <Tabs value={0} indicatorColor="primary" textColor="primary">
+            <Tabs value={this.state.valueOfTab} indicatorColor="primary" textColor="primary">
               <Tab label="Verified Charities" />
             </Tabs>
-            <TabPanel value={0} index={0}>
+            <TabPanel value={this.state.valueOfTab} index={0}>
               <Grid container spacing={3}>
                 {this.state.verifiedCharities}
               </Grid>
@@ -245,9 +241,7 @@ class AllCharities extends React.Component {
             All Charities
           </Box>
         </Grid>
-        {this.state.verifiedCharities}
-        {this.state.pendingCharities}
-        {this.state.rejectedCharities}
+        {view()}
 
       </Grid>
     );

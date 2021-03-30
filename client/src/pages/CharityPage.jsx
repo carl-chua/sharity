@@ -32,11 +32,20 @@ class CharityPage extends React.Component {
       owner: false,
       name: "",
       description: "",
+      contact: 0,
+      address: "",
       status: "",
       currentCampaigns: "",
       pastCampaigns: "",
+      valueOfTab:0
     };    
+    this.handleChange = this.handleChange.bind(this)
   }
+
+  handleChange(event, value) {
+    console.log(value)
+    this.setState({ valueOfTab: value });
+  };
 
   componentDidMount = async() => {
     console.log(this.state)
@@ -69,26 +78,33 @@ class CharityPage extends React.Component {
         .getCharityDescription(this.state.charityId)
         .call();
         this.setState({description: this.props.web3.utils.toUtf8(charityDescription)})
+        /*const charityContact = await charityContract.methods
+        .getCharityContactNumber(this.state.charityId)
+        .call();
+        this.setState({contact: this.props.web3.utils.toUtf8(charityContact)})
+        const charityAddress = await charityContract.methods
+        .getCharityAddress(this.state.charityId)
+        .call();
+        this.setState({address: this.props.web3.utils.toUtf8(charityAddress)})*/
       const length = await charityContract.methods.getNoOfCampaigns().call();
       console.log(length)
       for (var i = 0; i < length; i++) {
         const campaign = [];
-        campaign.charityId = await charityContract.methods.getCampaignCharity(i).call();
-        campaign.name = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignName(i).call());
-        campaign.description = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignDescription(i).call());
-        campaign.targetDonation = await charityContract.methods.getCampaignTargetDonation(i).call();
-        campaign.pictureURL = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignPictureURL(i).call());
-        console.log()
-        campaign.startDate = await charityContract.methods.getCampaignStartDate(i).call();
-        campaign.endDate = await charityContract.methods.getCampaignEndDate(i).call();
+        campaign.charityId = parseInt(await charityContract.methods.getCampaignCharity(i).call());
+        campaign.charityPictureURL = this.props.web3.utils.toUtf8(await charityContract.methods.getCharityPictureURL(campaign.charityId).call());
+        campaign.campaignName = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignName(i).call());
+        campaign.campaignDescription = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignDescription(i).call());
+        campaign.campaignTargetDonation = parseInt(await charityContract.methods.getCampaignTargetDonation(i).call());
+        campaign.campaignPictureURL = this.props.web3.utils.toUtf8(await charityContract.methods.getCampaignPictureURL(i).call());
+        campaign.campaignStartDate = parseInt(await charityContract.methods.getCampaignStartDate(i).call());
+        campaign.campaignEndDate = parseInt(await charityContract.methods.getCampaignEndDate(i).call());
         campaign.status = await charityContract.methods.getCampaignStatus(i).call();
-        campaign.currentDonation = await charityContract.methods.getCampaignCurrentDonation(i).call();
-        campaign.noOfDonors = await charityContract.methods.getCampaignNoOfDonors(i).call();
-        campaign.charityName = await charityContract.methods.getCharityName(parseInt(campaign.charityId)).call();
+        campaign.campaignCurrentDonation = parseInt(await charityContract.methods.getCampaignCurrentDonation(i).call());
+        campaign.campaignNoOfDonors = parseInt(await charityContract.methods.getCampaignNoOfDonors(i).call());
+        campaign.charityName = this.props.web3.utils.toUtf8(await charityContract.methods.getCharityName(parseInt(campaign.charityId)).call());
 
         if (parseInt(campaign.charityId) === this.state.charityId && campaign.status === "0") {
             campaign.id = i;
-            console.log(campaign.name)
             currentCampaigns.push(campaign);
         }
         if (parseInt(campaign.charityId) === this.state.charityId && campaign.status === "1") {
@@ -103,14 +119,16 @@ class CharityPage extends React.Component {
       var currentCampaignsCards = currentCampaigns.map((campaign) => {
         const classes = useStyles;
         const data = {
-            currentDonation: campaign.currentDonation,
-            targetDonation: campaign.targetDonation,
-            noOfDonors: campaign.noOfDonors,
-            startDate: campaign.startDate,
-            endDate: campaign.endDate,
+          campaignCurrentDonation: campaign.campaignCurrentDonation,
+          campaignTargetDonation: campaign.campaignTargetDonation,
+          campaignNoOfDonors: campaign.campaignNoOfDonors,
+          campaignStartDate: campaign.campaignStartDate,
+          campaignEndDate: campaign.campaignEndDate,
             campaignName: campaign.campaignName,
             charityName: campaign.charityName,
-            description:campaign.description,
+            campaignDescription:campaign.campaignDescription,
+            charityPictureURL: campaign.charityPictureURL,
+            campaignPictureURL: campaign.campaignPictureURL
           };
         return (
           <Grid key={campaign.id} item xs={4}>
@@ -122,14 +140,16 @@ class CharityPage extends React.Component {
       var pastCampaignsCards = pastCampaigns.map((campaign) => {
         const classes = useStyles;
         const data = {
-            currentDonation: campaign.currentDonation,
-            targetDonation: campaign.targetDonation,
-            noOfDonors: campaign.noOfDonors,
-            startDate: campaign.startDate,
-            endDate: campaign.endDate,
+          campaignCurrentDonation: campaign.campaignCurrentDonation,
+          campaignTargetDonation: campaign.campaignTargetDonation,
+          campaignNoOfDonors: campaign.campaignNoOfDonors,
+          campaignStartDate: campaign.campaignStartDate,
+          campaignEndDate: campaign.campaignEndDate,
             campaignName: campaign.campaignName,
             charityName: campaign.charityName,
-            description:campaign.description,
+            campaignDescription:campaign.campaignDescription,
+            charityPictureURL: campaign.charityPictureURL,
+            campaignPictureURL: campaign.campaignPictureURL
           };
         return (
           <Grid key={campaign.id} item xs={4}>
@@ -204,10 +224,13 @@ class CharityPage extends React.Component {
 
     var profile = () => {
       if (this.state.owner === true && this.state.status === "PENDING") {
+        //<p>Contact: {this.state.contact}</p>
+       // <p>Address: {this.state.address}</p>
         return (
           <div>
-            <p>{this.state.name}</p>
-            <p>{this.state.description}</p>
+            <p>Name:{this.state.name}</p>
+            <p>Description:{this.state.description}</p>
+            
             <p>Status: {this.state.status}</p>
             <Button size="small" onClick={this.handleVerify}>Verify the Charity</Button>
             <Button size="small" onClick={this.handleReject}>Reject the Charity</Button>
@@ -227,18 +250,19 @@ class CharityPage extends React.Component {
       }
     };
     var view = () => {
+      if (this.state.status === "VERIFIED") {
         return (
           <Grid item xs={10}>
-            <Tabs value={0} indicatorColor="primary" textColor="primary">
+            <Tabs value={this.state.valueOfTab} onchange={this.handleChange} indicatorColor="primary" textColor="primary">
               <Tab label="Profile" />
               <Tab label="Campaigns" />
             </Tabs>
-            <TabPanel value={0} index={0}>
+            <TabPanel value={this.state.valueOfTab} index={0}>
               <Grid container spacing={3}>
                 {profile()}
               </Grid>
             </TabPanel>
-            <TabPanel value={0} index={1}>
+            <TabPanel value={this.state.valueOfTab} index={1}>
               Ongoing Campaigns: 
               <Grid container spacing={3}>
                 {this.state.currentCampaigns}
@@ -250,18 +274,30 @@ class CharityPage extends React.Component {
             </TabPanel>
           </Grid>
         );
+      } else {
+        return (
+        <Grid item xs={10}>
+          <Tabs value={this.state.valueOfTab} onchange={this.handleChange} indicatorColor="primary" textColor="primary">
+            <Tab label="Profile" />
+          </Tabs>
+          <TabPanel value={this.state.valueOfTab} index={0}>
+            <Grid container spacing={3}>
+              {profile()}
+            </Grid>
+          </TabPanel>
+          </Grid>)
+      }
       }
 
     return (
       <Grid container spacing={2} justify="center">
         <Grid item xs={10}>
           <Box textAlign="left" fontWeight="fontWeightBold" fontSize={26}>
-            {this.state.charityName}
+            {this.state.name}
           </Box>
         </Grid>
-        {view()}
         {this.state.currentCampaigns}
-
+        {view()}
       </Grid>
     );
   }

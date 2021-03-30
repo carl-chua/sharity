@@ -27,15 +27,12 @@ class RegisterCharity extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount = async() => {
     console.log(this.props.charityContract)
-    const getNumber = async () => {
-      this.state.charityId = await this.props.charityContract.methods
-        .getNoOfCharities()
-        .call();
-      console.log(this.state.charityId);
-    };
-    getNumber();
+    const id = await this.props.charityContract.methods
+    .getNoOfCharities()
+    .call();
+      this.setState({charityId:id}) 
   }
 
   handleInputChange(event) {
@@ -51,7 +48,6 @@ class RegisterCharity extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     console.log(this.state);
-    //web3.utils.hexToAscii(val)
     try {
       this.props.charityContract.methods
         .registerCharity(
@@ -79,6 +75,8 @@ class RegisterCharity extends React.Component {
           alert(
             "Registration successful, please wait for Sharity to verify your registration"
           );
+          window.location.reload(false);
+
         })
         .on("error", (error) => {
           console.log(error.message);
@@ -95,6 +93,8 @@ class RegisterCharity extends React.Component {
             "Registration unsuccessful, please register again. Error Occured: " +
               error.message
           );
+          window.location.reload(false);
+
         });
     } catch (err) {
       console.log(err);
@@ -228,7 +228,9 @@ class RegisterCharity extends React.Component {
                 style={{ marginTop: "30px", marginBottom: "20px" }}
               >
                 Submit
-              </Button>
+              </Button>           
+              <Typography>After submission, please wait for alert to come out.</Typography>
+
             </form>
           </div>
         </Container>

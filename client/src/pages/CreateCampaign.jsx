@@ -37,13 +37,13 @@ class CreateCampaign extends React.Component {
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
   }
 
-  componentDidMount() {
-    const getNumber = async () => {
-      this.state.campaignId = await this.props.charityContract.methods
+  componentDidMount = async() => {
+    const id =  await this.props.charityContract.methods
         .getNoOfCampaigns()
         .call();
-    };
-    getNumber();
+    this.setState({campaignId: id})
+    console.log("AFTER mount ")
+    console.log(this.state)
   }
 
   handleInputChange(event) {
@@ -63,8 +63,13 @@ class CreateCampaign extends React.Component {
     this.setState({ endDate: date });
   }
 
+  getFileName() {
+    return 'campaign' + this.state.campaignId + '.png'
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
+    console.log("SUBMIT ")
     console.log(this.state);
     try {
       var date = new Date(this.state.startDate);
@@ -81,8 +86,6 @@ class CreateCampaign extends React.Component {
           ("0" + (date.getMonth() + 1)).slice(-2) +
           date.getDate()
       );
-      console.log(parsedEndDate);
-      console.log(parsedStartDate);
       this.props.charityContract.methods
         .createCampaign(
           this.props.web3.utils.toHex(this.state.name),
@@ -108,9 +111,10 @@ class CreateCampaign extends React.Component {
           alert(
             "Campaign creation successful, please view/edit details within the campaigns page"
           );
+          window.location.reload(false);
+
         })
         .on("error", (error) => {
-          console.log(error.message);
           this.setState({
             campaignId: this.state.campaignId,
             name: "",
@@ -124,6 +128,8 @@ class CreateCampaign extends React.Component {
             "Campaign creation unsuccessful, please create again. Error Occured: " +
               error.message
           );
+          window.location.reload(false);
+
         });
     } catch (err) {
       console.log(err);
@@ -144,6 +150,7 @@ class CreateCampaign extends React.Component {
       .child(filename)
       .getDownloadURL()
       .then((url) => this.setState({ avatarURL: url }));
+    
   };
 
   render() {
@@ -163,6 +170,7 @@ class CreateCampaign extends React.Component {
       },
     }));
     const style = useStyles;
+    console.log(this.state.campaignId)
 
     return (
       <Container
@@ -188,7 +196,7 @@ class CreateCampaign extends React.Component {
               <FileUploader
                 accept="image/*"
                 name="avatar"
-                filename={"campaign" + this.state.campaignId + ".png"}
+                filename = {"campaign" + this.state.campaignId + ".png"}
                 storageRef={firebase.storage().ref("images")}
                 onUploadStart={this.handleUploadStart}
                 onUploadError={this.handleUploadError}
@@ -275,6 +283,7 @@ class CreateCampaign extends React.Component {
             >
               Submit
             </Button>
+            <Typography>After submission, please wait for alert to come out.</Typography>
           </form>
         </div>
       </Container>
