@@ -147,7 +147,7 @@ const EnhancedTableToolbar = (props) => {
         component="div"
         align="left"
       >
-        Transaction history
+        {props.title}
       </Typography>
     </Toolbar>
   );
@@ -177,7 +177,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable() {
+export default function EnhancedTable({ title, data }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -205,7 +205,7 @@ export default function EnhancedTable() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar />
+        <EnhancedTableToolbar title={title} />
         <TableContainer>
           <Table
             className={classes.table}

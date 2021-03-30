@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -30,8 +30,37 @@ const rows = [
   createData("Gingerbread", 356, 16.0, 49, 3.9),
 ];
 
-export default function TransactionHistory() {
+export default function TransactionHistory({
+  web3,
+  accounts,
+  charityContract,
+  donationContract,
+  isAuthed,
+}) {
   const classes = useStyles();
+  const [transactions, setTransactions] = useState();
+
+  var getTransactions = async (address) => {
+    const noOfTransactions = await donationContract.methods
+      .getDonorTotalDonations(address)
+      .call();
+    var transactions = [];
+    for (let i = 0; i < noOfTransactions; i++) {
+      // transaction id, donor address, campaign id, donated amount
+      var transaction = await donationContract.methods
+        .getDonorDonation(address)
+        .call();
+      console.log(transaction);
+      transactions.push(transaction);
+    }
+    return transactions;
+  };
+
+  useEffect(async () => {
+    var transactions = await getTransactions(accounts[0]);
+    await setTransactions(transactions);
+  }, []);
+
   return (
     <Box mt={10}>
       <Grid container spacing={5} justify="center">
@@ -64,7 +93,7 @@ export default function TransactionHistory() {
           </TableContainer>
         </Grid>
         <Grid item xs={10}>
-          <EnhancedTable />
+          <EnhancedTable title={"Transaction history"} data={transactions} />
         </Grid>
       </Grid>
     </Box>
