@@ -15,7 +15,6 @@ export default function CampaignCard({ data }) {
     root: {
       maxWidth: 345,
     },
-
     mediaCard: {
       height: 200,
       background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${data.campaignPictureURL})`,

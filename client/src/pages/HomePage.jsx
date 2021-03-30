@@ -5,15 +5,19 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
-
 import CardMedia from "@material-ui/core/CardMedia";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 import HomePageBanner from "../assets/homepagebanner.jpg";
 import TabPanel from "../components/TabPanel";
 import CampaignCard from "../components/CampaignCard";
 
 const useStyles = makeStyles({
   media: {
-    height: 250,
+    height: 300,
+    background: `url(${HomePageBanner})`,
+    backgroundSize: "cover",
+    color: "white",
   },
 });
 
@@ -28,6 +32,7 @@ export default function HomePage({
   const [ongoingCampaigns, setOngoingCampaigns] = useState();
   const [pastCampaigns, setPastCampaigns] = useState();
   const [value, setValue] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -111,44 +116,30 @@ export default function HomePage({
         pastCampaigns.push(campaign);
       }
     }
+    setIsLoading(false);
     await setOngoingCampaigns(ongoingCampaigns);
     await setPastCampaigns(pastCampaigns);
   }, []);
 
   return (
-    <Grid container spacing={2} justify="center">
-      <Grid item xs={12}>
-        <Card>
-          <CardMedia className={classes.media} image={HomePageBanner} />
-          <div
-            style={{
-              position: "absolute",
-              color: "white",
-              top: "12%",
-              left: "9%",
-            }}
-          >
-            <Box textAlign="left" fontWeight="fontWeightBold" fontSize={40}>
-              Give the Gift Today!
-            </Box>
-          </div>
-          <div
-            style={{
-              position: "absolute",
-              color: "white",
-              top: "18%",
-              left: "9%",
-            }}
-          >
-            <Box textAlign="left" fontWeight="fontWeightBold" fontSize={28}>
-              Every little bit counts!
-            </Box>
-          </div>
-        </Card>
+    <Grid
+      container
+      direction="row"
+      justify="center"
+      alignItems="center"
+      spacing={2}
+    >
+      <Grid className={classes.media} item xs={12}>
+        <Box mt={10} fontWeight="fontWeightBold" fontSize={40}>
+          Give the Gift Today!
+        </Box>
+        <Box fontWeight="fontWeightBold" fontSize={28}>
+          Every little bit counts!
+        </Box>
       </Grid>
       <Grid item xs={10}>
         <Box textAlign="left" fontWeight="fontWeightBold" fontSize={26}>
-          Campaigns
+          All Campaigns
         </Box>
       </Grid>
       <Grid item xs={10}>
@@ -163,22 +154,34 @@ export default function HomePage({
         </Tabs>
         <TabPanel value={value} index={0}>
           <Grid container spacing={3}>
-            {ongoingCampaigns &&
+            {isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
+              </Grid>
+            ) : (
+              ongoingCampaigns &&
               ongoingCampaigns.map((campaign, index) => (
                 <Grid key={index} item xs={4}>
                   <CampaignCard data={campaign} />
                 </Grid>
-              ))}
+              ))
+            )}
           </Grid>
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Grid container spacing={3}>
-            {pastCampaigns &&
+            {isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
+              </Grid>
+            ) : (
+              pastCampaigns &&
               pastCampaigns.map((campaign, index) => (
                 <Grid key={index} item xs={4}>
                   <CampaignCard data={campaign} />
                 </Grid>
-              ))}
+              ))
+            )}
           </Grid>
         </TabPanel>
       </Grid>
