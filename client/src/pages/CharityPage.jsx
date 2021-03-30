@@ -32,7 +32,7 @@ class CharityPage extends React.Component {
       owner: false,
       name: "",
       description: "",
-      contact: 0,
+      contact: '',
       address: "",
       status: "",
       currentCampaigns: "",
@@ -78,14 +78,14 @@ class CharityPage extends React.Component {
         .getCharityDescription(this.state.charityId)
         .call();
         this.setState({description: this.props.web3.utils.toUtf8(charityDescription)})
-        /*const charityContact = await charityContract.methods
+        const charityContact = await charityContract.methods
         .getCharityContactNumber(this.state.charityId)
         .call();
-        this.setState({contact: this.props.web3.utils.toUtf8(charityContact)})
+        this.setState({contact: (this.props.web3.utils.toBN(charityContact)).toString()})
         const charityAddress = await charityContract.methods
-        .getCharityAddress(this.state.charityId)
+        .getCharityContactAddress(this.state.charityId)
         .call();
-        this.setState({address: this.props.web3.utils.toUtf8(charityAddress)})*/
+        this.setState({address: this.props.web3.utils.toUtf8(charityAddress)})
       const length = await charityContract.methods.getNoOfCampaigns().call();
       console.log(length)
       for (var i = 0; i < length; i++) {
@@ -224,13 +224,13 @@ class CharityPage extends React.Component {
 
     var profile = () => {
       if (this.state.owner === true && this.state.status === "PENDING") {
-        //<p>Contact: {this.state.contact}</p>
-       // <p>Address: {this.state.address}</p>
+        
         return (
           <div>
             <p>Name:{this.state.name}</p>
             <p>Description:{this.state.description}</p>
-            
+            <p>Contact: {this.state.contact}</p>
+        <p>Address: {this.state.address}</p>
             <p>Status: {this.state.status}</p>
             <Button size="small" onClick={this.handleVerify}>Verify the Charity</Button>
             <Button size="small" onClick={this.handleReject}>Reject the Charity</Button>
@@ -242,7 +242,10 @@ class CharityPage extends React.Component {
           <div>
 
           <p>Name: {this.state.name}</p>
+          
           <p>Description: {this.state.description}</p>
+          <p>Contact: {this.state.contact}</p>
+        <p>Address: {this.state.address}</p>
           <p>Status: {this.state.status}</p>
           </div>
 
