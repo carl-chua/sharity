@@ -140,7 +140,19 @@ class App extends Component {
                   />
                 )}
               />
-              <Route exact path="/CharityPage/:id" render={(props) => <CharityPage web3={this.state.web3} accounts={this.state.accounts} charityContract={this.state.charityContract} donationContract={this.state.donationContract} isAuthed={true} />} />
+              <Route
+                exact
+                path="/CharityPage/:id"
+                render={(props) => (
+                  <CharityPage
+                    web3={this.state.web3}
+                    accounts={this.state.accounts}
+                    charityContract={this.state.charityContract}
+                    donationContract={this.state.donationContract}
+                    isAuthed={true}
+                  />
+                )}
+              />
 
               <Route
                 exact
@@ -158,7 +170,7 @@ class App extends Component {
 
               <Route
                 exact
-                path="/Campaign"
+                path="/CampaignPage/:id"
                 render={(props) => (
                   <CampaignPage
                     web3={this.state.web3}

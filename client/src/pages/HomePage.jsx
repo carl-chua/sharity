@@ -35,6 +35,7 @@ export default function HomePage({
 
   var getCampaign = async (campaignId) => {
     var campaign = {};
+    campaign.campaignId = campaignId;
     campaign.campaignName = await charityContract.methods
       .getCampaignName(campaignId)
       .call();
@@ -100,6 +101,7 @@ export default function HomePage({
       .call();
     let ongoingCampaigns = [];
     let pastCampaigns = [];
+    console.log(noOfCampaigns);
     for (let i = 0; i < noOfCampaigns; i++) {
       var campaign = await getCampaign(i);
       if (campaign.campaignStatus === "0") {

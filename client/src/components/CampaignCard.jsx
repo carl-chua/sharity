@@ -6,84 +6,78 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-
+import { useHistory } from "react-router-dom";
 import LinearWithValueLabel from "./LinearWithValueLabel";
 
-const useStyles = makeStyles({
-  root: {
-    maxWidth: 345,
-  },
-  media: {
-    height: 180,
-    filter: "brightness(60%)",
-  },
-});
-
 export default function CampaignCard({ data }) {
+  let history = useHistory();
+  const useStyles = makeStyles({
+    root: {
+      maxWidth: 345,
+    },
+
+    mediaCard: {
+      height: 200,
+      background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${data.campaignPictureURL})`,
+      backgroundSize: "cover",
+      color: "white",
+    },
+  });
   const classes = useStyles();
 
+  const handleClick = () => {
+    history.push("/CampaignPage/" + data.campaignId);
+  };
+
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} onClick={() => handleClick()}>
       <CardActionArea>
-        <CardMedia
-          className={classes.media}
-          image={data.campaignPictureURL}
-          alt="campaign image"
-        />
-        <div
-          style={{
-            position: "absolute",
-            height: "180",
-            width: "100%",
-            top: "25%",
-            color: "white",
-          }}
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="flex-end"
+          spacing={0}
+          className={classes.mediaCard}
         >
-          <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="center"
-          >
-            <Grid item xs={12}>
-              <Box ml={2} textAlign="left" fontWeight="fontWeightBold">
-                ${data.campaignCurrentDonation}
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box ml={2} textAlign="left" fontSize={13}>
-                raised from <b>{data.campaignNoOfDonors}</b> donors
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box ml={2}>
-                <LinearWithValueLabel
-                  progress={Math.floor(
-                    (100 * data.campaignCurrentDonation) /
-                      data.campaignTargetDonation
-                  )}
-                />
-              </Box>
-            </Grid>
-            <Grid item xs={7}>
-              <Box ml={2} textAlign="left" fontSize={13}>
-                <b>
-                  {Math.floor(
-                    (100 * data.campaignCurrentDonation) /
-                      data.campaignTargetDonation
-                  )}
-                  %
-                </b>{" "}
-                of <b>${data.campaignTargetDonation}</b>
-              </Box>
-            </Grid>
-            <Grid item xs={5}>
-              <Box fontSize={13}>
-                <b>{data.campaignEndDate - data.campaignStartDate}</b> more days
-              </Box>
-            </Grid>
+          <Grid item xs={12}>
+            <Box ml={2} mt={10} textAlign="left" fontWeight="fontWeightBold">
+              ${data.campaignCurrentDonation}
+            </Box>
           </Grid>
-        </div>
+          <Grid item xs={12}>
+            <Box ml={2} textAlign="left" fontSize={13}>
+              raised from <b>{data.campaignNoOfDonors}</b> donors
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <Box ml={2}>
+              <LinearWithValueLabel
+                progress={Math.floor(
+                  (100 * data.campaignCurrentDonation) /
+                    data.campaignTargetDonation
+                )}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={7}>
+            <Box ml={2} textAlign="left" fontSize={13}>
+              <b>
+                {Math.floor(
+                  (100 * data.campaignCurrentDonation) /
+                    data.campaignTargetDonation
+                )}
+                %
+              </b>{" "}
+              of <b>${data.campaignTargetDonation}</b>
+            </Box>
+          </Grid>
+          <Grid item xs={5}>
+            <Box fontSize={13}>
+              <b>{data.campaignEndDate - data.campaignStartDate}</b> more days
+            </Box>
+          </Grid>
+        </Grid>
         <CardContent>
           <Grid
             container
