@@ -18,7 +18,6 @@ contract Charity {
     bytes description;
     bytes pictureURL;
     CharityStatus charityStatus;
-    bool addressWithCharity;
   }
 
   struct campaign {
@@ -40,6 +39,7 @@ contract Charity {
   mapping(uint => charity) charities;
   mapping(address => uint) charityAddressIdMap;
   mapping(address => charity) charityAddressMap;
+  mapping(address => bool) charityOwnerRegistered;
   uint noOfCharities = 0;
 
   //uint[] ongoingCampaigns;
@@ -75,13 +75,14 @@ contract Charity {
     require(contactNumber != "Charity number cannot be empty");
     require(description != "Description cannot be empty");
     require(pictureURL != "Picture URL cannot be empty");*/
-    require(charityAddressMap[msg.sender].addressWithCharity == false, "This address has registered another charity already");
+    require(charityOwnerRegistered[msg.sender] == false, "This address has registered another charity already");
 
     charityId = noOfCharities++;
-    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED, true);
+    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED);
     charities[charityId] = newCharity;
     charityAddressIdMap[msg.sender] = charityId;
     isVerifiedCharity[charityId] = false;
+    charityOwnerRegistered[msg.sender] = true;
     emit charityRegistered(charityId);
     // charitiesPendingVerification.push(charityId);
     return charityId;
