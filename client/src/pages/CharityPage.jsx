@@ -241,8 +241,8 @@ class CharityPage extends React.Component {
         return (
           <div>
 
-          <p>{this.state.name}</p>
-          <p>{this.state.description}</p>
+          <p>Name: {this.state.name}</p>
+          <p>Description: {this.state.description}</p>
           <p>Status: {this.state.status}</p>
           </div>
 
@@ -253,7 +253,7 @@ class CharityPage extends React.Component {
       if (this.state.status === "VERIFIED") {
         return (
           <Grid item xs={10}>
-            <Tabs value={this.state.valueOfTab} onchange={this.handleChange} indicatorColor="primary" textColor="primary">
+            <Tabs value={this.state.valueOfTab} onChange={this.handleChange} indicatorColor="primary" textColor="primary">
               <Tab label="Profile" />
               <Tab label="Campaigns" />
             </Tabs>
@@ -263,12 +263,14 @@ class CharityPage extends React.Component {
               </Grid>
             </TabPanel>
             <TabPanel value={this.state.valueOfTab} index={1}>
+            <Grid container spacing={3}>
               Ongoing Campaigns: 
-              <Grid container spacing={3}>
                 {this.state.currentCampaigns}
-              </Grid>
+                </Grid>
+                <Grid container spacing={3}>
+
               Ended Campaigns: 
-              <Grid container spacing={3}>
+              
                 {this.state.pastCampaigns}
               </Grid>
             </TabPanel>
@@ -296,7 +298,6 @@ class CharityPage extends React.Component {
             {this.state.name}
           </Box>
         </Grid>
-        {this.state.currentCampaigns}
         {view()}
       </Grid>
     );
