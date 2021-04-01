@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import { useHistory } from "react-router-dom";
 import LinearWithValueLabel from "./LinearWithValueLabel";
+import moment from "moment";
 
 export default function CampaignCard({ data }) {
   let history = useHistory();
@@ -72,9 +73,17 @@ export default function CampaignCard({ data }) {
             </Box>
           </Grid>
           <Grid item xs={5}>
-            <Box fontSize={13}>
-              <b>{data.campaignEndDate - data.campaignStartDate}</b> more days
-            </Box>
+            {data.campaignStatus === "0" && (
+              <Box fontSize={13}>
+                <b>
+                  {moment(data.campaignEndDate, "YYYYMMDD").diff(
+                    moment(),
+                    "days"
+                  )}
+                </b>{" "}
+                more days
+              </Box>
+            )}
           </Grid>
         </Grid>
         <CardContent>

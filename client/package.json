@@ -11,6 +11,7 @@
     "bootstrap": "^4.6.0",
     "date-fns": "^2.19.0",
     "firebase": "^8.3.0",
+    "moment": "^2.29.1",
     "react": "16.11.0",
     "react-alert": "^7.0.2",
     "react-alert-template-basic": "^1.0.0",
