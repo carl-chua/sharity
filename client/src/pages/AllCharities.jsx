@@ -23,7 +23,7 @@ const useStyles = makeStyles({
     maxWidth: 100,
   },
   media: {
-    height: 180,
+    height: 200,
     filter: "brightness(60%)",
   },
 });
@@ -98,7 +98,7 @@ class AllCharities extends React.Component {
               <CardActionArea>
                 <CardMedia
                   component="img"
-                  height="180"
+                  height="200"
                   className={classes.media}
                   image={charity.pictureURL}
                   title="charity avatar"
@@ -134,7 +134,7 @@ class AllCharities extends React.Component {
               <CardActionArea>
               <CardMedia
                   component="img"
-                  height="180"
+                  height="200"
                   className={classes.media}
                   image={charity.pictureURL}
                   title="charity avatar"
@@ -169,7 +169,7 @@ class AllCharities extends React.Component {
               <CardActionArea>
               <CardMedia
                   component="img"
-                  height="180"
+                  height="200"
                   className={classes.media}
                   image={charity.pictureURL}
                   title="charity avatar"

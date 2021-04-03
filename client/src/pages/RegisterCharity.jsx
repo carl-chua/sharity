@@ -35,7 +35,7 @@ class RegisterCharity extends React.Component {
     const id = await this.props.charityContract.methods
     .getNoOfCharities()
     .call();
-      this.setState({charityId:id}) 
+    this.setState({charityId:id}) 
   }
 
   handleInputChange(event) {

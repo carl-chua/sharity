@@ -43,6 +43,7 @@ class CharityPage extends React.Component {
       description: "",
       contact: "",
       address: "",
+      charityPictureURL: "",
       verificationLink: "",
       status: "",
       currentCampaigns: "",
@@ -114,6 +115,10 @@ class CharityPage extends React.Component {
       .getCharityName(this.state.charityId)
       .call();
     this.setState({ name: this.props.web3.utils.toUtf8(charityName) });
+    const charityPictureURL = await charityContract.methods
+      .getCharityPictureURL(this.state.charityId)
+      .call();
+    this.setState({ charityPictureURL: this.props.web3.utils.toUtf8(charityPictureURL) });
     const charityDescription = await charityContract.methods
       .getCharityDescription(this.state.charityId)
       .call();
@@ -331,7 +336,8 @@ class CharityPage extends React.Component {
       if (this.state.owner === true && this.state.status === "PENDING") {
         return (
           <div>
-            <p>Name:{this.state.name}</p>
+            <img src={this.state.charityPictureURL} alt="charity avatar" width="200" height="200"></img>
+            <p >Name:{this.state.name}</p>
             <p>Description:{this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
@@ -382,6 +388,7 @@ class CharityPage extends React.Component {
       } else {
         return (
           <div>
+            <img src={this.state.charityPictureURL} alt="charity avatar" width="200" height="200"></img>
             <p>Name: {this.state.name}</p>
             <p>Description: {this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
