@@ -17,6 +17,7 @@ contract Charity {
     bytes contactNumber;
     bytes description;
     bytes pictureURL;
+    bytes verificationLink;
     CharityStatus charityStatus;
   }
 
@@ -69,7 +70,7 @@ contract Charity {
     _;
   }
 
-  function registerCharity(bytes memory charityName, bytes memory charityAddress, bytes memory contactNumber, bytes memory description, bytes memory pictureURL) public returns (uint charityId) {
+  function registerCharity(bytes memory charityName, bytes memory charityAddress, bytes memory contactNumber, bytes memory description, bytes memory pictureURL, bytes memory verificationLink) public returns (uint charityId) {
     /*require(charityName != "Charity name cannot be empty");
     require(charityAddress != "Charity address cannot be empty");
     require(contactNumber != "Charity number cannot be empty");
@@ -78,7 +79,7 @@ contract Charity {
     require(charityOwnerRegistered[msg.sender] == false, "This address has registered another charity already");
 
     charityId = noOfCharities++;
-    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED);
+    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, verificationLink, CharityStatus.UNVERIFIED);
     charities[charityId] = newCharity;
     charityAddressIdMap[msg.sender] = charityId;
     isVerifiedCharity[charityId] = false;
@@ -88,7 +89,7 @@ contract Charity {
     return charityId;
   }
 
-  function verifyCharity(uint charityId) public onlyOwner(msg.sender) {
+  function verifyCharity(uint charityId, bytes memory verificationLink) public onlyOwner(msg.sender) {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
