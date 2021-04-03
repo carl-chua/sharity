@@ -9,6 +9,7 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -34,7 +35,8 @@ class AllCharities extends React.Component {
       charities: "",
       owner: false,
       selectedCharityId: '',
-      valueOfTab: 0
+      valueOfTab: 0,
+      isLoading: true
     };
     this.handleChange = this.handleChange.bind(this)
 
@@ -187,6 +189,7 @@ class AllCharities extends React.Component {
         verifiedCharities: verifiedCharitiesCards,
         pendingCharities: pendingCharitiesCards,
         rejectedCharities: rejectedCharitiesCards,
+        isLoading: false
       });
 
   }
@@ -203,18 +206,30 @@ class AllCharities extends React.Component {
             </Tabs>
             <TabPanel value={this.state.valueOfTab} index={0}>
               <Grid container spacing={3}>
-                {this.state.verifiedCharities}
+              {this.state.isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
               </Grid>
+            ) : (this.state.verifiedCharities)}             
+             </Grid>
             </TabPanel>
             <TabPanel value={this.state.valueOfTab} index={1}>
-              <Grid container spacing={3}>
-                {this.state.pendingCharities}
+            <Grid container spacing={3}>
+              {this.state.isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
               </Grid>
+            ) : (this.state.pendingCharities)}             
+             </Grid>
             </TabPanel>
             <TabPanel value={this.state.valueOfTab} index={2}>
-              <Grid container spacing={3}>
-                {this.state.rejectedCharities}
+            <Grid container spacing={3}>
+              {this.state.isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
               </Grid>
+            ) : (this.state.rejectedCharities)}             
+             </Grid>
             </TabPanel>
           </Grid>
         );
@@ -225,9 +240,13 @@ class AllCharities extends React.Component {
               <Tab label="Verified Charities" />
             </Tabs>
             <TabPanel value={this.state.valueOfTab} index={0}>
-              <Grid container spacing={3}>
-                {this.state.verifiedCharities}
+            <Grid container spacing={3}>
+              {this.state.isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
               </Grid>
+            ) : (this.state.verifiedCharities)}             
+             </Grid>
             </TabPanel>
           </Grid>
         );

@@ -11,6 +11,13 @@ import CampaignCard from "../components/CampaignCard";
 import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
 import { useLocation, Link } from "react-router-dom";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import TextField from '@material-ui/core/TextField';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -36,17 +43,48 @@ class CharityPage extends React.Component {
       description: "",
       contact: "",
       address: "",
+      verificationLink: "",
       status: "",
       currentCampaigns: "",
       pastCampaigns: "",
       valueOfTab: 0,
+      isLoading: true,
+      isLoadingDia: false,
+      openDialogue: false,
+      verificationLinkInput: ""
     };
-    this.handleChange = this.handleChange.bind(this);
+    this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleOpenDia = this.handleOpenDia.bind(this);
+    this.handleCloseDia = this.handleCloseDia.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+
   }
 
-  handleChange(event, value) {
+  handleTabChange(event, value) {
     console.log(value);
     this.setState({ valueOfTab: value });
+  }
+
+  handleOpenDia() {
+    this.setState({ openDialogue: true });
+
+  }
+
+  handleCloseDia() {
+    this.setState({ openDialogue: false });
+  }
+
+  handleInputChange(event) {
+    console.log('/')
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+    console.log(name)
+    console.log(value)
+
+    this.setState({
+      [name]: value,
+    });
   }
 
   componentDidMount = async () => {
@@ -92,6 +130,12 @@ class CharityPage extends React.Component {
       .getCharityContactAddress(this.state.charityId)
       .call();
     this.setState({ address: this.props.web3.utils.toUtf8(charityAddress) });
+    const charityVerificationLink = await charityContract.methods
+      .getCharityVerificationLink(this.state.charityId)
+      .call();
+    if (charityVerificationLink != null) {
+      this.setState({ verificationLink: this.props.web3.utils.toUtf8(charityVerificationLink) });
+    }
     const length = await charityContract.methods.getNoOfCampaigns().call();
     console.log(length);
     for (var i = 0; i < length; i++) {
@@ -200,21 +244,26 @@ class CharityPage extends React.Component {
     this.setState({
       currentCampaigns: currentCampaignsCards,
       pastCampaigns: pastCampaignsCards,
+      isLoading: false
     });
   };
 
   handleVerify = () => {
+    console.log(this.state)
+    this.setState({isLoadingDia: true})
     try {
       this.props.charityContract.methods
-        .verifyCharity(this.state.charityId)
+        .verifyCharity(this.state.charityId, this.props.web3.utils.toHex(this.state.verificationLinkInput))
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {
           console.log(receipt);
+          this.setState({isLoadingDia: false})
           alert("Verification successful");
           this.refreshPage();
         })
         .on("error", (error) => {
           console.log(error.message);
+          this.setState({isLoadingDia: false})
           alert(
             "Verification unsuccessful, please verify again. Error Occured: " +
               error.message
@@ -223,6 +272,7 @@ class CharityPage extends React.Component {
     } catch (err) {
       console.log(err);
     }
+
   };
 
   handleReject = () => {
@@ -252,7 +302,11 @@ class CharityPage extends React.Component {
   };
 
   render() {
-    const useStyles = makeStyles({
+    const useStyles = makeStyles((theme) => ({
+      form: {
+        width: "100%", // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+      },
       root: {
         minWidth: 275,
       },
@@ -267,7 +321,10 @@ class CharityPage extends React.Component {
       pos: {
         marginBottom: 12,
       },
-    });
+      submit: {
+        margin: theme.spacing(3, 0, 2),
+      },
+    }));
     const classes = useStyles;
 
     var profile = () => {
@@ -279,22 +336,57 @@ class CharityPage extends React.Component {
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
             <p>Status: {this.state.status}</p>
-            <Button size="small" onClick={this.handleVerify}>
+            <Button size="small" onClick={this.handleOpenDia} >
               Verify the Charity
             </Button>
+            <Dialog
+              open={this.state.openDialogue}
+              onClose={this.handleCloseDia}
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">Verification Link</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Enter the link that evidence the legitimacy of the charity.
+                </DialogContentText>
+                  <TextField
+                    name="verificationLinkInput"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="verificationLink"
+                    value={this.state.verificationLinkInput}
+                    onChange={this.handleInputChange}
+                    label="Verification Link"
+                    autoFocus
+                  />
+              </DialogContent>
+              <DialogActions>
+              {this.state.isLoadingDia ? (
+                    <Grid item xs={12}>
+                      <CircularProgress />
+                    </Grid>
+                  ) : (<span></span>)}             
+                <Button onClick={this.handleVerify} color="primary">
+                  Submit
+                </Button>
+              </DialogActions>
+            </Dialog>
+  
             <Button size="small" onClick={this.handleReject}>
               Reject the Charity
             </Button>
+            <Typography>After submission, please wait for alert to come out.</Typography>
           </div>
         );
       } else {
         return (
           <div>
             <p>Name: {this.state.name}</p>
-
             <p>Description: {this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
+            <p>Verification Link: {this.state.verificationLink}</p>
             <p>Status: {this.state.status}</p>
           </div>
         );
@@ -306,49 +398,35 @@ class CharityPage extends React.Component {
           <Grid item xs={10}>
             <Tabs
               value={this.state.valueOfTab}
-              onChange={this.handleChange}
+              onChange={this.handleTabChange}
               indicatorColor="primary"
               textColor="primary"
             >
-              <Tab label="Profile" />
-              <Tab label="Campaigns" />
+              <Tab label="Ongoing Campaigns" />
+              <Tab label="Ended Campaigns" />
             </Tabs>
             <TabPanel value={this.state.valueOfTab} index={0}>
               <Grid container spacing={3}>
-                {profile()}
+              {this.state.isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
+              </Grid>
+            ) : (this.state.currentCampaigns)}
+                
               </Grid>
             </TabPanel>
             <TabPanel value={this.state.valueOfTab} index={1}>
               <Grid container spacing={3}>
-                Ongoing Campaigns:
-                {this.state.currentCampaigns}
+              {this.state.isLoading ? (
+              <Grid item xs={12}>
+                <CircularProgress />
               </Grid>
-              <Grid container spacing={3}>
-                Ended Campaigns:
-                {this.state.pastCampaigns}
-              </Grid>
+            ) : (this.state.endedCampaigns)}              
+            </Grid>
             </TabPanel>
           </Grid>
         );
-      } else {
-        return (
-          <Grid item xs={10}>
-            <Tabs
-              value={this.state.valueOfTab}
-              onchange={this.handleChange}
-              indicatorColor="primary"
-              textColor="primary"
-            >
-              <Tab label="Profile" />
-            </Tabs>
-            <TabPanel value={this.state.valueOfTab} index={0}>
-              <Grid container spacing={3}>
-                {profile()}
-              </Grid>
-            </TabPanel>
-          </Grid>
-        );
-      }
+      } else {return }
     };
 
     return (
@@ -358,6 +436,7 @@ class CharityPage extends React.Component {
             {this.state.name}
           </Box>
         </Grid>
+        {profile()}
         {view()}
       </Grid>
     );

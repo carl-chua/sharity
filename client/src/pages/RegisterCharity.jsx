@@ -6,6 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import firebase from "firebase";
 import FileUploader from "react-firebase-file-uploader";
@@ -23,6 +24,8 @@ class RegisterCharity extends React.Component {
       progress: 0,
       avatarURL: "",
       message: "",
+      isLoading: false
+
     };
     this.handleInputChange = this.handleInputChange.bind(this);
   }
@@ -46,6 +49,8 @@ class RegisterCharity extends React.Component {
 
   
   handleSubmit = (e) => {
+    this.setState({isLoading: true})
+
     e.preventDefault();
     console.log(this.state);
     try {
@@ -71,6 +76,7 @@ class RegisterCharity extends React.Component {
             avatarURL: "",
           });
           console.log(this.state);
+          this.setState({isLoading: false})
 
           alert(
             "Registration successful, please wait for Sharity to verify your registration"
@@ -88,6 +94,7 @@ class RegisterCharity extends React.Component {
             avatarURL: "",
           });
           console.log(this.state);
+          this.setState({isLoading: false})
 
           alert(
             "Registration unsuccessful, please register again. Error Occured: " +
@@ -219,6 +226,11 @@ class RegisterCharity extends React.Component {
                   />
                 </Grid>
               </Grid>
+              {this.state.isLoading ? (
+                    <Grid item xs={12}>
+                      <CircularProgress />
+                    </Grid>
+                  ) : (<span></span>)}    
               <Button
                 type="submit"
                 fullWidth

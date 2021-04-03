@@ -6,6 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
@@ -31,6 +32,7 @@ class CreateCampaign extends React.Component {
       progress: 0,
       avatarURL: "",
       message: "",
+      isLoading: false
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -68,6 +70,8 @@ class CreateCampaign extends React.Component {
   }
 
   handleSubmit = (e) => {
+    this.setState({isLoading: true})
+
     e.preventDefault();
     console.log("SUBMIT ")
     console.log(this.state);
@@ -108,6 +112,8 @@ class CreateCampaign extends React.Component {
             endDate: String(new Date()),
             avatarURL: "",
           });
+          this.setState({isLoading: false})
+
           alert(
             "Campaign creation successful, please view/edit details within the campaigns page"
           );
@@ -124,6 +130,8 @@ class CreateCampaign extends React.Component {
             endDate: String(new Date()),
             avatarURL: "",
           });
+          this.setState({isLoading: false})
+
           alert(
             "Campaign creation unsuccessful, please create again. Error Occured: " +
               error.message
@@ -273,6 +281,11 @@ class CreateCampaign extends React.Component {
                 </Grid>
               </MuiPickersUtilsProvider>
             </Grid>
+            {this.state.isLoading ? (
+                    <Grid item xs={12}>
+                      <CircularProgress />
+                    </Grid>
+                  ) : (<span></span>)}             
             <Button
               type="submit"
               fullWidth
