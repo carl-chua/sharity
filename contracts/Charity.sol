@@ -17,6 +17,7 @@ contract Charity {
     bytes contactNumber;
     bytes description;
     bytes pictureURL;
+    bytes verificationLink;
     CharityStatus charityStatus;
   }
 
@@ -78,7 +79,7 @@ contract Charity {
     require(charityOwnerRegistered[msg.sender] == false, "This address has registered another charity already");
 
     charityId = noOfCharities++;
-    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, CharityStatus.UNVERIFIED);
+    charity memory newCharity = charity(msg.sender, charityName, charityAddress, contactNumber, description, pictureURL, "", CharityStatus.UNVERIFIED);
     charities[charityId] = newCharity;
     charityAddressIdMap[msg.sender] = charityId;
     isVerifiedCharity[charityId] = false;
@@ -88,13 +89,14 @@ contract Charity {
     return charityId;
   }
 
-  function verifyCharity(uint charityId) public onlyOwner(msg.sender) {
+  function verifyCharity(uint charityId, bytes memory verificationLink) public onlyOwner(msg.sender) {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
     require(isVerifiedCharity[charityId] == false, "Charity has been verified");
 
     charities[charityId].charityStatus = CharityStatus.VERIFIED;
+    charities[charityId].verificationLink = verificationLink;
     isVerifiedCharity[charityId] = true;
     emit charityVerified(charityId);
     // remove charity from charitiesPendingVerification[]
@@ -219,6 +221,15 @@ contract Charity {
   function getCharityContactAddress(uint charityId) public view returns (bytes memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].charityAddress;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the charity verification Link.
+  * Parameters of this function will include uint charityId
+  */
+  function getCharityVerificationLink(uint charityId) public view returns (bytes memory) {
+    require(charityId < noOfCharities, "Invalid charity id");
+    return charities[charityId].verificationLink;
   }
 
   /* 
