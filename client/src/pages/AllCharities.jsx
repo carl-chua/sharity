@@ -95,6 +95,8 @@ class AllCharities extends React.Component {
             <Card className={classes.root}>
               <CardActionArea>
                 <CardMedia
+                  component="img"
+                  height="180"
                   className={classes.media}
                   image={charity.pictureURL}
                   title="charity avatar"
@@ -128,7 +130,9 @@ class AllCharities extends React.Component {
           }}>
             <Card className={classes.root}>
               <CardActionArea>
-                <CardMedia
+              <CardMedia
+                  component="img"
+                  height="180"
                   className={classes.media}
                   image={charity.pictureURL}
                   title="charity avatar"
@@ -161,7 +165,9 @@ class AllCharities extends React.Component {
           }}>
             <Card className={classes.root}>
               <CardActionArea>
-                <CardMedia
+              <CardMedia
+                  component="img"
+                  height="180"
                   className={classes.media}
                   image={charity.pictureURL}
                   title="charity avatar"
