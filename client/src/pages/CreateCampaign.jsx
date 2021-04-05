@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 import React from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -37,6 +39,8 @@ class CreateCampaign extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
+    this.stringToBytes32 = this.stringToBytes32.bind(this);
+
   }
 
   componentDidMount = async() => {
@@ -65,13 +69,23 @@ class CreateCampaign extends React.Component {
     this.setState({ endDate: date });
   }
 
-  getFileName() {
-    return 'campaign' + this.state.campaignId + '.png'
+  stringToBytes32 (value) {
+    var valueArr = value.match(/.{1,31}/g);
+    var hexArr = [];
+    valueArr.forEach( (v) => {
+      var vBytes = ethers.utils.formatBytes32String(v)
+      hexArr.push(vBytes)
+    })
+    return hexArr
   }
 
   handleSubmit = (e) => {
     this.setState({isLoading: true})
-
+    var name = this.stringToBytes32(this.state.name)
+    console.log(name)
+    //console.log(ethers.utils.formatBytes32String(value))
+    //console.log(ethers.utils.formatBytes32String(this.state.name));
+    //console.log(ethers.utils.formatBytes32String(this.state.description));
     e.preventDefault();
     console.log("SUBMIT ")
     console.log(this.state);
