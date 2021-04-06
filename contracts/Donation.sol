@@ -25,10 +25,10 @@ contract Donation {
     
     /*
     * This function is for donors to donate to a campaign that is still ongoing. The function assumes that
-    * the uint amount == msg.value (in ether)
+    * the uint amount == msg.value
     */
     function donate(uint campaignId, uint amount) public payable returns (uint256) {
-        require(msg.value > 0 ether, "Donation value needs to be more than 0 ether");
+        require(msg.value > 0, "Donation value needs to be more than 0 ether");
         require(charityContract.isStatusComplete(campaignId) == false, "Campaign has already ended");
         require(amount <= (getRemainingAmount(campaignId)), "Donation value is more than campaign's remaining amount");
         

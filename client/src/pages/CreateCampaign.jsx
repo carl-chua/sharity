@@ -40,6 +40,7 @@ class CreateCampaign extends React.Component {
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.stringToBytes32 = this.stringToBytes32.bind(this);
+    this.bytes32ArrayToString = this.bytes32ArrayToString.bind(this);
 
   }
 
@@ -79,17 +80,25 @@ class CreateCampaign extends React.Component {
     return hexArr
   }
 
+  bytes32ArrayToString (hexArr) {
+    var sReturn = '';
+    hexArr.forEach( (v) => {
+      var s = ethers.utils.parseBytes32String(v)
+      sReturn += s
+    })
+    return sReturn
+  }
+
   handleSubmit = (e) => {
     this.setState({isLoading: true})
-    var name = this.stringToBytes32(this.state.name)
-    console.log(name)
-    //console.log(ethers.utils.formatBytes32String(value))
-    //console.log(ethers.utils.formatBytes32String(this.state.name));
-    //console.log(ethers.utils.formatBytes32String(this.state.description));
     e.preventDefault();
     console.log("SUBMIT ")
     console.log(this.state);
     try {
+      //var name = this.stringToBytes32(this.state.name)
+      //console.log(this.bytes32ArrayToString(name))
+      //var description = this.stringToBytes32(this.state.description)
+      //var avatarURL = this.stringToBytes32(this.state.avatarURL)
       var date = new Date(this.state.startDate);
       var parsedStartDate = parseInt(
         "" +
@@ -104,6 +113,8 @@ class CreateCampaign extends React.Component {
           ("0" + (date.getMonth() + 1)).slice(-2) +
           date.getDate()
       );
+      
+
       this.props.charityContract.methods
         .createCampaign(
           this.props.web3.utils.toHex(this.state.name),

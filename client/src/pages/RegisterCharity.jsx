@@ -54,8 +54,8 @@ class RegisterCharity extends React.Component {
 
     e.preventDefault();
     console.log(this.state);
-    ethers.utils.formatBytes32String(this.state.name);
-    ethers.utils.formatBytes32String(this.state.description);
+    //ethers.utils.formatBytes32String(this.state.name);
+    //ethers.utils.formatBytes32String(this.state.description);
 
     try {
       this.props.charityContract.methods
