@@ -13,12 +13,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Grid,
 } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import LinearWithValueLabel from "../components/LinearWithValueLabel";
 import { useAlert } from "react-alert";
 import gratitudeImage from "../assets/gratitudeImage.png";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,26 +55,97 @@ const ColorButton = withStyles((theme) => ({
   },
 }))(Button);
 
-export default function CampaignPage() {
+export default function CampaignPage({
+  web3,
+  accounts,
+  charityContract,
+  donationContract,
+  isAuthed,
+}) {
+  const campaignId = useParams();
+
   const classes = useStyles();
   const alert = useAlert();
-  const campaignExample = {
-    currentDonation: 95474,
-    targetDonation: 99999,
-    noOfDonors: 848,
-    startDate: 10,
-    endDate: 30,
-    campaignName: "Help the vulnerable in a crisis to survive this pandemic",
-    charityName: "JL KAH for Samaritans of Singapore",
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+
+  const getCampaign = async (campaignId) => {
+    var campaign = {};
+    campaign.campaignId = campaignId;
+    campaign.campaignName = await charityContract.methods
+      .getCampaignName(campaignId)
+      .call();
+    campaign.campaignName = web3.utils.toUtf8(campaign.campaignName);
+    campaign.campaignDescription = await charityContract.methods
+      .getCampaignDescription(campaignId)
+      .call();
+    campaign.campaignDescription = web3.utils.toUtf8(
+      campaign.campaignDescription
+    );
+    campaign.campaignPictureURL = await charityContract.methods
+      .getCampaignPictureURL(campaignId)
+      .call();
+    campaign.campaignPictureURL = web3.utils.toUtf8(
+      campaign.campaignPictureURL
+    );
+    campaign.campaignTargetDonation = await charityContract.methods
+      .getCampaignTargetDonation(campaignId)
+      .call();
+    campaign.campaignTargetDonation = parseInt(
+      campaign.campaignTargetDonation,
+      10
+    );
+    campaign.campaignCurrentDonation = await charityContract.methods
+      .getCampaignCurrentDonation(campaignId)
+      .call();
+    campaign.campaignCurrentDonation = parseInt(
+      campaign.campaignCurrentDonation,
+      10
+    );
+    campaign.campaignNoOfDonors = await charityContract.methods
+      .getCampaignNoOfDonors(campaignId)
+      .call();
+    campaign.campaignNoOfDonors = parseInt(campaign.campaignNoOfDonors, 10);
+    campaign.campaignStartDate = await charityContract.methods
+      .getCampaignStartDate(campaignId)
+      .call();
+    campaign.campaignEndDate = await charityContract.methods
+      .getCampaignEndDate(campaignId)
+      .call();
+    campaign.campaignStatus = await charityContract.methods
+      .getCampaignStatus(campaignId)
+      .call();
+    campaign.charityId = await charityContract.methods
+      .getCampaignCharity(campaignId)
+      .call();
+    campaign.charityId = parseInt(campaign.charityId, 10);
+    campaign.charityName = await charityContract.methods
+      .getCharityName(campaign.charityId)
+      .call();
+    campaign.charityName = web3.utils.toUtf8(campaign.charityName);
+    campaign.charityPictureURL = await charityContract.methods
+      .getCharityPictureURL(campaign.charityId)
+      .call();
+    campaign.charityPictureURL = web3.utils.toUtf8(campaign.charityPictureURL);
+    console.log(campaign);
+    return campaign;
   };
+
+  useEffect(() => {
+    (async () => {
+      let campaign = await getCampaign(campaignId.id);
+      setCampaign(campaign);
+      console.log(campaign);
+    })();
+  }, []);
+
+  const [campaign, setCampaign] = useState();
 
   const [donationAmount, setDonationAmount] = useState("");
   const [donationUnit, setDonationUnit] = useState("ether");
 
   const [donationDialogOpen, setDonationDialogOpen] = useState(false);
   const [gratitudeDialogOpen, setGratitudeDialogOpen] = useState(false);
+
+  const [loadingDialogOpen, setLoadingDialogOpen] = useState(false);
 
   function handleDonationDialogOpen() {
     setDonationDialogOpen(true);
@@ -91,6 +165,14 @@ export default function CampaignPage() {
     setGratitudeDialogOpen(false);
   }
 
+  function handleLoadingDialogOpen() {
+    setLoadingDialogOpen(true);
+  }
+
+  function handleLoadingDialogClose() {
+    setLoadingDialogOpen(false);
+  }
+
   function onDonateClick() {
     if (donationAmount == undefined || donationAmount == "") {
       alert.show("Please enter a valid donation amount");
@@ -99,9 +181,48 @@ export default function CampaignPage() {
     }
   }
 
+  function convertToWei() {
+    let amount = donationAmount;
+
+    if (donationUnit === "ether") {
+      amount *= 1000000000000000000;
+    } else if (donationUnit === "milliether") {
+      amount *= 1000000000000000;
+    } else if (donationUnit === "microether") {
+      amount *= 1000000000000;
+    } else if (donationUnit === "Gwei") {
+      amount *= 1000000000;
+    } else if (donationUnit === "Mwei") {
+      amount *= 1000000;
+    } else if (donationUnit === "Kwei") {
+      amount *= 1000;
+    } else if (donationUnit === "wei") {
+      amount *= 1;
+    }
+    return amount;
+  }
+
   function onConfirmDonation() {
-    handleDonationDialogClose();
-    handleGratitudeDialogOpen();
+    handleLoadingDialogOpen();
+    let amount = convertToWei();
+    donationContract.methods
+      .donate(campaignId.id, amount.toString())
+      .send({
+        from: web3.currentProvider.selectedAddress,
+        value: amount.toString(),
+      })
+      .on("receipt", (receipt) => {
+        (async () => {
+          let campaign = await getCampaign(campaignId.id);
+          setCampaign(campaign);
+          handleLoadingDialogClose();
+          handleDonationDialogClose();
+          handleGratitudeDialogOpen();
+        })();
+      })
+      .on("error", (error) => {
+        console.log(error.message);
+      });
   }
 
   function renderGratitudeDialog() {
@@ -120,7 +241,7 @@ export default function CampaignPage() {
             <b>
               {donationAmount} {donationUnit}
             </b>{" "}
-            to <b>{campaignExample.campaignName}</b>
+            to <b>{campaign.campaignName}</b>
           </DialogContentText>
         </DialogContent>
       </Dialog>
@@ -144,8 +265,7 @@ export default function CampaignPage() {
             <b>
               {donationAmount} {donationUnit}
             </b>{" "}
-            to <b>{campaignExample.campaignName}</b> by{" "}
-            <b>{campaignExample.charityName}</b>
+            to <b>{campaign.campaignName}</b> by <b>{campaign.charityName}</b>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -172,7 +292,31 @@ export default function CampaignPage() {
     return <h5 style={{ textAlign: "center", color: "#0ACB1D" }}>ONGOING</h5>;
   }
 
-  return (
+  function renderLoadingDialog() {
+    return (
+      <Dialog open={loadingDialogOpen}>
+        <DialogTitle id="confirm-donation-dialog-title">
+          Transaction in progress
+        </DialogTitle>
+        <DialogContent>
+          <Grid
+            item
+            xs={12}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              paddingBottom: "10px",
+            }}
+          >
+            <CircularProgress />
+          </Grid>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return campaign != undefined ? (
     <div
       style={{
         display: "flex",
@@ -207,8 +351,8 @@ export default function CampaignPage() {
         >
           <div style={{ maxWidth: "100%", overflow: "hidden" }}>
             <img
-              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-              style={{ width: "100%", objectFit: "contain" }}
+              src={campaign.campaignPictureURL}
+              style={{ width: "38vw", maxHeight: "60vh", objectFit: "contain" }}
             />
           </div>
           <h5
@@ -221,7 +365,7 @@ export default function CampaignPage() {
           >
             Our Campaign Story
           </h5>
-          <p style={{ textAlign: "left" }}>{campaignExample.description}</p>
+          <p style={{ textAlign: "left" }}>{campaign.campaignDescription}</p>
         </div>
         <div
           style={{
@@ -230,7 +374,7 @@ export default function CampaignPage() {
             marginLeft: "3%",
           }}
         >
-          <h3 style={{ textAlign: "left" }}>{campaignExample.campaignName}</h3>
+          <h3 style={{ textAlign: "left" }}>{campaign.campaignName}</h3>
           <div
             style={{
               display: "flex",
@@ -248,7 +392,7 @@ export default function CampaignPage() {
                 marginRight: "1%",
               }}
             >
-              <Avatar src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />
+              <Avatar src={campaign.charityPictureURL} />
             </Link>
             <Link
               style={{
@@ -259,7 +403,7 @@ export default function CampaignPage() {
                 alignItems: "center",
               }}
             >
-              {campaignExample.charityName}
+              {campaign.charityName}
             </Link>
           </div>
           <div
@@ -279,18 +423,18 @@ export default function CampaignPage() {
               }}
             >
               <h3 style={{ margin: "0", textAlign: "left" }}>
-                ${campaignExample.currentDonation}
+                ${campaign.campaignCurrentDonation}
               </h3>
               <p style={{ margin: "0", textAlign: "left" }}>
-                raised from {campaignExample.noOfDonors} donors
+                raised from {campaign.campaignNoOfDonors} donors
               </p>
             </div>
             <div style={{ flexGrow: "1" }}>{renderCampaignState()}</div>
           </div>
           <LinearWithValueLabel
             progress={Math.floor(
-              (100 * campaignExample.currentDonation) /
-                campaignExample.targetDonation
+              (100 * campaign.campaignCurrentDonation) /
+                campaign.campaignTargetDonation
             )}
           />
           <div
@@ -303,20 +447,25 @@ export default function CampaignPage() {
             <div>
               <b>
                 {Math.floor(
-                  (100 * campaignExample.currentDonation) /
-                    campaignExample.targetDonation
+                  (100 * campaign.campaignCurrentDonation) /
+                    campaign.campaignTargetDonation
                 )}
                 %
               </b>{" "}
-              of <b>${campaignExample.targetDonation}</b>
+              of <b>${campaign.campaignTargetDonation}</b>
             </div>
             <div>
-              <b>{campaignExample.endDate - campaignExample.startDate}</b> more
-              days
+              <b>
+                {moment(campaign.campaignEndDate, "YYYYMMDD").diff(
+                  moment(),
+                  "days"
+                )}
+              </b>{" "}
+              more days
             </div>
           </div>
           <Card
-            style={{ marginTop: "28px", width: "80%", alignSelf: "center" }}
+            style={{ marginTop: "28px", width: "100%", alignSelf: "center" }}
           >
             <CardContent
               style={{
@@ -368,6 +517,11 @@ export default function CampaignPage() {
       </div>
       {renderDonationDialog()}
       {renderGratitudeDialog()}
+      {renderLoadingDialog()}
     </div>
+  ) : (
+    <Grid item xs={12}>
+      <CircularProgress />
+    </Grid>
   );
 }
