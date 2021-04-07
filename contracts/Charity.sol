@@ -12,20 +12,20 @@ contract Charity {
 
   struct charity {
     address charityOwner;
-    bytes charityName;
-    bytes charityAddress;
-    bytes contactNumber;
-    bytes description;
-    bytes pictureURL;
-    bytes verificationLink;
+    string charityName;
+    string charityAddress;
+    string contactNumber;
+    string description;
+    string pictureURL;
+    string verificationLink;
     CharityStatus charityStatus;
   }
 
   struct campaign {
     uint charityId;
-    bytes campaignName;
-    bytes description;
-    bytes pictureURL;
+    string campaignName;
+    string description;
+    string pictureURL;
     uint targetDonation;
     uint currentDonation;
     uint noOfDonors;
@@ -70,7 +70,7 @@ contract Charity {
     _;
   }
 
-  function registerCharity(bytes memory charityName, bytes memory charityAddress, bytes memory contactNumber, bytes memory description, bytes memory pictureURL) public returns (uint charityId) {
+  function registerCharity(string memory charityName, string memory charityAddress, string memory contactNumber, string memory description, string memory pictureURL) public returns (uint charityId) {
     /*require(charityName != "Charity name cannot be empty");
     require(charityAddress != "Charity address cannot be empty");
     require(contactNumber != "Charity number cannot be empty");
@@ -89,7 +89,7 @@ contract Charity {
     return charityId;
   }
 
-  function verifyCharity(uint charityId, bytes memory verificationLink) public onlyOwner(msg.sender) {
+  function verifyCharity(uint charityId, string memory verificationLink) public onlyOwner(msg.sender) {
     require(msg.sender == contractOwner, "Caller is not contract owner");
     require(charityId < noOfCharities, "Invalid charity id");
     require(charities[charityId].charityStatus == CharityStatus.UNVERIFIED, "Charity has been verified or rejected");
@@ -127,7 +127,7 @@ contract Charity {
   * This will be the function that charities call to create a campaign.
   * Parameters of this function will include uint targetDonation (of the campaign), uint startDate (of the campaign), uint endDate (of the campaign)
   */
-  function createCampaign(bytes memory campaignName, bytes memory description, bytes memory pictureURL, uint targetDonation, uint startDate, uint endDate) public onlyVerifiedCharity(msg.sender) returns (uint campaignId) {
+  function createCampaign(string memory campaignName, string memory description, string memory pictureURL, uint targetDonation, uint startDate, uint endDate) public onlyVerifiedCharity(msg.sender) returns (uint campaignId) {
     /*require(campaignName != "Charity name cannot be empty");
     require(description != "Description cannot be empty");
     require(pictureURL != "Picture URL cannot be empty");
@@ -173,7 +173,7 @@ contract Charity {
   * This will be the getter function that everyone can call to check the charity name.
   * Parameters of this function will include uint charityId
   */
-  function getCharityName(uint charityId) public view returns (bytes memory) {
+  function getCharityName(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].charityName;
   }
@@ -182,7 +182,7 @@ contract Charity {
   * This will be the getter function that everyone can call to check the charity pictureURL.
   * Parameters of this function will include uint charityId
   */
-  function getCharityPictureURL(uint charityId) public view returns (bytes memory) {
+  function getCharityPictureURL(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].pictureURL;
   }
@@ -191,7 +191,7 @@ contract Charity {
   * This will be the getter function that everyone can call to check the charity description.
   * Parameters of this function will include uint charityId
   */
-  function getCharityDescription(uint charityId) public view returns (bytes memory) {
+  function getCharityDescription(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].description;
   }
@@ -209,7 +209,7 @@ contract Charity {
   * This will be the getter function that everyone can call to get the charity contact number.
   * Parameters of this function will include uint charityId
   */
-  function getCharityContactNumber(uint charityId) public view returns (bytes memory) {
+  function getCharityContactNumber(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].contactNumber;
   }
@@ -218,7 +218,7 @@ contract Charity {
   * This will be the getter function that everyone can call to get the charity contact address.
   * Parameters of this function will include uint charityId
   */
-  function getCharityContactAddress(uint charityId) public view returns (bytes memory) {
+  function getCharityContactAddress(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].charityAddress;
   }
@@ -227,7 +227,7 @@ contract Charity {
   * This will be the getter function that everyone can call to get the charity verification Link.
   * Parameters of this function will include uint charityId
   */
-  function getCharityVerificationLink(uint charityId) public view returns (bytes memory) {
+  function getCharityVerificationLink(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].verificationLink;
   }
@@ -337,7 +337,7 @@ contract Charity {
   * This will be the getter function that everyone can call to check the campaign name.
   * Parameters of this function will include uint campaignId
   */
-  function getCampaignName(uint campaignId) public view returns (bytes memory) {
+  function getCampaignName(uint campaignId) public view returns (string memory) {
     require(campaignId < noOfCampaigns, "Invalid campaign id");
     return campaigns[campaignId].campaignName;
   }
@@ -346,7 +346,7 @@ contract Charity {
   * This will be the getter function that everyone can call to check the campaign description.
   * Parameters of this function will include uint campaignId
   */
-  function getCampaignDescription(uint campaignId) public view returns (bytes memory) {
+  function getCampaignDescription(uint campaignId) public view returns (string memory) {
     require(campaignId < noOfCampaigns, "Invalid campaign id");
     return campaigns[campaignId].description;
   }
@@ -355,7 +355,7 @@ contract Charity {
   * This will be the getter function that everyone can call to check the campaign pictureURL.
   * Parameters of this function will include uint campaignId
   */
-  function getCampaignPictureURL(uint campaignId) public view returns (bytes memory) {
+  function getCampaignPictureURL(uint campaignId) public view returns (string memory) {
     require(campaignId < noOfCampaigns, "Invalid campaign id");
     return campaigns[campaignId].pictureURL;
   }
