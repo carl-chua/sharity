@@ -100,25 +100,27 @@ export default function HomePage({
     return campaign;
   };
 
-  useEffect(async () => {
-    const noOfCampaigns = await charityContract.methods
-      .getNoOfCampaigns()
-      .call();
-    let ongoingCampaigns = [];
-    let pastCampaigns = [];
-    console.log(noOfCampaigns);
-    for (let i = 0; i < noOfCampaigns; i++) {
-      var campaign = await getCampaign(i);
-      if (campaign.campaignStatus === "0") {
-        ongoingCampaigns.push(campaign);
+  useEffect(() => {
+    (async () => {
+      const noOfCampaigns = await charityContract.methods
+        .getNoOfCampaigns()
+        .call();
+      let ongoingCampaigns = [];
+      let pastCampaigns = [];
+      console.log(noOfCampaigns);
+      for (let i = 0; i < noOfCampaigns; i++) {
+        var campaign = await getCampaign(i);
+        if (campaign.campaignStatus === "0") {
+          ongoingCampaigns.push(campaign);
+        }
+        if (campaign.campaignStatus === "1") {
+          pastCampaigns.push(campaign);
+        }
       }
-      if (campaign.campaignStatus === "1") {
-        pastCampaigns.push(campaign);
-      }
-    }
-    setIsLoading(false);
-    await setOngoingCampaigns(ongoingCampaigns);
-    await setPastCampaigns(pastCampaigns);
+      setIsLoading(false);
+      await setOngoingCampaigns(ongoingCampaigns);
+      await setPastCampaigns(pastCampaigns);
+    })();
   }, []);
 
   return (

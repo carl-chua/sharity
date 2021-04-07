@@ -25,19 +25,18 @@ class RegisterCharity extends React.Component {
       progress: 0,
       avatarURL: "",
       message: "",
-      isLoading: false
-
+      isLoading: false,
     };
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  componentDidMount = async() => {
-    console.log(this.props.charityContract)
+  componentDidMount = async () => {
+    console.log(this.props.charityContract);
     const id = await this.props.charityContract.methods
-    .getNoOfCharities()
-    .call();
-    this.setState({charityId:id}) 
-  }
+      .getNoOfCharities()
+      .call();
+    this.setState({ charityId: id });
+  };
 
   handleInputChange(event) {
     const target = event.target;
@@ -48,9 +47,8 @@ class RegisterCharity extends React.Component {
     });
   }
 
-  
   handleSubmit = (e) => {
-    this.setState({isLoading: true})
+    this.setState({ isLoading: true });
 
     e.preventDefault();
     console.log(this.state);
@@ -60,7 +58,7 @@ class RegisterCharity extends React.Component {
     try {
       this.props.charityContract.methods
         .registerCharity(
-          this.props.web3.utils.toHex(this.state.name),          
+          this.props.web3.utils.toHex(this.state.name),
           this.props.web3.utils.toHex(this.state.address),
           this.props.web3.utils.toHex(this.state.contact),
           this.props.web3.utils.toHex(this.state.description),
@@ -80,13 +78,12 @@ class RegisterCharity extends React.Component {
             avatarURL: "",
           });
           console.log(this.state);
-          this.setState({isLoading: false})
+          this.setState({ isLoading: false });
 
           alert(
             "Registration successful, please wait for Sharity to verify your registration"
           );
           window.location.reload(false);
-
         })
         .on("error", (error) => {
           console.log(error.message);
@@ -98,14 +95,13 @@ class RegisterCharity extends React.Component {
             avatarURL: "",
           });
           console.log(this.state);
-          this.setState({isLoading: false})
+          this.setState({ isLoading: false });
 
           alert(
             "Registration unsuccessful, please register again. Error Occured: " +
               error.message
           );
           window.location.reload(false);
-
         });
     } catch (err) {
       console.log(err);
@@ -231,10 +227,12 @@ class RegisterCharity extends React.Component {
                 </Grid>
               </Grid>
               {this.state.isLoading ? (
-                    <Grid item xs={12}>
-                      <CircularProgress />
-                    </Grid>
-                  ) : (<span></span>)}    
+                <Grid item xs={12}>
+                  <CircularProgress />
+                </Grid>
+              ) : (
+                <span></span>
+              )}
               <Button
                 type="submit"
                 fullWidth
@@ -244,9 +242,10 @@ class RegisterCharity extends React.Component {
                 style={{ marginTop: "30px", marginBottom: "20px" }}
               >
                 Submit
-              </Button>           
-              <Typography>After submission, please wait for alert to come out.</Typography>
-
+              </Button>
+              <Typography>
+                After submission, please wait for alert to come out.
+              </Typography>
             </form>
           </div>
         </Container>

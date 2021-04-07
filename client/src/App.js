@@ -171,7 +171,7 @@ class App extends Component {
               <Route
                 exact
                 path="/CampaignPage/:id"
-                render={(props) => (
+                render={() => (
                   <CampaignPage
                     web3={this.state.web3}
                     accounts={this.state.accounts}
