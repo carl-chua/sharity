@@ -42,8 +42,8 @@ export default function CampaignCard({ data }) {
             className={classes.mediaCard}
           >
             <Grid item xs={12}>
-              <Box ml={2} mt={10} textAlign="left" fontWeight="fontWeightBold">
-                ${data.campaignCurrentDonation}
+              <Box ml={2} mt={10} textAlign="left">
+                <b>{data.campaignCurrentDonation}</b> wei
               </Box>
             </Grid>
             <Grid item xs={12}>
@@ -70,7 +70,7 @@ export default function CampaignCard({ data }) {
                   )}
                   %
                 </b>{" "}
-                of <b>${data.campaignTargetDonation}</b>
+                of <b>{data.campaignTargetDonation}</b> wei
               </Box>
             </Grid>
             <Grid item xs={5}>
