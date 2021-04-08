@@ -39,9 +39,6 @@ class CreateCampaign extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
-    this.stringToBytes32 = this.stringToBytes32.bind(this);
-    this.bytes32ArrayToString = this.bytes32ArrayToString.bind(this);
-
   }
 
   componentDidMount = async() => {

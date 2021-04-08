@@ -138,6 +138,7 @@ class CharityPage extends React.Component {
     const charityVerificationLink = await charityContract.methods
       .getCharityVerificationLink(this.state.charityId)
       .call();
+    
     if (charityVerificationLink != null) {
       this.setState({ verificationLink: charityVerificationLink });
     }

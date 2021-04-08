@@ -321,7 +321,7 @@ contract Charity {
   * This will be the getter function that everyone can call to get the charity verification Link.
   * Parameters of this function will include address inputAddress
   */
-  function getCharityVerificationLink(address inputAddress) public view returns (string memory) {
+  function getCharityVerificationLinkByAddress(address inputAddress) public view returns (string memory) {
     require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
     uint charityIdByAddress = charityAddressIdMap[inputAddress];
     return charities[charityIdByAddress].verificationLink;
