@@ -70,6 +70,21 @@ contract Charity {
     _;
   }
 
+  /*
+  * This will be the function that check the address type
+  * Parameters of this function will include address inputAddress
+  * This function assumes all input address are either contract, charity, or donor
+  */
+  function checkAddressType(address inputAddress) public view returns (string memory) {
+    if (inputAddress == contractOwner) {
+      return "CONTRACT";
+    } else if (charityOwnerRegistered[inputAddress] == true) {
+      return "CHARITYOWNER";
+    } else {
+      return "DONOR";
+    }
+  }
+
   function registerCharity(string memory charityName, string memory charityAddress, string memory contactNumber, string memory description, string memory pictureURL) public returns (uint charityId) {
     /*require(charityName != "Charity name cannot be empty");
     require(charityAddress != "Charity address cannot be empty");
@@ -170,12 +185,32 @@ contract Charity {
   }
 
   /*
+  * This will be the getter function that everyone can call to check the charity id.
+  * Parameters of this function will include address inputAddress
+  */
+  function getCharityIdByAddress(address inputAddress) public view returns (uint) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charityIdByAddress;
+  }
+
+  /*
   * This will be the getter function that everyone can call to check the charity name.
   * Parameters of this function will include uint charityId
   */
   function getCharityName(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].charityName;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to check the charity name.
+  * Parameters of this function will include address inputAddress
+  */
+  function getCharityNameByAddress(address inputAddress) public view returns (string memory) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charities[charityIdByAddress].charityName;
   }
 
   /*
@@ -188,12 +223,32 @@ contract Charity {
   }
 
   /*
+  * This will be the getter function that everyone can call to check the charity pictureURL.
+  * Parameters of this function will include uint charityId
+  */
+  function getCharityPictureURLByAddress(address inputAddress) public view returns (string memory) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charities[charityIdByAddress].pictureURL;
+  }
+
+  /*
   * This will be the getter function that everyone can call to check the charity description.
   * Parameters of this function will include uint charityId
   */
   function getCharityDescription(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].description;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to check the charity description.
+  * Parameters of this function will include address inputAddress
+  */
+  function getCharityDescriptionByAddress(address inputAddress) public view returns (string memory) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charities[charityIdByAddress].description;
   }
 
   /*
@@ -206,12 +261,32 @@ contract Charity {
   }
 
   /*
+  * This will be the getter function that everyone can call to check the charity status.
+  * Parameters of this function will include address inputAddress
+  */
+  function getCharityStatusByAddress(address inputAddress) public view returns (CharityStatus) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charities[charityIdByAddress].charityStatus;
+  }
+
+  /*
   * This will be the getter function that everyone can call to get the charity contact number.
   * Parameters of this function will include uint charityId
   */
   function getCharityContactNumber(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].contactNumber;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the charity contact number.
+  * Parameters of this function will include address inputAddress
+  */
+  function getCharityContactNumberByAddress(address inputAddress) public view returns (string memory) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charities[charityIdByAddress].contactNumber;
   }
 
   /*
@@ -224,12 +299,32 @@ contract Charity {
   }
 
   /*
+  * This will be the getter function that everyone can call to get the charity contact address.
+  * Parameters of this function will include address inputAddress
+  */
+  function getCharityContactAddressByAddress(address inputAddress) public view returns (string memory) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charities[charityIdByAddress].charityAddress;
+  }
+
+  /*
   * This will be the getter function that everyone can call to get the charity verification Link.
   * Parameters of this function will include uint charityId
   */
   function getCharityVerificationLink(uint charityId) public view returns (string memory) {
     require(charityId < noOfCharities, "Invalid charity id");
     return charities[charityId].verificationLink;
+  }
+
+  /*
+  * This will be the getter function that everyone can call to get the charity verification Link.
+  * Parameters of this function will include address inputAddress
+  */
+  function getCharityVerificationLink(address inputAddress) public view returns (string memory) {
+    require(charityOwnerRegistered[inputAddress] == true, "Address not owner of any charity");
+    uint charityIdByAddress = charityAddressIdMap[inputAddress];
+    return charities[charityIdByAddress].verificationLink;
   }
 
   /* 
