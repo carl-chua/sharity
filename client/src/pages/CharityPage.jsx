@@ -50,6 +50,7 @@ class CharityPage extends React.Component {
       pastCampaigns: "",
       valueOfTab: 0,
       isLoading: true,
+      isLoadingButton: false,
       isLoadingDia: false,
       openDialogue: false,
       verificationLinkInput: ""
@@ -259,7 +260,7 @@ class CharityPage extends React.Component {
     this.setState({isLoadingDia: true})
     try {
       this.props.charityContract.methods
-        .verifyCharity(this.state.charityId, this.props.web3.utils.toHex(this.state.verificationLinkInput))
+        .verifyCharity(this.state.charityId, this.state.verificationLinkInput)
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {
           console.log(receipt);
@@ -282,17 +283,49 @@ class CharityPage extends React.Component {
   };
 
   handleReject = () => {
+    this.setState({isLoadingButton: true})
     try {
       this.props.charityContract.methods
         .rejectCharity(this.state.charityId)
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {
           console.log(receipt);
+          this.setState({isLoadingButton: false})
+
           alert("Rejection successful");
           this.refreshPage();
         })
         .on("error", (error) => {
           console.log(error.message);
+          this.setState({isLoadingButton: false})
+
+          alert(
+            "Rejection unsuccessful, please verify again. Error Occured: " +
+              error.message
+          );
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  handleRevoke = () => {
+    this.setState({isLoadingButton: true})
+    try {
+      this.props.charityContract.methods
+        .revokeCharity(this.state.charityId)
+        .send({ from: this.props.accounts[0] })
+        .on("receipt", (receipt) => {
+          console.log(receipt);
+          this.setState({isLoadingButton: false})
+
+          alert("Rejection successful");
+          this.refreshPage();
+        })
+        .on("error", (error) => {
+          console.log(error.message);
+          this.setState({isLoadingButton: false})
+
           alert(
             "Rejection unsuccessful, please verify again. Error Occured: " +
               error.message
@@ -343,7 +376,7 @@ class CharityPage extends React.Component {
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
             <p>Status: {this.state.status}</p>
-            <Button size="small" onClick={this.handleOpenDia} >
+            <Button size="small" color="primary" variant="outlined" onClick={this.handleOpenDia} >
               Verify the Charity
             </Button>
             <Dialog
@@ -379,14 +412,46 @@ class CharityPage extends React.Component {
                 </Button>
               </DialogActions>
             </Dialog>
-  
-            <Button size="small" onClick={this.handleReject}>
+            {this.state.isLoadingButton ? (
+                    <Grid item xs={12}>
+                      <CircularProgress />
+                    </Grid>
+                  ) : (<span></span>)} 
+            <Button size="small" color="primary" variant="outlined"  onClick={this.handleReject}>
               Reject the Charity
             </Button>
             <Typography>After submission, please wait for alert to come out.</Typography>
           </div>
         );
-      } else {
+      } else if (this.state.owner === true && this.state.status === "VERIFIED"){
+        return (
+          <div>
+            <img src={this.state.charityPictureURL} alt="charity avatar" width="200" height="200"></img>
+            <p>Name: {this.state.name}</p>
+            <p>Description: {this.state.description}</p>
+            <p>Contact: {this.state.contact}</p>
+            <p>Address: {this.state.address}</p>
+            <p>Verification Link: {this.state.verificationLink}</p>
+            <p>Status: {this.state.status}</p>
+            {this.state.isLoadingButton ? (
+                    <Grid item xs={12}>
+                      <CircularProgress />
+                    </Grid>
+                  ) : (<span></span>)} 
+            <Button size="small" color="primary" variant="outlined" onClick={this.handleRevoke}>
+              Revoke the Charity
+            </Button>
+            <Typography>After submission, please wait for alert to come out.</Typography>
+          </div>
+        );
+      } else if (this.state.status === "REJECTED"){
+        return (
+          <div>
+            <Typography>This is not a valid charity or the charity has been rejected. Please find another. </Typography>
+          </div>
+        );
+      }
+      else {
         return (
           <div>
             <img src={this.state.charityPictureURL} alt="charity avatar" width="200" height="200"></img>
