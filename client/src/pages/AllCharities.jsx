@@ -65,11 +65,11 @@ class AllCharities extends React.Component {
         var charity = {};
         charity.id = i;
         charity.name = await charityContract.methods.getCharityName(i).call();
-        charity.name = this.props.web3.utils.toUtf8(charity.name)
+        charity.name = charity.name
         charity.description = await charityContract.methods.getCharityDescription(i).call();
-        charity.description = this.props.web3.utils.toUtf8(charity.description)
+        charity.description = charity.description
         charity.pictureURL = await charityContract.methods.getCharityPictureURL(i).call();
-        charity.pictureURL = this.props.web3.utils.toUtf8(charity.pictureURL)
+        charity.pictureURL = charity.pictureURL
         charity.status = await charityContract.methods.getCharityStatus(i).call();
         console.log("status: " + charity.status)
         if (charity.status === '0') {

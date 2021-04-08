@@ -114,16 +114,16 @@ class CharityPage extends React.Component {
     const charityName = await charityContract.methods
       .getCharityName(this.state.charityId)
       .call();
-    this.setState({ name: this.props.web3.utils.toUtf8(charityName) });
+    this.setState({ name: charityName });
     const charityPictureURL = await charityContract.methods
       .getCharityPictureURL(this.state.charityId)
       .call();
-    this.setState({ charityPictureURL: this.props.web3.utils.toUtf8(charityPictureURL) });
+    this.setState({ charityPictureURL: charityPictureURL });
     const charityDescription = await charityContract.methods
       .getCharityDescription(this.state.charityId)
       .call();
     this.setState({
-      description: this.props.web3.utils.toUtf8(charityDescription),
+      description: charityDescription,
     });
     const charityContact = await charityContract.methods
       .getCharityContactNumber(this.state.charityId)
@@ -134,12 +134,12 @@ class CharityPage extends React.Component {
     const charityAddress = await charityContract.methods
       .getCharityContactAddress(this.state.charityId)
       .call();
-    this.setState({ address: this.props.web3.utils.toUtf8(charityAddress) });
+    this.setState({ address: charityAddress });
     const charityVerificationLink = await charityContract.methods
       .getCharityVerificationLink(this.state.charityId)
       .call();
     if (charityVerificationLink != null) {
-      this.setState({ verificationLink: this.props.web3.utils.toUtf8(charityVerificationLink) });
+      this.setState({ verificationLink: charityVerificationLink });
     }
     const length = await charityContract.methods.getNoOfCampaigns().call();
     console.log(length);
@@ -148,23 +148,23 @@ class CharityPage extends React.Component {
       campaign.charityId = parseInt(
         await charityContract.methods.getCampaignCharity(i).call()
       );
-      campaign.charityPictureURL = this.props.web3.utils.toUtf8(
+      campaign.charityPictureURL = 
         await charityContract.methods
           .getCharityPictureURL(campaign.charityId)
           .call()
-      );
-      campaign.campaignName = this.props.web3.utils.toUtf8(
+      ;
+      campaign.campaignName = 
         await charityContract.methods.getCampaignName(i).call()
-      );
-      campaign.campaignDescription = this.props.web3.utils.toUtf8(
+      ;
+      campaign.campaignDescription = 
         await charityContract.methods.getCampaignDescription(i).call()
-      );
+      ;
       campaign.campaignTargetDonation = parseInt(
         await charityContract.methods.getCampaignTargetDonation(i).call()
       );
-      campaign.campaignPictureURL = this.props.web3.utils.toUtf8(
+      campaign.campaignPictureURL = 
         await charityContract.methods.getCampaignPictureURL(i).call()
-      );
+      ;
       campaign.campaignStartDate = parseInt(
         await charityContract.methods.getCampaignStartDate(i).call()
       );
@@ -180,11 +180,11 @@ class CharityPage extends React.Component {
       campaign.campaignNoOfDonors = parseInt(
         await charityContract.methods.getCampaignNoOfDonors(i).call()
       );
-      campaign.charityName = this.props.web3.utils.toUtf8(
+      campaign.charityName = 
         await charityContract.methods
           .getCharityName(parseInt(campaign.charityId))
           .call()
-      );
+      ;
 
       if (
         parseInt(campaign.charityId) === this.state.charityId &&

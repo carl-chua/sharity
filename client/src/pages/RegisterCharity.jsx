@@ -54,17 +54,14 @@ class RegisterCharity extends React.Component {
 
     e.preventDefault();
     console.log(this.state);
-    //ethers.utils.formatBytes32String(this.state.name);
-    //ethers.utils.formatBytes32String(this.state.description);
-
     try {
       this.props.charityContract.methods
         .registerCharity(
-          this.props.web3.utils.toHex(this.state.name),          
-          this.props.web3.utils.toHex(this.state.address),
-          this.props.web3.utils.toHex(this.state.contact),
-          this.props.web3.utils.toHex(this.state.description),
-          this.props.web3.utils.toHex(this.state.avatarURL)
+          this.state.name,          
+          this.state.address,
+          this.state.contact,
+          this.state.description,
+          this.state.avatarURL
         )
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {

@@ -70,35 +70,12 @@ class CreateCampaign extends React.Component {
     this.setState({ endDate: date });
   }
 
-  stringToBytes32 (value) {
-    var valueArr = value.match(/.{1,31}/g);
-    var hexArr = [];
-    valueArr.forEach( (v) => {
-      var vBytes = ethers.utils.formatBytes32String(v)
-      hexArr.push(vBytes)
-    })
-    return hexArr
-  }
-
-  bytes32ArrayToString (hexArr) {
-    var sReturn = '';
-    hexArr.forEach( (v) => {
-      var s = ethers.utils.parseBytes32String(v)
-      sReturn += s
-    })
-    return sReturn
-  }
-
   handleSubmit = (e) => {
     this.setState({isLoading: true})
     e.preventDefault();
     console.log("SUBMIT ")
     console.log(this.state);
     try {
-      //var name = this.stringToBytes32(this.state.name)
-      //console.log(this.bytes32ArrayToString(name))
-      //var description = this.stringToBytes32(this.state.description)
-      //var avatarURL = this.stringToBytes32(this.state.avatarURL)
       var date = new Date(this.state.startDate);
       var parsedStartDate = parseInt(
         "" +
@@ -117,9 +94,9 @@ class CreateCampaign extends React.Component {
 
       this.props.charityContract.methods
         .createCampaign(
-          this.props.web3.utils.toHex(this.state.name),
-          this.props.web3.utils.toHex(this.state.description),
-          this.props.web3.utils.toHex(this.state.avatarURL),
+          this.state.name,
+          this.state.description,
+          this.state.avatarURL,
           this.state.target,
           parsedStartDate,
           parsedEndDate
