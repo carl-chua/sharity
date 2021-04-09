@@ -28,7 +28,7 @@ contract Donation {
     * the uint amount == msg.value
     */
     function donate(uint campaignId, uint amount) public payable returns (uint256) {
-        require(msg.value > 0, "Donation value needs to be more than 0 ether");
+        require(msg.value > 0, "Donation value needs to be more than 0 wei");
         require(charityContract.isStatusComplete(campaignId) == false, "Campaign has already ended");
         require(amount <= (getRemainingAmount(campaignId)), "Donation value is more than campaign's remaining amount");
         
@@ -46,6 +46,14 @@ contract Donation {
         
         donorDonations[msg.sender].push(newTransaction);
         campaignDonations[campaignId].push(newTransaction);
+
+        uint id = charityContract.getCampaignCharity(campaignId);
+        address payable recipient = address(uint160(charityContract.getCharityOwner(id)));
+        recipient.transfer(msg.value);
+
+        if(charityContract.checkCharityDonor(msg.sender, id) == false) {
+            charityContract.addCharityDonor(msg.sender, id);
+        }
         
         uint newTransactionId = numTransactions++;
         emit donated(newTransactionId);
@@ -101,5 +109,5 @@ contract Donation {
         }
         return false;
     }
-    
+
 }

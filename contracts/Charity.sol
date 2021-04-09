@@ -806,4 +806,20 @@ contract Charity {
     function getContractOwner() public view returns (address) {
         return contractOwner;
     }
+
+    // This will be the function to check if donor has donated to charity before
+    function checkCharityDonor(address donor, uint256 charityId) public view returns (bool) {
+        uint length = charities[charityId].donors.length;
+        for (uint i = 0; i < length; i++) {
+            if(charities[charityId].donors[i] == donor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // This will be the function to add a new donor to charity
+    function addCharityDonor(address donor, uint256 charityId) public {
+        charities[charityId].donors.push(donor);
+    }
 }
