@@ -37,6 +37,7 @@ contract Charity {
     mapping(address => charity) charityAddressMap;
     mapping(address => bool) charityOwnerRegistered;
     uint256 noOfCharities = 0;
+    uint256 charityRegFee = 5 * 10**17; // Reg fee is 0.5 ether, 1 ether is 10**18 wei
 
     //uint[] ongoingCampaigns;
     mapping(uint256 => bool) isOngoingCampaign;
@@ -91,7 +92,7 @@ contract Charity {
         string memory contactNumber,
         string memory description,
         string memory pictureURL
-    ) public returns (uint256 charityId) {
+    ) public payable returns (uint256 charityId) {
         /*require(charityName != "Charity name cannot be empty");
     require(charityAddress != "Charity address cannot be empty");
     require(contactNumber != "Charity number cannot be empty");
@@ -100,6 +101,10 @@ contract Charity {
         require(
             charityOwnerRegistered[msg.sender] == false,
             "This address has registered another charity already"
+        );
+        require(
+            msg.value >= charityRegFee,
+            "Need at least 0.5 ether to register a charity"
         );
 
         charityId = noOfCharities++;
