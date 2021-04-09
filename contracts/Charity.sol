@@ -14,6 +14,7 @@ contract Charity {
         string pictureURL;
         string verificationLink;
         CharityStatus charityStatus;
+        address[] donors;
     }
 
     struct campaign {
@@ -36,7 +37,9 @@ contract Charity {
     mapping(address => uint256) charityAddressIdMap;
     mapping(address => charity) charityAddressMap;
     mapping(address => bool) charityOwnerRegistered;
+    address[] donors;
     uint256 noOfCharities = 0;
+    uint contractMoney = 0;
     uint256 charityRegFee = 5 * 10**17; // Reg fee is 0.5 ether, 1 ether is 10**18 wei
 
     //uint[] ongoingCampaigns;
@@ -86,6 +89,15 @@ contract Charity {
         }
     }
 
+    function withdrawMoney() 
+        public
+        onlyOwner(msg.sender)
+    {
+        require(contractMoney >= 3 * charityRegFee, "Current money is less than 3 * charity register fee");
+        address payable recipient = address(uint160(contractOwner));
+        recipient.transfer(contractMoney);
+    }
+
     function registerCharity(
         string memory charityName,
         string memory charityAddress,
@@ -106,7 +118,7 @@ contract Charity {
             msg.value >= charityRegFee,
             "Need at least 0.5 ether to register a charity"
         );
-
+        contractMoney = contractMoney + msg.value;
         charityId = noOfCharities++;
         charity memory newCharity =
             charity(
@@ -117,12 +129,17 @@ contract Charity {
                 description,
                 pictureURL,
                 "",
-                CharityStatus.UNVERIFIED
+                CharityStatus.UNVERIFIED,
+                donors
             );
         charities[charityId] = newCharity;
         charityAddressIdMap[msg.sender] = charityId;
         isVerifiedCharity[charityId] = false;
         charityOwnerRegistered[msg.sender] = true;
+        
+        address payable recipient = address(uint160(contractOwner));
+        recipient.transfer(msg.value);
+        
         emit charityRegistered(charityId);
         // charitiesPendingVerification.push(charityId);
         return charityId;
@@ -180,7 +197,16 @@ contract Charity {
         );
 
         charities[charityId].charityStatus = CharityStatus.REJECTED;
+
         emit charityRevoked(charityId);
+
+        uint noOfRecepients = charities[charityId].donors.length;
+        uint dividend = charityRegFee / noOfRecepients;
+
+        for (uint i = 0; i < noOfRecepients; i++) {
+            address payable recipient = address(uint160(charities[charityId].donors[i]));
+            recipient.transfer(dividend);
+        }
     }
 
     /*
