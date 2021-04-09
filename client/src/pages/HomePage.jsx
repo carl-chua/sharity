@@ -44,19 +44,12 @@ export default function HomePage({
     campaign.campaignName = await charityContract.methods
       .getCampaignName(campaignId)
       .call();
-    campaign.campaignName = web3.utils.toUtf8(campaign.campaignName);
     campaign.campaignDescription = await charityContract.methods
       .getCampaignDescription(campaignId)
       .call();
-    campaign.campaignDescription = web3.utils.toUtf8(
-      campaign.campaignDescription
-    );
     campaign.campaignPictureURL = await charityContract.methods
       .getCampaignPictureURL(campaignId)
       .call();
-    campaign.campaignPictureURL = web3.utils.toUtf8(
-      campaign.campaignPictureURL
-    );
     campaign.campaignTargetDonation = await charityContract.methods
       .getCampaignTargetDonation(campaignId)
       .call();
@@ -91,11 +84,9 @@ export default function HomePage({
     campaign.charityName = await charityContract.methods
       .getCharityName(campaign.charityId)
       .call();
-    campaign.charityName = web3.utils.toUtf8(campaign.charityName);
     campaign.charityPictureURL = await charityContract.methods
       .getCharityPictureURL(campaign.charityId)
       .call();
-    campaign.charityPictureURL = web3.utils.toUtf8(campaign.charityPictureURL);
     console.log(campaign);
     return campaign;
   };
@@ -130,6 +121,7 @@ export default function HomePage({
       justify="center"
       alignItems="center"
       spacing={2}
+      style={{ marginTop: "2px" }}
     >
       <Grid className={classes.media} item xs={12}>
         <Box mt={10} fontWeight="fontWeightBold" fontSize={40}>

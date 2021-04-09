@@ -56,9 +56,11 @@ export default function TransactionHistory({
     return transactions;
   };
 
-  useEffect(async () => {
-    var transactions = await getTransactions(accounts[0]);
-    await setTransactions(transactions);
+  useEffect(() => {
+    (async () => {
+      var transactions = await getTransactions(accounts[0]);
+      await setTransactions(transactions);
+    })();
   }, []);
 
   return (
