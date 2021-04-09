@@ -4,14 +4,13 @@ import Box from "@material-ui/core/Box";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardMedia from "@material-ui/core/CardMedia";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import HomePageBanner from "../assets/homepagebanner.jpg";
 import TabPanel from "../components/TabPanel";
 import CampaignCard from "../components/CampaignCard";
 
+//Styling for Home page Banner
 const useStyles = makeStyles({
   media: {
     height: 300,
@@ -38,25 +37,19 @@ export default function HomePage({
     setValue(newValue);
   };
 
+  //Retrieve campaign from contract
   var getCampaign = async (campaignId) => {
     var campaign = {};
     campaign.campaignId = campaignId;
     campaign.campaignName = await charityContract.methods
       .getCampaignName(campaignId)
       .call();
-    campaign.campaignName = web3.utils.toUtf8(campaign.campaignName);
     campaign.campaignDescription = await charityContract.methods
       .getCampaignDescription(campaignId)
       .call();
-    campaign.campaignDescription = web3.utils.toUtf8(
-      campaign.campaignDescription
-    );
     campaign.campaignPictureURL = await charityContract.methods
       .getCampaignPictureURL(campaignId)
       .call();
-    campaign.campaignPictureURL = web3.utils.toUtf8(
-      campaign.campaignPictureURL
-    );
     campaign.campaignTargetDonation = await charityContract.methods
       .getCampaignTargetDonation(campaignId)
       .call();
@@ -91,15 +84,13 @@ export default function HomePage({
     campaign.charityName = await charityContract.methods
       .getCharityName(campaign.charityId)
       .call();
-    campaign.charityName = web3.utils.toUtf8(campaign.charityName);
     campaign.charityPictureURL = await charityContract.methods
       .getCharityPictureURL(campaign.charityId)
       .call();
-    campaign.charityPictureURL = web3.utils.toUtf8(campaign.charityPictureURL);
-    console.log(campaign);
     return campaign;
   };
 
+  // Load all campaigns data
   useEffect(() => {
     (async () => {
       const noOfCampaigns = await charityContract.methods
@@ -107,7 +98,6 @@ export default function HomePage({
         .call();
       let ongoingCampaigns = [];
       let pastCampaigns = [];
-      console.log(noOfCampaigns);
       for (let i = 0; i < noOfCampaigns; i++) {
         var campaign = await getCampaign(i);
         if (campaign.campaignStatus === "0") {
@@ -118,8 +108,8 @@ export default function HomePage({
         }
       }
       setIsLoading(false);
-      await setOngoingCampaigns(ongoingCampaigns);
-      await setPastCampaigns(pastCampaigns);
+      setOngoingCampaigns(ongoingCampaigns);
+      setPastCampaigns(pastCampaigns);
     })();
   }, []);
 
