@@ -70,6 +70,15 @@ contract Charity {
         _;
     }
 
+    // This will be the modifier that checks whether the function call is done by the Charity or contract owner itself.
+    modifier onlyVerifiedCharityOrOwner(address caller) {
+        require(
+            isVerifiedCharity[charityAddressIdMap[caller]] || caller == contractOwner,
+            "Caller is not a valid charity nor contract owner"
+        );
+        _;
+    }
+
     /*
      * This will be the function that check the address type
      * Parameters of this function will include address inputAddress
@@ -207,6 +216,12 @@ contract Charity {
             address payable recipient = address(uint160(charities[charityId].donors[i]));
             recipient.transfer(dividend);
         }
+
+        for (uint256 i = 0; i < noOfCampaigns; i++) {
+            if (campaigns[i].charityId == charityId) {
+                endCampaign(i);
+            }
+        }
     }
 
     /*
@@ -256,7 +271,7 @@ contract Charity {
      */
     function endCampaign(uint256 campaignId)
         public
-        onlyVerifiedCharity(msg.sender)
+        onlyVerifiedCharityOrOwner(msg.sender)
     {
         require(campaignId < noOfCampaigns, "Invalid campaign id");
         require(isOngoingCampaign[campaignId], "Campaign is not ongoing");
