@@ -61,7 +61,7 @@ class RegisterCharity extends React.Component {
           this.state.description,
           this.state.avatarURL
         )
-        .send({ from: this.props.accounts[0] })
+        .send({ from: this.props.accounts[0], value: this.props.web3.utils.toWei("0.5", 'ether')})
         .on("receipt", (receipt) => {
           console.log(receipt);
           var newId = parseInt(this.state.charityId) + 1;
@@ -241,7 +241,7 @@ class RegisterCharity extends React.Component {
                 Submit
               </Button>
               <Typography>
-                After submission, please wait for alert to come out.
+                Please note that 0.5 ether will be transferred as the nonrefundable registration fee. After submission, please wait for alert to come out.
               </Typography>
             </form>
           </div>
