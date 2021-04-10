@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { InputBase, IconButton, Paper, Button } from "@material-ui/core";
+import {
+  InputBase,
+  IconButton,
+  Paper,
+  Button,
+  Avatar,
+} from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import searchLogo from "../assets/Search logo.svg";
-import { Link } from "react-router-dom";
+import defaultAvatarLogo from "../assets/Default Avatar logo.svg";
+import { Link, useHistory } from "react-router-dom";
 import MetaMaskOnboarding from "@metamask/onboarding";
 
 const useStyles = makeStyles((theme) => ({
@@ -10,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
     padding: "2px 4px",
     display: "flex",
     alignItems: "center",
-    height: 35,
-    width: 300,
+    height: 30,
+    width: 250,
     backgroundColor: "#EAECEF",
   },
   input: {
@@ -37,26 +44,54 @@ const ColorButton = withStyles((theme) => ({
   },
 }))(Button);
 
-export default function Navbar() {
+export default function Navbar({
+  web3,
+  accounts,
+  charityContract,
+  donationContract,
+  isAuthed,
+  addressType,
+}) {
+  const history = useHistory();
   const classes = useStyles();
   const forwarderOrigin = "http://localhost:3000";
   const onboarding = new MetaMaskOnboarding({ forwarderOrigin });
 
-  const [metamaskInstalled, setMetamaskInstalled] = useState(false);
+  //const [metamaskInstalled, setMetamaskInstalled] = useState(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const { ethereum } = window;
     setMetamaskInstalled(Boolean(ethereum && ethereum.isMetaMask));
-  }, []);
+  }, []);*/
 
-  useEffect(() => {}, []);
+  const [charity, setCharity] = useState();
 
-  function handleClickInstallMetaMask() {
+  useEffect(() => {
+    if (addressType === "CHARITYOWNER") {
+      (async () => {
+        // I need the charity ID and the verified status
+        let charity = {};
+        charity.id = await charityContract.methods
+          .getCharityIdByAddress(web3.currentProvider.selectedAddress)
+          .call();
+        charity.profilePicture = await charityContract.methods
+          .getCharityPictureURLByAddress(web3.currentProvider.selectedAddress)
+          .call();
+        charity.charityStatus = await charityContract.methods
+          .getCharityStatusByAddress(web3.currentProvider.selectedAddress)
+          .call();
+
+        setCharity(charity);
+      })();
+    }
+  }, [addressType]);
+
+  /*function handleClickInstallMetaMask() {
     onboarding.startOnboarding();
-  }
+  }*/
 
   function renderButtonsComponent() {
-    if (metamaskInstalled === false) {
+    if (addressType === "DONOR") {
       return (
         <div
           style={{
@@ -66,6 +101,7 @@ export default function Navbar() {
           }}
         >
           <Link
+            to="/AllCharities"
             style={{
               textDecoration: "none",
               color: "#3B21CB",
@@ -74,20 +110,163 @@ export default function Navbar() {
           >
             All Charities
           </Link>
-          <ColorButton
+          <Link
+            to="/RegisterCharity"
             style={{
-              width: "210px",
-              outline: "none",
+              textDecoration: "none",
+              color: "#3B21CB",
+              marginRight: "18px",
             }}
-            variant="contained"
-            color="primary"
-            onClick={handleClickInstallMetaMask}
           >
-            Install MetaMask
-          </ColorButton>
+            Register Charity
+          </Link>
+          <Link
+            to="/TransactionHistory"
+            style={{
+              textDecoration: "none",
+              color: "#3B21CB",
+            }}
+          >
+            My Donations
+          </Link>
         </div>
       );
-    } else {
+    } else if (addressType === "CHARITYOWNER") {
+      if (charity == undefined) {
+        return "";
+      } else if (charity.charityStatus === "0") {
+        // Unverified
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Link
+              to="/AllCharities"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+                marginRight: "18px",
+              }}
+            >
+              All Charities
+            </Link>
+            <Link
+              to="/TransactionHistory"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+                marginRight: "18px",
+              }}
+            >
+              My Donations
+            </Link>
+            <Link
+              onClick={() => {
+                history.push(`/CharityPage/${charity.id}`);
+                window.location.reload();
+              }}
+            >
+              <Avatar src={charity.profilePicture || defaultAvatarLogo} />
+            </Link>
+          </div>
+        );
+      } else if (charity.charityStatus === "1") {
+        // Verified
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Link
+              to="/AllCharities"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+                marginRight: "18px",
+              }}
+            >
+              All Charities
+            </Link>
+            <Link
+              to="/CreateCampaign"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+                marginRight: "18px",
+              }}
+            >
+              Create Campaign
+            </Link>
+            <Link
+              to="/TransactionHistory"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+                marginRight: "18px",
+              }}
+            >
+              My Donations
+            </Link>
+            <Link
+              onClick={() => {
+                history.push(`/CharityPage/${charity.id}`);
+                window.location.reload();
+              }}
+            >
+              <Avatar src={charity.profilePicture || defaultAvatarLogo} />
+            </Link>
+          </div>
+        );
+      } else if (charity.charityStatus === "2") {
+        // Rejected (same as donor)
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Link
+              to="/AllCharities"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+                marginRight: "18px",
+              }}
+            >
+              All Charities
+            </Link>
+            <Link
+              to="/RegisterCharity"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+                marginRight: "18px",
+              }}
+            >
+              Register Charity
+            </Link>
+            <Link
+              to="/TransactionHistory"
+              style={{
+                textDecoration: "none",
+                color: "#3B21CB",
+              }}
+            >
+              My Donations
+            </Link>
+          </div>
+        );
+      }
+    } else if (addressType === "CONTRACT") {
       return (
         <div
           style={{
@@ -97,6 +276,7 @@ export default function Navbar() {
           }}
         >
           <Link
+            to="/AllCharities"
             style={{
               textDecoration: "none",
               color: "#3B21CB",
@@ -105,16 +285,15 @@ export default function Navbar() {
           >
             All Charities
           </Link>
-          <ColorButton
+          <Link
+            to="/TransactionHistory"
             style={{
-              width: "210px",
-              outline: "none",
+              textDecoration: "none",
+              color: "#3B21CB",
             }}
-            variant="contained"
-            color="primary"
           >
-            CONNECT TO A WALLET
-          </ColorButton>
+            My Donations
+          </Link>
         </div>
       );
     }
@@ -156,7 +335,9 @@ export default function Navbar() {
             <InputBase className={classes.input} placeholder="Search" />
           </Paper>
         </div>
-        <h3 style={{ fontStyle: "italic", fontSize: "28px" }}>Sharity</h3>
+        <Link to="/" style={{ color: "inherit", textDecoration: "inherit" }}>
+          <h3 style={{ fontStyle: "italic", fontSize: "28px" }}>Sharity</h3>
+        </Link>
       </div>
       <div>{renderButtonsComponent()}</div>
     </div>

@@ -55,7 +55,7 @@ class RegisterCharity extends React.Component {
     try {
       this.props.charityContract.methods
         .registerCharity(
-          this.state.name,          
+          this.state.name,
           this.state.address,
           this.state.contact,
           this.state.description,
@@ -75,6 +75,7 @@ class RegisterCharity extends React.Component {
             avatarURL: "",
           });
           console.log(this.state);
+          this.props.refreshNavbar();
           this.setState({ isLoading: false });
 
           alert(
