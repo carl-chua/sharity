@@ -8,6 +8,8 @@ import Box from "@material-ui/core/Box";
 import { useHistory, Link } from "react-router-dom";
 import LinearWithValueLabel from "./LinearWithValueLabel";
 import moment from "moment";
+import defaultAvatarLogo from "../assets/Default Avatar logo.svg";
+import defaultCharityPicture from "../assets/defaultCharityPicture.jpg";
 
 export default function CampaignCard({ data }) {
   let history = useHistory();
@@ -17,7 +19,9 @@ export default function CampaignCard({ data }) {
     },
     mediaCard: {
       height: 200,
-      background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${data.campaignPictureURL})`,
+      background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${
+        data.campaignPictureURL || defaultCharityPicture
+      })`,
       backgroundSize: "cover",
       color: "white",
     },
@@ -101,7 +105,8 @@ export default function CampaignCard({ data }) {
               </Grid>
               <Grid item xs={3}>
                 <img
-                  src={data.charityPictureURL}
+                  style={{ height: "48px" }}
+                  src={data.charityPictureURL || defaultAvatarLogo}
                   className="rounded-circle img-fluid"
                 />
               </Grid>

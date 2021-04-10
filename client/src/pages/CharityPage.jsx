@@ -16,8 +16,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import TextField from '@material-ui/core/TextField';
+import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import defaultAvatarLogo from "../assets/Default Avatar logo.svg";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -53,13 +54,12 @@ class CharityPage extends React.Component {
       isLoadingButton: false,
       isLoadingDia: false,
       openDialogue: false,
-      verificationLinkInput: ""
+      verificationLinkInput: "",
     };
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleOpenDia = this.handleOpenDia.bind(this);
     this.handleCloseDia = this.handleCloseDia.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-
   }
 
   handleTabChange(event, value) {
@@ -69,7 +69,6 @@ class CharityPage extends React.Component {
 
   handleOpenDia() {
     this.setState({ openDialogue: true });
-
   }
 
   handleCloseDia() {
@@ -77,12 +76,12 @@ class CharityPage extends React.Component {
   }
 
   handleInputChange(event) {
-    console.log('/')
+    console.log("/");
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    console.log(name)
-    console.log(value)
+    console.log(name);
+    console.log(value);
 
     this.setState({
       [name]: value,
@@ -139,7 +138,7 @@ class CharityPage extends React.Component {
     const charityVerificationLink = await charityContract.methods
       .getCharityVerificationLink(this.state.charityId)
       .call();
-    
+
     if (charityVerificationLink != null) {
       this.setState({ verificationLink: charityVerificationLink });
     }
@@ -147,26 +146,25 @@ class CharityPage extends React.Component {
     console.log(length);
     for (var i = 0; i < length; i++) {
       const campaign = [];
+      campaign.campaignId = i;
       campaign.charityId = parseInt(
         await charityContract.methods.getCampaignCharity(i).call()
       );
-      campaign.charityPictureURL = 
-        await charityContract.methods
-          .getCharityPictureURL(campaign.charityId)
-          .call()
-      ;
-      campaign.campaignName = 
-        await charityContract.methods.getCampaignName(i).call()
-      ;
-      campaign.campaignDescription = 
-        await charityContract.methods.getCampaignDescription(i).call()
-      ;
+      campaign.charityPictureURL = await charityContract.methods
+        .getCharityPictureURL(campaign.charityId)
+        .call();
+      campaign.campaignName = await charityContract.methods
+        .getCampaignName(i)
+        .call();
+      campaign.campaignDescription = await charityContract.methods
+        .getCampaignDescription(i)
+        .call();
       campaign.campaignTargetDonation = parseInt(
         await charityContract.methods.getCampaignTargetDonation(i).call()
       );
-      campaign.campaignPictureURL = 
-        await charityContract.methods.getCampaignPictureURL(i).call()
-      ;
+      campaign.campaignPictureURL = await charityContract.methods
+        .getCampaignPictureURL(i)
+        .call();
       campaign.campaignStartDate = parseInt(
         await charityContract.methods.getCampaignStartDate(i).call()
       );
@@ -182,11 +180,9 @@ class CharityPage extends React.Component {
       campaign.campaignNoOfDonors = parseInt(
         await charityContract.methods.getCampaignNoOfDonors(i).call()
       );
-      campaign.charityName = 
-        await charityContract.methods
-          .getCharityName(parseInt(campaign.charityId))
-          .call()
-      ;
+      campaign.charityName = await charityContract.methods
+        .getCharityName(parseInt(campaign.charityId))
+        .call();
 
       if (
         parseInt(campaign.charityId) === this.state.charityId &&
@@ -208,7 +204,9 @@ class CharityPage extends React.Component {
     console.log(currentCampaigns);
     var currentCampaignsCards = currentCampaigns.map((campaign) => {
       const classes = useStyles;
+      console.log(campaign);
       const data = {
+        campaignId: campaign.campaignId,
         campaignCurrentDonation: campaign.campaignCurrentDonation,
         campaignTargetDonation: campaign.campaignTargetDonation,
         campaignNoOfDonors: campaign.campaignNoOfDonors,
@@ -230,6 +228,7 @@ class CharityPage extends React.Component {
     var pastCampaignsCards = pastCampaigns.map((campaign) => {
       const classes = useStyles;
       const data = {
+        campaignId: campaign.campaignId,
         campaignCurrentDonation: campaign.campaignCurrentDonation,
         campaignTargetDonation: campaign.campaignTargetDonation,
         campaignNoOfDonors: campaign.campaignNoOfDonors,
@@ -251,26 +250,26 @@ class CharityPage extends React.Component {
     this.setState({
       currentCampaigns: currentCampaignsCards,
       pastCampaigns: pastCampaignsCards,
-      isLoading: false
+      isLoading: false,
     });
   };
 
   handleVerify = () => {
-    console.log(this.state)
-    this.setState({isLoadingDia: true})
+    console.log(this.state);
+    this.setState({ isLoadingDia: true });
     try {
       this.props.charityContract.methods
         .verifyCharity(this.state.charityId, this.state.verificationLinkInput)
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {
           console.log(receipt);
-          this.setState({isLoadingDia: false})
+          this.setState({ isLoadingDia: false });
           alert("Verification successful");
           this.refreshPage();
         })
         .on("error", (error) => {
           console.log(error.message);
-          this.setState({isLoadingDia: false})
+          this.setState({ isLoadingDia: false });
           alert(
             "Verification unsuccessful, please verify again. Error Occured: " +
               error.message
@@ -279,25 +278,24 @@ class CharityPage extends React.Component {
     } catch (err) {
       console.log(err);
     }
-
   };
 
   handleReject = () => {
-    this.setState({isLoadingButton: true})
+    this.setState({ isLoadingButton: true });
     try {
       this.props.charityContract.methods
         .rejectCharity(this.state.charityId)
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {
           console.log(receipt);
-          this.setState({isLoadingButton: false})
+          this.setState({ isLoadingButton: false });
 
           alert("Rejection successful");
           this.refreshPage();
         })
         .on("error", (error) => {
           console.log(error.message);
-          this.setState({isLoadingButton: false})
+          this.setState({ isLoadingButton: false });
 
           alert(
             "Rejection unsuccessful, please verify again. Error Occured: " +
@@ -310,21 +308,21 @@ class CharityPage extends React.Component {
   };
 
   handleRevoke = () => {
-    this.setState({isLoadingButton: true})
+    this.setState({ isLoadingButton: true });
     try {
       this.props.charityContract.methods
         .revokeCharity(this.state.charityId)
         .send({ from: this.props.accounts[0] })
         .on("receipt", (receipt) => {
           console.log(receipt);
-          this.setState({isLoadingButton: false})
+          this.setState({ isLoadingButton: false });
 
           alert("Rejection successful");
           this.refreshPage();
         })
         .on("error", (error) => {
           console.log(error.message);
-          this.setState({isLoadingButton: false})
+          this.setState({ isLoadingButton: false });
 
           alert(
             "Rejection unsuccessful, please verify again. Error Occured: " +
@@ -370,13 +368,23 @@ class CharityPage extends React.Component {
       if (this.state.owner === true && this.state.status === "PENDING") {
         return (
           <div>
-            <img src={this.state.charityPictureURL} alt="charity avatar" width="200" height="200"></img>
-            <p >Name:{this.state.name}</p>
+            <img
+              src={this.state.charityPictureURL || defaultAvatarLogo}
+              alt="charity avatar"
+              width="200"
+              height="200"
+            ></img>
+            <p>Name:{this.state.name}</p>
             <p>Description:{this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
             <p>Status: {this.state.status}</p>
-            <Button size="small" color="primary" variant="outlined" onClick={this.handleOpenDia} >
+            <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              onClick={this.handleOpenDia}
+            >
               Verify the Charity
             </Button>
             <Dialog
@@ -384,49 +392,70 @@ class CharityPage extends React.Component {
               onClose={this.handleCloseDia}
               aria-labelledby="form-dialog-title"
             >
-              <DialogTitle id="form-dialog-title">Verification Link</DialogTitle>
+              <DialogTitle id="form-dialog-title">
+                Verification Link
+              </DialogTitle>
               <DialogContent>
                 <DialogContentText>
                   Enter the link that evidence the legitimacy of the charity.
                 </DialogContentText>
-                  <TextField
-                    name="verificationLinkInput"
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="verificationLink"
-                    value={this.state.verificationLinkInput}
-                    onChange={this.handleInputChange}
-                    label="Verification Link"
-                    autoFocus
-                  />
+                <TextField
+                  name="verificationLinkInput"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="verificationLink"
+                  value={this.state.verificationLinkInput}
+                  onChange={this.handleInputChange}
+                  label="Verification Link"
+                  autoFocus
+                />
               </DialogContent>
               <DialogActions>
-              {this.state.isLoadingDia ? (
-                    <Grid item xs={12}>
-                      <CircularProgress />
-                    </Grid>
-                  ) : (<span></span>)}             
+                {this.state.isLoadingDia ? (
+                  <Grid item xs={12}>
+                    <CircularProgress />
+                  </Grid>
+                ) : (
+                  <span></span>
+                )}
                 <Button onClick={this.handleVerify} color="primary">
                   Submit
                 </Button>
               </DialogActions>
             </Dialog>
             {this.state.isLoadingButton ? (
-                    <Grid item xs={12}>
-                      <CircularProgress />
-                    </Grid>
-                  ) : (<span></span>)} 
-            <Button size="small" color="primary" variant="outlined"  onClick={this.handleReject}>
+              <Grid item xs={12}>
+                <CircularProgress />
+              </Grid>
+            ) : (
+              <span></span>
+            )}
+            <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              onClick={this.handleReject}
+            >
               Reject the Charity
             </Button>
-            <Typography>After submission, please wait for alert to come out.</Typography>
+            <Typography>
+              After submission, please wait for alert to come out.
+            </Typography>
           </div>
         );
-      } else if (this.state.owner === true && this.state.status === "VERIFIED"){
+      } else if (
+        this.state.owner === true &&
+        this.state.status === "VERIFIED"
+      ) {
         return (
           <div>
-            <img src={this.state.charityPictureURL} alt="charity avatar" width="200" height="200"></img>
+            <img
+              src={this.state.charityPictureURL || defaultAvatarLogo}
+              alt="charity avatar"
+              width="200"
+              height="200"
+            ></img>
             <p>Name: {this.state.name}</p>
             <p>Description: {this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
@@ -434,27 +463,43 @@ class CharityPage extends React.Component {
             <p>Verification Link: {this.state.verificationLink}</p>
             <p>Status: {this.state.status}</p>
             {this.state.isLoadingButton ? (
-                    <Grid item xs={12}>
-                      <CircularProgress />
-                    </Grid>
-                  ) : (<span></span>)} 
-            <Button size="small" color="primary" variant="outlined" onClick={this.handleRevoke}>
+              <Grid item xs={12}>
+                <CircularProgress />
+              </Grid>
+            ) : (
+              <span></span>
+            )}
+            <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              onClick={this.handleRevoke}
+            >
               Revoke the Charity
             </Button>
-            <Typography>After submission, please wait for alert to come out.</Typography>
+            <Typography>
+              After submission, please wait for alert to come out.
+            </Typography>
           </div>
         );
-      } else if (this.state.status === "REJECTED"){
+      } else if (this.state.status === "REJECTED") {
         return (
           <div>
-            <Typography>This is not a valid charity or the charity has been rejected. Please find another. </Typography>
+            <Typography>
+              This is not a valid charity or the charity has been rejected.
+              Please find another.{" "}
+            </Typography>
           </div>
         );
-      }
-      else {
+      } else {
         return (
           <div>
-            <img src={this.state.charityPictureURL} alt="charity avatar" width="200" height="200"></img>
+            <img
+              src={this.state.charityPictureURL || defaultAvatarLogo}
+              alt="charity avatar"
+              width="200"
+              height="200"
+            ></img>
             <p>Name: {this.state.name}</p>
             <p>Description: {this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
@@ -480,26 +525,31 @@ class CharityPage extends React.Component {
             </Tabs>
             <TabPanel value={this.state.valueOfTab} index={0}>
               <Grid container spacing={3}>
-              {this.state.isLoading ? (
-              <Grid item xs={12}>
-                <CircularProgress />
-              </Grid>
-            ) : (this.state.currentCampaigns)}
-                
+                {this.state.isLoading ? (
+                  <Grid item xs={12}>
+                    <CircularProgress />
+                  </Grid>
+                ) : (
+                  this.state.currentCampaigns
+                )}
               </Grid>
             </TabPanel>
             <TabPanel value={this.state.valueOfTab} index={1}>
               <Grid container spacing={3}>
-              {this.state.isLoading ? (
-              <Grid item xs={12}>
-                <CircularProgress />
+                {this.state.isLoading ? (
+                  <Grid item xs={12}>
+                    <CircularProgress />
+                  </Grid>
+                ) : (
+                  this.state.pastCampaigns
+                )}
               </Grid>
-            ) : (this.state.endedCampaigns)}              
-            </Grid>
             </TabPanel>
           </Grid>
         );
-      } else {return }
+      } else {
+        return;
+      }
     };
 
     return (

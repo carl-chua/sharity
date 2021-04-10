@@ -18,11 +18,17 @@ import Charity from "./contracts/Charity.json";
 import Donation from "./contracts/Donation.json";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.refreshNavbar = this.refreshNavbar.bind(this);
+  }
   state = {
     web3: null,
     accounts: null,
     charityContract: null,
     donationContract: null,
+    addressType: null,
   };
 
   componentDidMount = async () => {
@@ -49,6 +55,10 @@ class App extends Component {
         deployedNetworkDonation && deployedNetworkDonation.address
       );
 
+      let addressType = await charityInstance.methods
+        .checkAddressType(web3.currentProvider.selectedAddress)
+        .call();
+
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({
@@ -56,6 +66,7 @@ class App extends Component {
         accounts,
         charityContract: charityInstance,
         donationContract: donationInstance,
+        addressType: addressType,
       });
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -66,6 +77,15 @@ class App extends Component {
     }
   };
 
+  refreshNavbar = async () => {
+    let addressType = await this.state.charityContract.methods
+      .checkAddressType(this.state.web3.currentProvider.selectedAddress)
+      .call();
+    this.setState({
+      addressType: addressType,
+    });
+  };
+
   render() {
     return (
       <div className="App">
@@ -73,7 +93,14 @@ class App extends Component {
           <ErrorPage />
         ) : (
           <div>
-            <Navbar />
+            <Navbar
+              web3={this.state.web3}
+              accounts={this.state.accounts}
+              charityContract={this.state.charityContract}
+              donationContract={this.state.donationContract}
+              isAuthed={true}
+              addressType={this.state.addressType}
+            />
             <Switch>
               <Route
                 exact
@@ -98,6 +125,7 @@ class App extends Component {
                     charityContract={this.state.charityContract}
                     donationContract={this.state.donationContract}
                     isAuthed={true}
+                    refreshNavbar={this.refreshNavbar}
                   />
                 )}
               />
@@ -127,7 +155,7 @@ class App extends Component {
                   />
                 )}
               />
-              <Route
+              {/*<Route
                 exact
                 path="/CharityPage"
                 render={(props) => (
@@ -139,7 +167,7 @@ class App extends Component {
                     isAuthed={true}
                   />
                 )}
-              />
+                />*/}
               <Route
                 exact
                 path="/CharityPage/:id"
@@ -178,6 +206,7 @@ class App extends Component {
                     charityContract={this.state.charityContract}
                     donationContract={this.state.donationContract}
                     isAuthed={true}
+                    addressType={this.state.addressType}
                   />
                 )}
               />
