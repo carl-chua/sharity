@@ -29,6 +29,14 @@ contract Charity {
         uint256 endDate;
         CampaignStatus campaignStatus;
     }
+    
+    struct Transaction {
+        uint transactionId;
+        address donor;
+        uint campaignId;
+        uint amount;
+    }
+    
 
     address contractOwner = msg.sender;
     //uint[] charitiesPendingVerification;
@@ -37,6 +45,7 @@ contract Charity {
     mapping(address => uint256) charityAddressIdMap;
     mapping(address => charity) charityAddressMap;
     mapping(address => bool) charityOwnerRegistered;
+    mapping (uint256 => Transaction[]) charityRegReturn;
     address[] donors;
     uint256 noOfCharities = 0;
     uint contractMoney = 0;
@@ -46,6 +55,7 @@ contract Charity {
     mapping(uint256 => bool) isOngoingCampaign;
     mapping(uint256 => campaign) campaigns;
     uint256 noOfCampaigns = 0;
+    uint256 noOfReturns = 0;
 
     event charityRegistered(uint256 charityId);
     event charityVerified(uint256 charityId);
@@ -103,8 +113,9 @@ contract Charity {
         onlyOwner(msg.sender)
     {
         require(contractMoney >= 3 * charityRegFee, "Current money is less than 3 * charity register fee");
-        address payable recipient = address(uint160(contractOwner));
+        address payable recipient = address(uint160(address(this)));
         recipient.transfer(contractMoney);
+        contractMoney = 0;
     }
 
     function registerCharity(
@@ -193,6 +204,12 @@ contract Charity {
         // remove charity from charitiesPendingVerification[]
     }
 
+
+    function getDonors(uint256 charityId) public view returns(address[] memory) {
+        address[] memory donorList = charities[charityId].donors;
+        return donorList;
+    }
+
     function revokeCharity(uint256 charityId) public onlyOwner(msg.sender) {
         require(msg.sender == contractOwner, "Caller is not contract owner");
         require(charityId < noOfCharities, "Invalid charity id");
@@ -213,12 +230,20 @@ contract Charity {
         uint dividend = charityRegFee / noOfRecepients;
 
         for (uint i = 0; i < noOfRecepients; i++) {
-            address payable recipient = address(uint160(charities[charityId].donors[i]));
-            recipient.transfer(dividend);
+            //address payable recipient = address(uint160(charities[charityId].donors[i]));
+            //recipient.transfer(dividend);
+
+            Transaction memory newTransaction = Transaction(
+                noOfReturns,
+                charities[charityId].charityOwner,
+                charityId,
+                dividend
+            );
+            charityRegReturn[charityId].push(newTransaction);
         }
 
         for (uint256 i = 0; i < noOfCampaigns; i++) {
-            if (campaigns[i].charityId == charityId) {
+            if (campaigns[i].charityId == charityId && isOngoingCampaign[i]) {
                 endCampaign(i);
             }
         }
@@ -533,108 +558,6 @@ contract Charity {
     }
 
     /*
-     * This will be the getter function that everyone can call to get the total amounts of verified charities
-     * There will be no parameters for this function
-     */
-    function getVerifiedCharityAmount() public view returns (uint256) {
-        uint256 noOfVerifiedCharities = 0;
-        for (uint256 i = 0; i < noOfCharities; i++) {
-            if (charities[i].charityStatus == CharityStatus.VERIFIED) {
-                noOfVerifiedCharities++;
-            }
-        }
-        return noOfVerifiedCharities;
-    }
-
-    /*
-     * This will be the getter function that everyone can call to get the total amounts of unverified charities
-     * There will be no parameters for this function
-     */
-    function getUnverifiedCharityAmount() public view returns (uint256) {
-        uint256 noOfUnverifiedCharities = 0;
-        for (uint256 i = 0; i < noOfCharities; i++) {
-            if (charities[i].charityStatus == CharityStatus.UNVERIFIED) {
-                noOfUnverifiedCharities++;
-            }
-        }
-        return noOfUnverifiedCharities;
-    }
-
-    /*
-     * This will be the getter function that everyone can call to get the total amounts of rejected charities
-     * There will be no parameters for this function
-     */
-    function getRejectedCharityAmount() public view returns (uint256) {
-        uint256 noOfRejectedCharities = 0;
-        for (uint256 i = 0; i < noOfCharities; i++) {
-            if (charities[i].charityStatus == CharityStatus.REJECTED) {
-                noOfRejectedCharities++;
-            }
-        }
-        return noOfRejectedCharities;
-    }
-
-    /*
-     * This will be the function that everyone can call to get the total amounts of campaigns hold by the given charities
-     * Parameters of this function will include uint charityId
-     */
-    function getCampaignAmountByCharity(uint256 charityId)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 noOfCampaignByCharity = 0;
-        for (uint256 i = 0; i < noOfCampaigns; i++) {
-            if (campaigns[i].charityId == charityId) {
-                noOfCampaignByCharity++;
-            }
-        }
-        return noOfCampaignByCharity;
-    }
-
-    /*
-     * This will be the function that everyone can call to get the total amounts of active campaigns hold by the given charities
-     * Parameters of this function will include uint charityId
-     */
-    function getActiveCampaignAmountByCharity(uint256 charityId)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 noOfActiveCampaignByCharity = 0;
-        for (uint256 i = 0; i < noOfCampaigns; i++) {
-            if (
-                campaigns[i].charityId == charityId &&
-                isOngoingCampaign[i] == true
-            ) {
-                noOfActiveCampaignByCharity++;
-            }
-        }
-        return noOfActiveCampaignByCharity;
-    }
-
-    /*
-     * This will be the function that everyone can call to get the total amounts of ended campaigns hold by the given charities
-     * Parameters of this function will include uint charityId
-     */
-    function getEndedCampaignAmountByCharity(uint256 charityId)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 noOfEndedCampaignByCharity = 0;
-        for (uint256 i = 0; i < noOfCampaigns; i++) {
-            if (
-                campaigns[i].charityId == charityId &&
-                isOngoingCampaign[i] == false
-            ) {
-                noOfEndedCampaignByCharity++;
-            }
-        }
-        return noOfEndedCampaignByCharity;
-    }
-
-    /*
      * This will be the getter function that everyone can call to check the campaign's charityId.
      * Parameters of this function will include uint campaignId
      */
@@ -832,6 +755,7 @@ contract Charity {
         }
         return false;
     }
+
 
     // This will be the function to add a new donor to charity
     function addCharityDonor(address donor, uint256 charityId) public {
