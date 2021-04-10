@@ -87,6 +87,7 @@ export default function HomePage({
     campaign.charityPictureURL = await charityContract.methods
       .getCharityPictureURL(campaign.charityId)
       .call();
+    console.log(campaign);
     return campaign;
   };
 
@@ -120,6 +121,7 @@ export default function HomePage({
       justify="center"
       alignItems="center"
       spacing={2}
+      style={{ marginTop: "2px" }}
     >
       <Grid className={classes.media} item xs={12}>
         <Box mt={10} fontWeight="fontWeightBold" fontSize={40}>

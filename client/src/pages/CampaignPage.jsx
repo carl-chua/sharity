@@ -22,6 +22,8 @@ import { useAlert } from "react-alert";
 import gratitudeImage from "../assets/gratitudeImage.png";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
+import defaultAvatarLogo from "../assets/Default Avatar logo.svg";
+import defaultCharityPicture from "../assets/defaultCharityPicture.jpg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,37 +57,41 @@ const ColorButton = withStyles((theme) => ({
   },
 }))(Button);
 
+const ColorButton2 = withStyles((theme) => ({
+  root: {
+    color: theme.palette.getContrastText("#EA3F79"),
+    backgroundColor: "#DA2425",
+    "&:hover": {
+      backgroundColor: "#FC2223",
+    },
+  },
+}))(Button);
+
 export default function CampaignPage({
   web3,
   accounts,
   charityContract,
   donationContract,
   isAuthed,
+  addressType,
 }) {
   const campaignId = useParams();
 
   const classes = useStyles();
   const alert = useAlert();
 
-  const getCampaign = async (campaignId) => {
+  var getCampaign = async (campaignId) => {
     var campaign = {};
     campaign.campaignId = campaignId;
     campaign.campaignName = await charityContract.methods
       .getCampaignName(campaignId)
       .call();
-    campaign.campaignName = web3.utils.toUtf8(campaign.campaignName);
     campaign.campaignDescription = await charityContract.methods
       .getCampaignDescription(campaignId)
       .call();
-    campaign.campaignDescription = web3.utils.toUtf8(
-      campaign.campaignDescription
-    );
     campaign.campaignPictureURL = await charityContract.methods
       .getCampaignPictureURL(campaignId)
       .call();
-    campaign.campaignPictureURL = web3.utils.toUtf8(
-      campaign.campaignPictureURL
-    );
     campaign.campaignTargetDonation = await charityContract.methods
       .getCampaignTargetDonation(campaignId)
       .call();
@@ -120,12 +126,12 @@ export default function CampaignPage({
     campaign.charityName = await charityContract.methods
       .getCharityName(campaign.charityId)
       .call();
-    campaign.charityName = web3.utils.toUtf8(campaign.charityName);
     campaign.charityPictureURL = await charityContract.methods
       .getCharityPictureURL(campaign.charityId)
       .call();
-    campaign.charityPictureURL = web3.utils.toUtf8(campaign.charityPictureURL);
-    console.log(campaign);
+    campaign.charityOwner = await charityContract.methods
+      .getCharityOwner(campaign.charityId)
+      .call();
     return campaign;
   };
 
@@ -134,6 +140,7 @@ export default function CampaignPage({
       let campaign = await getCampaign(campaignId.id);
       setCampaign(campaign);
       console.log(campaign);
+      console.log(accounts[0]);
     })();
   }, []);
 
@@ -146,6 +153,15 @@ export default function CampaignPage({
   const [gratitudeDialogOpen, setGratitudeDialogOpen] = useState(false);
 
   const [loadingDialogOpen, setLoadingDialogOpen] = useState(false);
+  const [endCampaignDialogOpen, setEndCampaignDialogOpen] = useState(false);
+
+  function handleEndCampaignOpen() {
+    setEndCampaignDialogOpen(true);
+  }
+
+  function handleEndCampaignClose() {
+    setEndCampaignDialogOpen(false);
+  }
 
   function handleDonationDialogOpen() {
     setDonationDialogOpen(true);
@@ -222,6 +238,32 @@ export default function CampaignPage({
       })
       .on("error", (error) => {
         console.log(error.message);
+        handleLoadingDialogClose();
+        handleDonationDialogClose();
+        alert.show("something went wrong");
+      });
+  }
+
+  function handleConfirmEndCampaign() {
+    handleLoadingDialogOpen();
+    charityContract.methods
+      .endCampaign(campaignId.id)
+      .send({
+        from: web3.currentProvider.selectedAddress,
+      })
+      .on("receipt", (receipt) => {
+        (async () => {
+          let campaign = await getCampaign(campaignId.id);
+          setCampaign(campaign);
+          handleLoadingDialogClose();
+          handleEndCampaignClose();
+        })();
+      })
+      .on("error", (error) => {
+        handleLoadingDialogClose();
+        handleEndCampaignClose();
+        alert.show("something went wrong");
+        console.log(error.message);
       });
   }
 
@@ -288,8 +330,46 @@ export default function CampaignPage({
     );
   }
 
+  function renderEndCampaignDialog() {
+    return (
+      <Dialog open={endCampaignDialogOpen} onClose={handleEndCampaignClose}>
+        <DialogTitle>Confirm End Campaign?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Campaign will be permanently ended
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button style={{ outline: "none" }} onClick={handleEndCampaignClose}>
+            Cancel
+          </Button>
+          <ColorButton
+            style={{ outline: "none" }}
+            color="primary"
+            variant="contained"
+            onClick={handleConfirmEndCampaign}
+          >
+            Confirm
+          </ColorButton>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
   function renderCampaignState() {
-    return <h5 style={{ textAlign: "center", color: "#0ACB1D" }}>ONGOING</h5>;
+    if (campaign.campaignStatus === "0") {
+      return (
+        <h5 style={{ textAlign: "center", color: "#0ACB1D", margin: 0 }}>
+          CAMPAIGN ONGOING
+        </h5>
+      );
+    } else {
+      return (
+        <h5 style={{ textAlign: "center", color: "#D2BE03", margin: 0 }}>
+          CAMPAIGN ENDED
+        </h5>
+      );
+    }
   }
 
   function renderLoadingDialog() {
@@ -314,6 +394,28 @@ export default function CampaignPage({
         </DialogContent>
       </Dialog>
     );
+  }
+
+  function renderEndCampaignButton() {
+    if (
+      (campaign.charityOwner == accounts[0] || addressType === "CONTRACT") &&
+      campaign.campaignStatus === "0"
+    ) {
+      return (
+        <ColorButton2
+          style={{
+            width: "150px",
+            alignSelf: "center",
+            marginTop: "8px",
+          }}
+          variant="contained"
+          color="primary"
+          onClick={handleEndCampaignOpen}
+        >
+          END CAMPAIGN
+        </ColorButton2>
+      );
+    }
   }
 
   return campaign != undefined ? (
@@ -351,7 +453,7 @@ export default function CampaignPage({
         >
           <div style={{ maxWidth: "100%", overflow: "hidden" }}>
             <img
-              src={campaign.campaignPictureURL}
+              src={campaign.campaignPictureURL || defaultCharityPicture}
               style={{ width: "38vw", maxHeight: "60vh", objectFit: "contain" }}
             />
           </div>
@@ -372,6 +474,7 @@ export default function CampaignPage({
             display: "flex",
             flexDirection: "column",
             marginLeft: "3%",
+            flexGrow: 1,
           }}
         >
           <h3 style={{ textAlign: "left" }}>{campaign.campaignName}</h3>
@@ -383,6 +486,7 @@ export default function CampaignPage({
             }}
           >
             <Link
+              to={"/CharityPage/" + campaign.charityId}
               style={{
                 textDecoration: "none",
                 color: "#3B21CB",
@@ -392,9 +496,10 @@ export default function CampaignPage({
                 marginRight: "1%",
               }}
             >
-              <Avatar src={campaign.charityPictureURL} />
+              <Avatar src={campaign.charityPictureURL || defaultAvatarLogo} />
             </Link>
             <Link
+              to={"/CharityPage/" + campaign.charityId}
               style={{
                 textDecoration: "none",
                 color: "#3B21CB",
@@ -406,12 +511,13 @@ export default function CampaignPage({
               {campaign.charityName}
             </Link>
           </div>
+          {renderEndCampaignButton()}
           <div
             style={{
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
-              marginTop: "3%",
+              marginTop: "8px",
             }}
           >
             <div
@@ -452,7 +558,7 @@ export default function CampaignPage({
                 )}
                 %
               </b>{" "}
-              of <b>${campaign.campaignTargetDonation}</b>
+              of <b>{campaign.campaignTargetDonation}</b> wei
             </div>
             <div>
               <b>
@@ -464,60 +570,65 @@ export default function CampaignPage({
               more days
             </div>
           </div>
-          <Card
-            style={{ marginTop: "28px", width: "100%", alignSelf: "center" }}
-          >
-            <CardContent
-              style={{
-                display: "flex",
-                flexDirection: "column",
-              }}
+          {campaign.campaignStatus === "0" ? (
+            <Card
+              style={{ marginTop: "28px", width: "100%", alignSelf: "center" }}
             >
-              <h5 style={{ color: "#3B21CB" }}>Donate Today</h5>
-              <Paper
-                style={{ alignSelf: "center", marginTop: "10px" }}
-                className={classes.root}
-              >
-                <InputBase
-                  className={classes.input}
-                  type="number"
-                  placeholder="Enter donation amount"
-                  value={donationAmount}
-                  onChange={(e) => setDonationAmount(e.target.value)}
-                />
-                <NativeSelect
-                  value={donationUnit}
-                  onChange={(e) => setDonationUnit(e.target.value)}
-                  inputProps={{ "aria-label": "donationUnit" }}
-                >
-                  <option value="ether">ether</option>
-                  <option value="milliether">milliether</option>
-                  <option value="microether">microether</option>
-                  <option value="Gwei">Gwei</option>
-                  <option value="Mwei">Mwei</option>
-                  <option value="Kwei">Kwei</option>
-                  <option value="wei">wei</option>
-                </NativeSelect>
-              </Paper>
-              <ColorButton
+              <CardContent
                 style={{
-                  marginTop: "18px",
-                  width: "150px",
-                  alignSelf: "center",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
-                variant="contained"
-                color="primary"
-                onClick={onDonateClick}
               >
-                DONATE
-              </ColorButton>
-            </CardContent>
-          </Card>
+                <h5 style={{ color: "#3B21CB" }}>Donate Today</h5>
+                <Paper
+                  style={{ alignSelf: "center", marginTop: "10px" }}
+                  className={classes.root}
+                >
+                  <InputBase
+                    className={classes.input}
+                    type="number"
+                    placeholder="Enter donation amount"
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(e.target.value)}
+                  />
+                  <NativeSelect
+                    value={donationUnit}
+                    onChange={(e) => setDonationUnit(e.target.value)}
+                    inputProps={{ "aria-label": "donationUnit" }}
+                  >
+                    <option value="ether">ether</option>
+                    <option value="milliether">milliether</option>
+                    <option value="microether">microether</option>
+                    <option value="Gwei">Gwei</option>
+                    <option value="Mwei">Mwei</option>
+                    <option value="Kwei">Kwei</option>
+                    <option value="wei">wei</option>
+                  </NativeSelect>
+                </Paper>
+                <ColorButton
+                  style={{
+                    marginTop: "18px",
+                    width: "150px",
+                    alignSelf: "center",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  onClick={onDonateClick}
+                >
+                  DONATE
+                </ColorButton>
+              </CardContent>
+            </Card>
+          ) : (
+            ""
+          )}
         </div>
       </div>
       {renderDonationDialog()}
       {renderGratitudeDialog()}
       {renderLoadingDialog()}
+      {renderEndCampaignDialog()}
     </div>
   ) : (
     <Grid item xs={12}>
