@@ -29,6 +29,14 @@ contract Charity {
         uint256 endDate;
         CampaignStatus campaignStatus;
     }
+    
+    struct Transaction {
+        uint transactionId;
+        address donor;
+        uint campaignId;
+        uint amount;
+    }
+    
 
     address contractOwner = msg.sender;
     //uint[] charitiesPendingVerification;
@@ -37,6 +45,7 @@ contract Charity {
     mapping(address => uint256) charityAddressIdMap;
     mapping(address => charity) charityAddressMap;
     mapping(address => bool) charityOwnerRegistered;
+    mapping (address => Transaction[]) charityRegReturn;
     address[] donors;
     uint256 noOfCharities = 0;
     uint contractMoney = 0;
@@ -46,6 +55,7 @@ contract Charity {
     mapping(uint256 => bool) isOngoingCampaign;
     mapping(uint256 => campaign) campaigns;
     uint256 noOfCampaigns = 0;
+    uint256 noOfReturns = 0;
 
     event charityRegistered(uint256 charityId);
     event charityVerified(uint256 charityId);
@@ -215,10 +225,17 @@ contract Charity {
         for (uint i = 0; i < noOfRecepients; i++) {
             address payable recipient = address(uint160(charities[charityId].donors[i]));
             recipient.transfer(dividend);
+            Transaction memory newTransaction = Transaction(
+                noOfReturns,
+                charities[charityId].charityOwner,
+                campaignId,
+                dividend
+            );
+            charityRegReturn[charityId].push(newTransaction);
         }
 
         for (uint256 i = 0; i < noOfCampaigns; i++) {
-            if (campaigns[i].charityId == charityId) {
+            if (campaigns[i].charityId == charityId && isOngoingCampaign[i]) {
                 endCampaign(i);
             }
         }
@@ -823,6 +840,21 @@ contract Charity {
     }
 
     // This will be the function to check if donor has donated to charity before
+    function checkCharityDonor(address donor, uint256 charityId) public view returns (bool) {
+        uint length = charities[charityId].donors.length;
+        for (uint i = 0; i < length; i++) {
+            if(charities[charityId].donors[i] == donor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // This will be the function to add a new donor to charity
+    function addCharityDonor(address donor, uint256 charityId) public {
+        charities[charityId].donors.push(donor);
+    }
+
     function checkCharityDonor(address donor, uint256 charityId) public view returns (bool) {
         uint length = charities[charityId].donors.length;
         for (uint i = 0; i < length; i++) {
