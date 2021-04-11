@@ -46,7 +46,7 @@ const headCells = [
     id: "hash",
     numeric: false,
     disablePadding: false,
-    label: "Transaction id",
+    label: "Transaction Hash",
   },
   {
     id: "campaignName",
