@@ -7,14 +7,11 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "../components/TabPanel";
-import { Redirect } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
 
@@ -56,11 +53,9 @@ class AllCharities extends React.Component {
       const owner = await charityContract.methods.getContractOwner().call();
       if (accounts[0] === owner) {
           this.setState({owner: true})
-          //console.log("owner")
       }
       
       const length = await charityContract.methods.getNoOfCharities().call();
-      console.log("No of charities" + length)
       for (var i = 0; i < length; i++) {
         var charity = {};
         charity.id = i;
@@ -71,7 +66,6 @@ class AllCharities extends React.Component {
         charity.pictureURL = await charityContract.methods.getCharityPictureURL(i).call();
         charity.pictureURL = charity.pictureURL
         charity.status = await charityContract.methods.getCharityStatus(i).call();
-        console.log("status: " + charity.status)
         if (charity.status === '0') {
           charity.id = i;
           pendingCharities.push(charity);
@@ -123,7 +117,6 @@ class AllCharities extends React.Component {
       
       var pendingCharitiesCards = pendingCharities.map((charity) => {
         const classes = useStyles;
-        console.log(charity.pictureURL)
         return (
           <Grid key={charity.id} item xs={4}>
             <Link to={{

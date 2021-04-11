@@ -49,23 +49,13 @@ contract Charity {
     address[] donors;
     uint256 noOfCharities = 0;
     uint contractMoney = 0;
-    uint256 charityRegFee = 5 * 10**17 wei; // Reg fee is 0.5 ether, 1 ether is 10**18 wei
+    uint256 charityRegFee = 5 * 10**17; // Reg fee is 0.5 ether, 1 ether is 10**18 wei
 
     //uint[] ongoingCampaigns;
     mapping(uint256 => bool) isOngoingCampaign;
     mapping(uint256 => campaign) campaigns;
     uint256 noOfCampaigns = 0;
     uint256 noOfReturns = 0;
-
-    event charityRegistered(uint256 charityId);
-    event charityVerified(uint256 charityId);
-    event charityRejected(uint256 charityId);
-    event charityRevoked(uint256 charityId);
-    event campaignCreated(uint256 charityId, uint256 campaignId);
-    event campaignEnded(uint256 campaignId);
-    event updateCurrentDonation(uint256 newAmount);
-    event updateCampaignDonors(uint256 newNumber);
-    event showCharityBalance(uint256 balance, uint256 donation);
 
     modifier onlyOwner(address caller) {
         require(caller == contractOwner, "Caller is not contract owner");
@@ -89,8 +79,6 @@ contract Charity {
         );
         _;
     }
-    
-    function() external payable { }
 
     /*
      * This will be the function that check the address type
@@ -120,6 +108,7 @@ contract Charity {
         recipient.transfer(contractMoney);
         contractMoney = 0;
     }
+    function() external payable { }
 
     function registerCharity(
         string memory charityName,
@@ -128,11 +117,11 @@ contract Charity {
         string memory description,
         string memory pictureURL
     ) public payable returns (uint256 charityId) {
-        /*require(charityName != "Charity name cannot be empty");
-    require(charityAddress != "Charity address cannot be empty");
-    require(contactNumber != "Charity number cannot be empty");
-    require(description != "Description cannot be empty");
-    require(pictureURL != "Picture URL cannot be empty");*/
+        /*require(bytes(charityName).length != 0, "Charity name cannot be empty");
+    require(bytes(charityAddress).length != 0,  "Charity address cannot be empty");
+    require(bytes(contactNumber).length != 0,  "Charity number cannot be empty");
+    require(bytes(description).length != 0,  "Description cannot be empty");
+    require(bytes(pictureURL).length != 0,  "Picture URL cannot be empty");*/
         require(
             charityOwnerRegistered[msg.sender] == false,
             "This address has registered another charity already"
@@ -160,10 +149,9 @@ contract Charity {
         isVerifiedCharity[charityId] = false;
         charityOwnerRegistered[msg.sender] = true;
         
-        address payable recipient = address(uint160(address(this)));
-        recipient.send(msg.value);
+        address payable recipient = address(uint160(contractOwner));
+        recipient.transfer(msg.value);
         
-        emit charityRegistered(charityId);
         // charitiesPendingVerification.push(charityId);
         return charityId;
     }
@@ -186,7 +174,6 @@ contract Charity {
         charities[charityId].charityStatus = CharityStatus.VERIFIED;
         charities[charityId].verificationLink = verificationLink;
         isVerifiedCharity[charityId] = true;
-        emit charityVerified(charityId);
         // remove charity from charitiesPendingVerification[]
     }
 
@@ -203,58 +190,22 @@ contract Charity {
         );
 
         charities[charityId].charityStatus = CharityStatus.REJECTED;
-        emit charityRejected(charityId);
         // remove charity from charitiesPendingVerification[]
     }
 
 
-    function getDonors(uint256 charityId) public view returns(address[] memory) {
-        address[] memory donorList = charities[charityId].donors;
-        return donorList;
-    }
-
-    function revokeCharity(uint256 charityId) public payable onlyOwner(msg.sender) {
-        require(msg.sender == contractOwner, "Caller is not contract owner");
+    function revokeCharity(uint256 charityId) public onlyOwner(msg.sender) {
         require(charityId < noOfCharities, "Invalid charity id");
         require(
             charities[charityId].charityStatus == CharityStatus.VERIFIED,
             "Charity is not a verified charity"
         );
-        require(
-            isVerifiedCharity[charityId] == true,
-            "Charity has been verified"
-        );
 
         charities[charityId].charityStatus = CharityStatus.REJECTED;
 
-        emit charityRevoked(charityId);
-
-        uint noOfRecepients = charities[charityId].donors.length;
-        uint dividend = charityRegFee / noOfRecepients;
-        //dividend = dividend / 1e18;
-        
-        emit showCharityBalance(contractOwner.balance, dividend);
-        emit showCharityBalance(msg.sender.balance, dividend);
-
-        for (uint i = 0; i < noOfRecepients; i++) {
-            address payable recipient = address(uint160(charities[charityId].donors[i]));
-            recipient.transfer(dividend);
-
-            Transaction memory newTransaction = Transaction(
-                noOfReturns,
-                charities[charityId].charityOwner,
-                charityId,
-                dividend
-            );
-            charityRegReturn[charityId].push(newTransaction);
-        }
-
-        for (uint256 i = 0; i < noOfCampaigns; i++) {
-            if (campaigns[i].charityId == charityId && isOngoingCampaign[i]) {
-                endCampaign(i);
-            }
-        }
     }
+
+    
 
     /*
      * This will be the function that charities call to create a campaign.
@@ -268,9 +219,9 @@ contract Charity {
         uint256 startDate,
         uint256 endDate
     ) public onlyVerifiedCharity(msg.sender) returns (uint256 campaignId) {
-        /*require(campaignName != "Charity name cannot be empty");
-    require(description != "Description cannot be empty");
-    require(pictureURL != "Picture URL cannot be empty");
+        /*require(bytes(campaignName).length != 0, "Charity name cannot be empty");
+    require(bytes(description).length != 0,  "Description cannot be empty");
+    require(bytes(pictureURL ).length != 0,  "Picture URL cannot be empty");
     require(targetDonation > 0, "Target donation must be larger than 0");
     require(startDate < endDate, "Start date must be earlier than end date");*/
 
@@ -292,7 +243,6 @@ contract Charity {
         campaigns[campaignId] = newCampaign;
         // ongoingCampaigns.push(campaignId);
         isOngoingCampaign[campaignId] = true;
-        emit campaignCreated(charityId, campaignId);
         return campaignId;
     }
 
@@ -316,7 +266,6 @@ contract Charity {
 
         campaigns[campaignId].campaignStatus = CampaignStatus.ENDED;
         isOngoingCampaign[campaignId] = false;
-        emit campaignEnded(campaignId);
         // remove campaign from ongoingCampaigns[]
     }
 
@@ -333,7 +282,7 @@ contract Charity {
      * This will be the getter function that everyone can call to check the charity id.
      * Parameters of this function will include address inputAddress
      */
-    function getCharityIdByAddress(address inputAddress)
+    function getCharityIdByAddress(address inputAddress)   //used 
         public
         view
         returns (uint256)
@@ -360,23 +309,6 @@ contract Charity {
     }
 
     /*
-     * This will be the getter function that everyone can call to check the charity name.
-     * Parameters of this function will include address inputAddress
-     */
-    function getCharityNameByAddress(address inputAddress)
-        public
-        view
-        returns (string memory)
-    {
-        require(
-            charityOwnerRegistered[inputAddress] == true,
-            "Address not owner of any charity"
-        );
-        uint256 charityIdByAddress = charityAddressIdMap[inputAddress];
-        return charities[charityIdByAddress].charityName;
-    }
-
-    /*
      * This will be the getter function that everyone can call to check the charity pictureURL.
      * Parameters of this function will include uint charityId
      */
@@ -393,7 +325,7 @@ contract Charity {
      * This will be the getter function that everyone can call to check the charity pictureURL.
      * Parameters of this function will include uint charityId
      */
-    function getCharityPictureURLByAddress(address inputAddress)
+    function getCharityPictureURLByAddress(address inputAddress)   
         public
         view
         returns (string memory)
@@ -419,22 +351,6 @@ contract Charity {
         return charities[charityId].description;
     }
 
-    /*
-     * This will be the getter function that everyone can call to check the charity description.
-     * Parameters of this function will include address inputAddress
-     */
-    function getCharityDescriptionByAddress(address inputAddress)
-        public
-        view
-        returns (string memory)
-    {
-        require(
-            charityOwnerRegistered[inputAddress] == true,
-            "Address not owner of any charity"
-        );
-        uint256 charityIdByAddress = charityAddressIdMap[inputAddress];
-        return charities[charityIdByAddress].description;
-    }
 
     /*
      * This will be the getter function that everyone can call to check the charity status.
@@ -453,7 +369,7 @@ contract Charity {
      * This will be the getter function that everyone can call to check the charity status.
      * Parameters of this function will include address inputAddress
      */
-    function getCharityStatusByAddress(address inputAddress)
+    function getCharityStatusByAddress(address inputAddress)   
         public
         view
         returns (CharityStatus)
@@ -479,22 +395,6 @@ contract Charity {
         return charities[charityId].contactNumber;
     }
 
-    /*
-     * This will be the getter function that everyone can call to get the charity contact number.
-     * Parameters of this function will include address inputAddress
-     */
-    function getCharityContactNumberByAddress(address inputAddress)
-        public
-        view
-        returns (string memory)
-    {
-        require(
-            charityOwnerRegistered[inputAddress] == true,
-            "Address not owner of any charity"
-        );
-        uint256 charityIdByAddress = charityAddressIdMap[inputAddress];
-        return charities[charityIdByAddress].contactNumber;
-    }
 
     /*
      * This will be the getter function that everyone can call to get the charity contact address.
@@ -509,22 +409,6 @@ contract Charity {
         return charities[charityId].charityAddress;
     }
 
-    /*
-     * This will be the getter function that everyone can call to get the charity contact address.
-     * Parameters of this function will include address inputAddress
-     */
-    function getCharityContactAddressByAddress(address inputAddress)
-        public
-        view
-        returns (string memory)
-    {
-        require(
-            charityOwnerRegistered[inputAddress] == true,
-            "Address not owner of any charity"
-        );
-        uint256 charityIdByAddress = charityAddressIdMap[inputAddress];
-        return charities[charityIdByAddress].charityAddress;
-    }
 
     /*
      * This will be the getter function that everyone can call to get the charity verification Link.
@@ -539,22 +423,6 @@ contract Charity {
         return charities[charityId].verificationLink;
     }
 
-    /*
-     * This will be the getter function that everyone can call to get the charity verification Link.
-     * Parameters of this function will include address inputAddress
-     */
-    function getCharityVerificationLinkByAddress(address inputAddress)
-        public
-        view
-        returns (string memory)
-    {
-        require(
-            charityOwnerRegistered[inputAddress] == true,
-            "Address not owner of any charity"
-        );
-        uint256 charityIdByAddress = charityAddressIdMap[inputAddress];
-        return charities[charityIdByAddress].verificationLink;
-    }
 
     /*
      * This will be the getter function that everyone can call to get the total amounts of the charities.
@@ -563,7 +431,7 @@ contract Charity {
     function getNoOfCharities() public view returns (uint256) {
         return noOfCharities;
     }
-
+    
     /*
      * This will be the getter function that everyone can call to check the campaign's charityId.
      * Parameters of this function will include uint campaignId
@@ -730,7 +598,6 @@ contract Charity {
         require(campaignId < noOfCampaigns, "Invalid campaign id");
         uint256 newAmount = campaigns[campaignId].currentDonation + newDonation;
         campaigns[campaignId].currentDonation = newAmount;
-        emit updateCurrentDonation(newAmount);
     }
 
     /*
@@ -741,7 +608,15 @@ contract Charity {
         require(campaignId < noOfCampaigns, "Invalid campaign id");
         uint256 newNumber = campaigns[campaignId].noOfDonors + 1;
         campaigns[campaignId].noOfDonors = newNumber;
-        emit updateCampaignDonors(newNumber);
+    }
+
+    function getDonors(uint256 charityId) public view returns(address[] memory) {
+        address[] memory donorList = charities[charityId].donors;
+        return donorList;
+    }
+
+    function getRegFee() public view returns(uint256) {
+        return charityRegFee;
     }
 
     /*

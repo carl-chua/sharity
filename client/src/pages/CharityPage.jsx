@@ -1,16 +1,10 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import CampaignCard from "../components/CampaignCard";
-import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
-import { useLocation, Link } from "react-router-dom";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -40,6 +34,7 @@ class CharityPage extends React.Component {
         window.location.href.substring(window.location.href.length - 1)
       ),
       owner: false,
+      regFee: 0,
       name: "",
       description: "",
       contact: "",
@@ -49,6 +44,7 @@ class CharityPage extends React.Component {
       status: "",
       currentCampaigns: "",
       pastCampaigns: "",
+      ongoingCampaignsIds: [],
       valueOfTab: 0,
       isLoading: true,
       isLoadingButton: false,
@@ -63,7 +59,6 @@ class CharityPage extends React.Component {
   }
 
   handleTabChange(event, value) {
-    console.log(value);
     this.setState({ valueOfTab: value });
   }
 
@@ -76,12 +71,9 @@ class CharityPage extends React.Component {
   }
 
   handleInputChange(event) {
-    console.log("/");
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    console.log(name);
-    console.log(value);
 
     this.setState({
       [name]: value,
@@ -89,16 +81,18 @@ class CharityPage extends React.Component {
   }
 
   componentDidMount = async () => {
-    console.log(this.state);
+    console.log(this.props.charityContract._address);
     var currentCampaigns = [];
     var pastCampaigns = [];
     const charityContract = this.props.charityContract;
     const accounts = this.props.accounts;
     const owner = await charityContract.methods.getContractOwner().call();
-    console.log(owner);
     if (accounts[0] === owner) {
       this.setState({ owner: true });
     }
+    const charityRegFee = await charityContract.methods.getRegFee().call();
+    this.setState({ regFee: parseInt(charityRegFee) });
+
     const charityStatus = await charityContract.methods
       .getCharityStatus(this.state.charityId)
       .call();
@@ -143,7 +137,6 @@ class CharityPage extends React.Component {
       this.setState({ verificationLink: charityVerificationLink });
     }
     const length = await charityContract.methods.getNoOfCampaigns().call();
-    console.log(length);
     for (var i = 0; i < length; i++) {
       const campaign = [];
       campaign.campaignId = i;
@@ -189,6 +182,7 @@ class CharityPage extends React.Component {
         campaign.status === "0"
       ) {
         campaign.id = i;
+        this.state.ongoingCampaignsIds.push(parseInt(campaign.id));
         currentCampaigns.push(campaign);
       }
       if (
@@ -198,10 +192,8 @@ class CharityPage extends React.Component {
         campaign.id = i;
         pastCampaigns.push(campaign);
       }
-      console.log(campaign);
     }
 
-    console.log(currentCampaigns);
     var currentCampaignsCards = currentCampaigns.map((campaign) => {
       const classes = useStyles;
       console.log(campaign);
@@ -255,7 +247,6 @@ class CharityPage extends React.Component {
   };
 
   handleVerify = () => {
-    console.log(this.state);
     this.setState({ isLoadingDia: true });
     try {
       this.props.charityContract.methods
@@ -307,31 +298,35 @@ class CharityPage extends React.Component {
     }
   };
 
-  handleRevoke = () => {
+  handleRevoke = async() => {
     this.setState({ isLoadingButton: true });
-    try {
-      this.props.charityContract.methods
-        .revokeCharity(this.state.charityId)
-        .send({ from: this.props.accounts[0] })
-        .on("receipt", (receipt) => {
-          console.log(receipt);
-          this.setState({ isLoadingButton: false });
-
-          alert("Rejection successful");
-          this.refreshPage();
-        })
-        .on("error", (error) => {
-          console.log(error.message);
-          this.setState({ isLoadingButton: false });
-
-          alert(
-            "Rejection unsuccessful, please verify again. Error Occured: " +
-              error.message
-          );
-        });
-    } catch (err) {
-      console.log(err);
+    console.log(this.state.ongoingCampaignsIds);
+    
+    for (var i = 0; i < this.state.ongoingCampaignsIds.length; i++) {
+      await this.props.charityContract.methods.endCampaign(parseInt(this.state.ongoingCampaignsIds[i])).send({ from: this.props.accounts[0] })
     }
+    const donors = await this.props.charityContract.methods.getDonors(this.state.charityId).call({ from: this.props.accounts[0] })
+    console.log(donors)
+    console.log(this.state.regFee)
+    const amount = this.state.regFee / donors.length;
+    console.log(amount);
+    const owner = await this.props.charityContract.methods.getContractOwner().call();
+    for (var i = 0; i < donors.length; i++) {
+      console.log(donors[i])
+      this.props.web3.eth.sendTransaction({
+        from: owner.toString(),
+        to: donors[i].toString(),
+        value: amount.toString(),
+      }).on("receipt", (receipt) => {console.log(receipt)})
+    };
+    console.log("here")
+    const revoke = await this.props.charityContract.methods
+    .revokeCharity(this.state.charityId)
+    .send({ from: this.props.accounts[0] })
+
+    this.setState({ isLoadingButton: false });
+    alert("Revoke success")
+    this.refreshPage();
   };
 
   refreshPage = () => {
@@ -469,7 +464,9 @@ class CharityPage extends React.Component {
             ) : (
               <span></span>
             )}
-            <Button
+                {this.state.isLoading ? (<span></span>
+                ) : (
+                  <Button
               size="small"
               color="primary"
               variant="outlined"
@@ -477,6 +474,8 @@ class CharityPage extends React.Component {
             >
               Revoke the Charity
             </Button>
+                )}
+            
             <Typography>
               After submission, please wait for alert to come out.
             </Typography>

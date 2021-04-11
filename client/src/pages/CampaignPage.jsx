@@ -529,7 +529,7 @@ export default function CampaignPage({
               }}
             >
               <h3 style={{ margin: "0", textAlign: "left" }}>
-                ${campaign.campaignCurrentDonation}
+                {campaign.campaignCurrentDonation} wei
               </h3>
               <p style={{ margin: "0", textAlign: "left" }}>
                 raised from {campaign.campaignNoOfDonors} donors
