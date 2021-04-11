@@ -68,7 +68,7 @@ contract Donation {
      * getDonorDonation only retrieves a specific donation by a donor. To retrieve the full donation
      * history by donor, it would require looping of entire Transaction[] mapped to donor address
     */
-    function getDonorDonation(address donor, uint index) public view returns(uint, address, uint, uint, uint, string){
+    function getDonorDonation(address donor, uint index) public view returns(uint, address, uint, uint, uint, string memory){
         return (donorDonations[donor][index].transactionId, donorDonations[donor][index].donor,
         donorDonations[donor][index].campaignId, donorDonations[donor][index].amount, 
         donorDonations[donor][index].date, donorDonations[donor][index].hash);
