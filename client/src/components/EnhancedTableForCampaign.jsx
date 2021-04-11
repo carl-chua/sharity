@@ -216,7 +216,18 @@ export default function EnhancedTable({ title, rows }) {
                             {row.hash}
                           </Link>
                         </TableCell>
-                        <TableCell align="left">{row.donor}</TableCell>
+                        <TableCell align="left">
+                          <Link
+                            href={
+                              "https://ropsten.etherscan.io/address/" +
+                              row.donor
+                            }
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            {row.donor}
+                          </Link>
+                        </TableCell>
                         <TableCell align="left">
                           {moment(row.date, "YYYYMMDD").format("YYYY-MM-DD")}
                         </TableCell>
