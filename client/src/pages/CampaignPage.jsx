@@ -145,6 +145,7 @@ export default function CampaignPage({
   }, []);
 
   const [campaign, setCampaign] = useState();
+  const [transactions, setTransactions] = useState();
 
   const [donationAmount, setDonationAmount] = useState("");
   const [donationUnit, setDonationUnit] = useState("ether");
@@ -239,10 +240,10 @@ export default function CampaignPage({
           let transactionId =
             receipt.events.donated.returnValues.newTransactionId;
           let transactionHash = receipt.transactionHash;
-          await donationContract.methods.setTransactionHash(
+          donationContract.methods.setTransactionHash(
             transactionId,
             campaignId.id,
-            web3.currentProvider.selectedAddress,
+            accounts[0],
             transactionHash
           );
           let campaign = await getCampaign(campaignId.id);
