@@ -365,8 +365,8 @@ class CharityPage extends React.Component {
             <img
               src={this.state.charityPictureURL || defaultAvatarLogo}
               alt="charity avatar"
-              width="200"
-              height="200"
+              width="300"
+              height="300"
             ></img>
             <p>Name:{this.state.name}</p>
             <p>Description:{this.state.description}</p>
@@ -447,8 +447,8 @@ class CharityPage extends React.Component {
             <img
               src={this.state.charityPictureURL || defaultAvatarLogo}
               alt="charity avatar"
-              width="200"
-              height="200"
+              width="300"
+              height="300"
             ></img>
             <p>Name: {this.state.name}</p>
             <p>Description: {this.state.description}</p>
@@ -495,15 +495,17 @@ class CharityPage extends React.Component {
             <img
               src={this.state.charityPictureURL || defaultAvatarLogo}
               alt="charity avatar"
-              width="200"
-              height="200"
+              width="300"
+              height="300"
             ></img>
+            <Grid>
             <p>Name: {this.state.name}</p>
             <p>Description: {this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
             <p>Verification Link: {this.state.verificationLink}</p>
             <p>Status: {this.state.status}</p>
+            </Grid>
           </div>
         );
       }
@@ -552,12 +554,9 @@ class CharityPage extends React.Component {
 
     return (
       <Grid container spacing={2} justify="center">
-        <Grid item xs={10}>
-          <Box textAlign="left" fontWeight="fontWeightBold" fontSize={26}>
-            {this.state.name}
+          <Box textAlign="left"  fontSize={26}>
+            {profile()}
           </Box>
-        </Grid>
-        {profile()}
         {view()}
       </Grid>
     );
