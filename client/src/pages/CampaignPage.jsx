@@ -145,6 +145,7 @@ export default function CampaignPage({
   }, []);
 
   const [campaign, setCampaign] = useState();
+  const [transactions, setTransactions] = useState();
 
   const [donationAmount, setDonationAmount] = useState("");
   const [donationUnit, setDonationUnit] = useState("ether");
@@ -221,14 +222,30 @@ export default function CampaignPage({
   function onConfirmDonation() {
     handleLoadingDialogOpen();
     let amount = convertToWei();
+    let transactionDate = new Date();
+    let parsedTransactionDate = parseInt(
+      "" +
+        transactionDate.getFullYear() +
+        ("0" + (transactionDate.getMonth() + 1)).slice(-2) +
+        transactionDate.getDate()
+    );
     donationContract.methods
-      .donate(campaignId.id, amount.toString())
+      .donate(campaignId.id, amount.toString(), parsedTransactionDate)
       .send({
         from: web3.currentProvider.selectedAddress,
         value: amount.toString(),
       })
       .on("receipt", (receipt) => {
         (async () => {
+          let transactionId =
+            receipt.events.donated.returnValues.newTransactionId;
+          let transactionHash = receipt.transactionHash;
+          donationContract.methods.setTransactionHash(
+            transactionId,
+            campaignId.id,
+            accounts[0],
+            transactionHash
+          );
           let campaign = await getCampaign(campaignId.id);
           setCampaign(campaign);
           handleLoadingDialogClose();
