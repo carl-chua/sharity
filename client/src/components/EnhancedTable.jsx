@@ -157,37 +157,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({ title, data }) {
+export default function EnhancedTable({ title, rows }) {
   const classes = useStyles();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("date");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [emptyRows, setEmptyRows] = useState();
-
-  const rows = [
-    {
-      hash:
-        "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
-      campaignName: "campaigasd",
-      date: "20200412",
-      donatedAmount: 1,
-    },
-    {
-      hash:
-        "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
-      campaignName: "casdasdas",
-      date: "20200411",
-      donatedAmount: 2,
-    },
-    {
-      hash:
-        "1x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
-      campaignName: "aasdasdas",
-      date: "20200413",
-      donatedAmount: 3,
-    },
-  ];
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -242,8 +218,7 @@ export default function EnhancedTable({ title, data }) {
                         </TableCell>
                         <TableCell align="left">{row.campaignName}</TableCell>
                         <TableCell align="left">
-                          {row.date}
-                          {/* {moment(row.date, "YYYYMMDD")} */}
+                          {moment(row.date, "YYYYMMDD").format("YYYY-MM-DD")}
                         </TableCell>
                         <TableCell align="right">
                           {row.donatedAmount} wei
