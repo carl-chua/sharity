@@ -24,6 +24,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
 import defaultAvatarLogo from "../assets/Default Avatar logo.svg";
 import defaultCharityPicture from "../assets/defaultCharityPicture.jpg";
+import EnhancedTableForCampaign from "../components/EnhancedTableForCampaign";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,6 +80,30 @@ export default function CampaignPage({
 
   const classes = useStyles();
   const alert = useAlert();
+
+  var getTransactions = async (campaignId) => {
+    const noOfTransactions = await donationContract.methods
+      .getCampaignTotalDonations(campaignId)
+      .call();
+    var transactions = [];
+    for (let i = 0; i < noOfTransactions; i++) {
+      var transaction = await donationContract.methods
+        .getCampaignDonation(campaignId, i)
+        .call();
+      var transactionObject = {};
+      transactionObject.transactionId = transaction["0"];
+      transactionObject.donor = transaction["1"];
+      transactionObject.campaignId = transaction["2"];
+      transactionObject.donatedAmount = transaction["3"];
+      transactionObject.date = transaction["4"];
+      transactionObject.hash = transaction["5"];
+      transactionObject.campaignName = await charityContract.methods
+        .getCampaignName(transactionObject.campaignId)
+        .call();
+      transactions.push(transactionObject);
+    }
+    return transactions;
+  };
 
   var getCampaign = async (campaignId) => {
     var campaign = {};
@@ -139,8 +164,8 @@ export default function CampaignPage({
     (async () => {
       let campaign = await getCampaign(campaignId.id);
       setCampaign(campaign);
-      console.log(campaign);
-      console.log(accounts[0]);
+      let transactions = await getTransactions(campaignId.id);
+      setTransactions(transactions);
     })();
   }, []);
 
@@ -236,21 +261,31 @@ export default function CampaignPage({
         value: amount.toString(),
       })
       .on("receipt", (receipt) => {
-        (async () => {
+        (() => {
           let transactionId =
             receipt.events.donated.returnValues.newTransactionId;
           let transactionHash = receipt.transactionHash;
-          donationContract.methods.setTransactionHash(
-            transactionId,
-            campaignId.id,
-            accounts[0],
-            transactionHash
-          );
-          let campaign = await getCampaign(campaignId.id);
-          setCampaign(campaign);
-          handleLoadingDialogClose();
-          handleDonationDialogClose();
-          handleGratitudeDialogOpen();
+          donationContract.methods
+            .setTransactionHash(
+              transactionId,
+              campaignId.id,
+              accounts[0],
+              transactionHash
+            )
+            .send({
+              from: web3.currentProvider.selectedAddress,
+            })
+            .on("receipt", (receipt) => {
+              (async () => {
+                let campaign = await getCampaign(campaignId.id);
+                setCampaign(campaign);
+                let transactions = await getTransactions(campaignId.id);
+                setTransactions(transactions);
+                handleLoadingDialogClose();
+                handleDonationDialogClose();
+                handleGratitudeDialogOpen();
+              })();
+            });
         })();
       })
       .on("error", (error) => {
@@ -435,7 +470,7 @@ export default function CampaignPage({
     }
   }
 
-  return campaign != undefined ? (
+  return campaign != undefined && transactions != undefined ? (
     <div
       style={{
         display: "flex",
@@ -642,6 +677,21 @@ export default function CampaignPage({
           )}
         </div>
       </div>
+      <Grid
+        container
+        spacing={5}
+        justify="center"
+        style={{ marginTop: "18px" }}
+      >
+        <Grid item xs={10}>
+          {transactions && (
+            <EnhancedTableForCampaign
+              title={"Transaction history"}
+              rows={transactions}
+            />
+          )}
+        </Grid>
+      </Grid>
       {renderDonationDialog()}
       {renderGratitudeDialog()}
       {renderLoadingDialog()}
