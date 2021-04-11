@@ -169,9 +169,9 @@ export default function EnhancedTable({ title, rows }) {
   };
 
   useEffect(() => {
-    const empty =
+    const noOfEmptyRows =
       rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-    setEmptyRows(empty);
+    setEmptyRows(noOfEmptyRows);
   }, []);
 
   return (
