@@ -34,6 +34,7 @@ export default function TransactionHistory({
       // transactionObject.transactionDate = await charityContract.methods
       // .getCampaignStartDate(campaignId)
       // .call();
+      console.log(transactionObject);
       transactions.push(transactionObject);
     }
     return transactions;

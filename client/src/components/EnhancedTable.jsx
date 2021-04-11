@@ -12,6 +12,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
+import Link from "@material-ui/core/Link";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -41,14 +42,24 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: "transactionId",
+    id: "transactionHash",
     numeric: false,
     disablePadding: false,
     label: "Transaction id",
   },
-  { id: "campaign", numeric: false, disablePadding: false, label: "Campaign" },
+  {
+    id: "campaignName",
+    numeric: false,
+    disablePadding: false,
+    label: "Campaign",
+  },
   { id: "date", numeric: false, disablePadding: false, label: "Date" },
-  { id: "amount", numeric: true, disablePadding: false, label: "Amount" },
+  {
+    id: "donatedAmount",
+    numeric: true,
+    disablePadding: false,
+    label: "Amount",
+  },
 ];
 
 function EnhancedTableHead(props) {
@@ -145,7 +156,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({ title, rows }) {
+export default function EnhancedTable({ title, data }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("date");
@@ -153,10 +164,36 @@ export default function EnhancedTable({ title, rows }) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [emptyRows, setEmptyRows] = React.useState();
 
+  const rows = [
+    {
+      transactionHash:
+        "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
+      campaignName: "campaigasd",
+      date: "asd",
+      donatedAmount: 1,
+    },
+    {
+      transactionHash:
+        "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
+      campaignName: "casdasdas",
+      date: "asdasd",
+      donatedAmount: 2,
+    },
+    {
+      transactionHash:
+        "1x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
+      campaignName: "aasdasdas",
+      date: "bsdasd",
+      donatedAmount: 3,
+    },
+  ];
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
+    console.log(property);
+    console.log("Order by: " + orderBy);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -179,12 +216,7 @@ export default function EnhancedTable({ title, rows }) {
       <Paper className={classes.paper}>
         <EnhancedTableToolbar title={title} />
         <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={"medium"}
-            aria-label="enhanced table"
-          >
+          <Table className={classes.table} size={"medium"}>
             <EnhancedTableHead
               classes={classes}
               order={order}
@@ -196,12 +228,22 @@ export default function EnhancedTable({ title, rows }) {
                 {stableSort(rows, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                       <TableRow hover tabIndex={-1} key={index}>
-                        <TableCell align="left">{row.donorAddress}</TableCell>
+                        <TableCell align="left">
+                          <Link
+                            href={
+                              "https://ropsten.etherscan.io/tx/" +
+                              row.transactionHash
+                            }
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            {row.transactionHash}
+                          </Link>
+                        </TableCell>
                         <TableCell align="left">{row.campaignName}</TableCell>
-                        <TableCell align="left">{1}</TableCell>
+                        <TableCell align="left">{row.date}</TableCell>
                         <TableCell align="right">
                           {row.donatedAmount} wei
                         </TableCell>
