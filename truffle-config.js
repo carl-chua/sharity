@@ -22,11 +22,6 @@ module.exports = {
           "https://ropsten.infura.io/v3/0b84a21e72fe499f9015ef8a509ce690",
           0
         );
-        // return new HDWalletProvider(
-        //   process.env.MNEMONIC,
-        //   process.env.ROPSTENKEY,
-        //   0
-        // );
       },
       
     },
@@ -34,6 +29,10 @@ module.exports = {
   compilers: {
     solc: {
       version: "0.5.0",
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
     },
   },
 };

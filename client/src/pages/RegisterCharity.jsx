@@ -1,5 +1,3 @@
-import { ethers } from "ethers";
-
 import React from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -31,7 +29,6 @@ class RegisterCharity extends React.Component {
   }
 
   componentDidMount = async () => {
-    console.log(this.props.charityContract);
     const id = await this.props.charityContract.methods
       .getNoOfCharities()
       .call();
@@ -47,11 +44,14 @@ class RegisterCharity extends React.Component {
     });
   }
 
+  test = async() => {
+    const c = await this.props.charityContract.methods.getContractOwner().call()
+    console.log(c)
+  }
+  
   handleSubmit = (e) => {
     this.setState({ isLoading: true });
-
     e.preventDefault();
-    console.log(this.state);
     try {
       this.props.charityContract.methods
         .registerCharity(
@@ -63,9 +63,7 @@ class RegisterCharity extends React.Component {
         )
         .send({ from: this.props.accounts[0], value: this.props.web3.utils.toWei("0.5", 'ether')})
         .on("receipt", (receipt) => {
-          console.log(receipt);
           var newId = parseInt(this.state.charityId) + 1;
-          console.log(newId);
           this.setState({
             charityId: newId,
             name: "",
@@ -74,7 +72,6 @@ class RegisterCharity extends React.Component {
             address: "",
             avatarURL: "",
           });
-          console.log(this.state);
           this.props.refreshNavbar();
           this.setState({ isLoading: false });
 
@@ -92,7 +89,6 @@ class RegisterCharity extends React.Component {
             address: "",
             avatarURL: "",
           });
-          console.log(this.state);
           this.setState({ isLoading: false });
 
           alert(
@@ -142,6 +138,9 @@ class RegisterCharity extends React.Component {
 
     return (
       <div>
+        <Button onClick={this.test} color="primary">
+                  test
+        </Button>
         <Container
           component="main"
           maxWidth="xs"

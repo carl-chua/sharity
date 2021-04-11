@@ -1,5 +1,3 @@
-import { ethers } from "ethers";
-
 import React from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -46,8 +44,6 @@ class CreateCampaign extends React.Component {
         .getNoOfCampaigns()
         .call();
     this.setState({campaignId: id})
-    console.log("AFTER mount ")
-    console.log(this.state)
   }
 
   handleInputChange(event) {
@@ -70,8 +66,6 @@ class CreateCampaign extends React.Component {
   handleSubmit = (e) => {
     this.setState({isLoading: true})
     e.preventDefault();
-    console.log("SUBMIT ")
-    console.log(this.state);
     try {
       var date = new Date(this.state.startDate);
       var parsedStartDate = parseInt(
@@ -177,7 +171,6 @@ class CreateCampaign extends React.Component {
       },
     }));
     const style = useStyles;
-    console.log(this.state.campaignId)
 
     return (
       <Container
@@ -241,7 +234,7 @@ class CreateCampaign extends React.Component {
                   required
                   fullWidth
                   name="target"
-                  label="Target Amount to Raise"
+                  label="Target Amount to Raise (in wei)"
                   id="target"
                   value={this.state.target}
                   onChange={this.handleInputChange}
