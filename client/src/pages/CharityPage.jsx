@@ -195,7 +195,6 @@ class CharityPage extends React.Component {
 
     var currentCampaignsCards = currentCampaigns.map((campaign) => {
       const classes = useStyles;
-      console.log(campaign);
       const data = {
         campaignId: campaign.campaignId,
         campaignCurrentDonation: campaign.campaignCurrentDonation,
@@ -299,26 +298,20 @@ class CharityPage extends React.Component {
 
   handleRevoke = async() => {
     this.setState({ isLoadingButton: true });
-    console.log(this.state.ongoingCampaignsIds);
     
     for (var i = 0; i < this.state.ongoingCampaignsIds.length; i++) {
       await this.props.charityContract.methods.endCampaign(parseInt(this.state.ongoingCampaignsIds[i])).send({ from: this.props.accounts[0] })
     }
     const donors = await this.props.charityContract.methods.getDonors(this.state.charityId).call({ from: this.props.accounts[0] })
-    console.log(donors)
-    console.log(this.state.regFee)
     const amount = this.state.regFee / donors.length;
-    console.log(amount);
     const owner = await this.props.charityContract.methods.getContractOwner().call();
     for (var i = 0; i < donors.length; i++) {
-      console.log(donors[i])
       this.props.web3.eth.sendTransaction({
         from: owner.toString(),
         to: donors[i].toString(),
         value: amount.toString(),
       }).on("receipt", (receipt) => {console.log(receipt)})
     };
-    console.log("here")
     const revoke = await this.props.charityContract.methods
     .revokeCharity(this.state.charityId)
     .send({ from: this.props.accounts[0] })
