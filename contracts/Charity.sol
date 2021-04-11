@@ -89,6 +89,8 @@ contract Charity {
         );
         _;
     }
+    
+    function() external payable { }
 
     /*
      * This will be the function that check the address type
@@ -158,8 +160,8 @@ contract Charity {
         isVerifiedCharity[charityId] = false;
         charityOwnerRegistered[msg.sender] = true;
         
-        address payable recipient = address(uint160(contractOwner));
-        recipient.transfer(msg.value);
+        address payable recipient = address(uint160(address(this)));
+        recipient.send(msg.value);
         
         emit charityRegistered(charityId);
         // charitiesPendingVerification.push(charityId);
@@ -229,7 +231,7 @@ contract Charity {
 
         uint noOfRecepients = charities[charityId].donors.length;
         uint dividend = charityRegFee / noOfRecepients;
-        dividend = dividend / 1e18;
+        //dividend = dividend / 1e18;
         
         emit showCharityBalance(contractOwner.balance, dividend);
         emit showCharityBalance(msg.sender.balance, dividend);
