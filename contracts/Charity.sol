@@ -49,7 +49,7 @@ contract Charity {
     address[] donors;
     uint256 noOfCharities = 0;
     uint contractMoney = 0;
-    uint256 charityRegFee = 5 * 10**17; // Reg fee is 0.5 ether, 1 ether is 10**18 wei
+    uint256 charityRegFee = 5 * 10**17 wei; // Reg fee is 0.5 ether, 1 ether is 10**18 wei
 
     //uint[] ongoingCampaigns;
     mapping(uint256 => bool) isOngoingCampaign;
@@ -65,6 +65,7 @@ contract Charity {
     event campaignEnded(uint256 campaignId);
     event updateCurrentDonation(uint256 newAmount);
     event updateCampaignDonors(uint256 newNumber);
+    event showCharityBalance(uint256 balance, uint256 donation);
 
     modifier onlyOwner(address caller) {
         require(caller == contractOwner, "Caller is not contract owner");
@@ -210,7 +211,7 @@ contract Charity {
         return donorList;
     }
 
-    function revokeCharity(uint256 charityId) public onlyOwner(msg.sender) {
+    function revokeCharity(uint256 charityId) public payable onlyOwner(msg.sender) {
         require(msg.sender == contractOwner, "Caller is not contract owner");
         require(charityId < noOfCharities, "Invalid charity id");
         require(
@@ -228,10 +229,14 @@ contract Charity {
 
         uint noOfRecepients = charities[charityId].donors.length;
         uint dividend = charityRegFee / noOfRecepients;
+        dividend = dividend / 1e18;
+        
+        emit showCharityBalance(contractOwner.balance, dividend);
+        emit showCharityBalance(msg.sender.balance, dividend);
 
         for (uint i = 0; i < noOfRecepients; i++) {
-            //address payable recipient = address(uint160(charities[charityId].donors[i]));
-            //recipient.transfer(dividend);
+            address payable recipient = address(uint160(charities[charityId].donors[i]));
+            recipient.transfer(dividend);
 
             Transaction memory newTransaction = Transaction(
                 noOfReturns,
