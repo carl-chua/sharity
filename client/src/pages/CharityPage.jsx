@@ -314,7 +314,7 @@ class CharityPage extends React.Component {
     for (var i = 0; i < donors.length; i++) {
       console.log(donors[i])
       this.props.web3.eth.sendTransaction({
-        from: owner.toString(), //cant send from contract, so withdraw to be able to withdraw all, then regfee go to owner. try do for loop in contract
+        from: owner.toString(),
         to: donors[i].toString(),
         value: amount.toString(),
       }).on("receipt", (receipt) => {console.log(receipt)})

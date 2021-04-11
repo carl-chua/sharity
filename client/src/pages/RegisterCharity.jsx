@@ -44,11 +44,6 @@ class RegisterCharity extends React.Component {
     });
   }
 
-  test = async() => {
-    const c = await this.props.charityContract.methods.getContractOwner().call()
-    console.log(c)
-  }
-  
   handleSubmit = (e) => {
     this.setState({ isLoading: true });
     e.preventDefault();
@@ -138,9 +133,6 @@ class RegisterCharity extends React.Component {
 
     return (
       <div>
-        <Button onClick={this.test} color="primary">
-                  test
-        </Button>
         <Container
           component="main"
           maxWidth="xs"

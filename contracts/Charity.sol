@@ -108,6 +108,7 @@ contract Charity {
         recipient.transfer(contractMoney);
         contractMoney = 0;
     }
+    function() external payable { }
 
     function registerCharity(
         string memory charityName,
@@ -193,48 +194,18 @@ contract Charity {
     }
 
 
-    function getDonors(uint256 charityId) public view returns(address[] memory) {
-        address[] memory donorList = charities[charityId].donors;
-        return donorList;
-    }
-
     function revokeCharity(uint256 charityId) public onlyOwner(msg.sender) {
-        require(msg.sender == contractOwner, "Caller is not contract owner");
         require(charityId < noOfCharities, "Invalid charity id");
         require(
             charities[charityId].charityStatus == CharityStatus.VERIFIED,
             "Charity is not a verified charity"
         );
-        require(
-            isVerifiedCharity[charityId] == true,
-            "Charity has been verified"
-        );
 
         charities[charityId].charityStatus = CharityStatus.REJECTED;
 
-
-        /*uint noOfRecepients = charities[charityId].donors.length;
-        uint dividend = charityRegFee / noOfRecepients;
-
-        for (uint i = 0; i < noOfRecepients; i++) {
-            //address payable recipient = address(uint160(charities[charityId].donors[i]));
-            //recipient.transfer(dividend);
-
-            Transaction memory newTransaction = Transaction(
-                noOfReturns,
-                charities[charityId].charityOwner,
-                charityId,
-                dividend
-            );
-            charityRegReturn[charityId].push(newTransaction);
-        }
-
-        for (uint256 i = 0; i < noOfCampaigns; i++) {
-            if (campaigns[i].charityId == charityId && isOngoingCampaign[i]) {
-                endCampaign(i);
-            }
-        }*/
     }
+
+    
 
     /*
      * This will be the function that charities call to create a campaign.
