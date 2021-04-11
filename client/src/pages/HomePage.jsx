@@ -87,6 +87,10 @@ export default function HomePage({
     campaign.charityPictureURL = await charityContract.methods
       .getCharityPictureURL(campaign.charityId)
       .call();
+    campaign.charityStatus = await charityContract.methods
+      .getCharityStatus(campaign.charityId)
+      .call();
+    campaign.charityStatus = parseInt(campaign.charityStatus, 10);
     console.log(campaign);
     return campaign;
   };
@@ -101,10 +105,13 @@ export default function HomePage({
       let pastCampaigns = [];
       for (let i = 0; i < noOfCampaigns; i++) {
         var campaign = await getCampaign(i);
-        if (campaign.campaignStatus === "0") {
+        if (campaign.charityStatus != 1) {
+          continue;
+        }
+        if (campaign.campaignStatus == 0) {
           ongoingCampaigns.push(campaign);
         }
-        if (campaign.campaignStatus === "1") {
+        if (campaign.campaignStatus == 1) {
           pastCampaigns.push(campaign);
         }
       }

@@ -21,10 +21,20 @@ export default function TransactionHistory({
     for (let i = 0; i < noOfTransactions; i++) {
       // transaction id, donor address, campaign id, donated amount
       var transaction = await donationContract.methods
-        .getDonorDonation(address)
+        .getDonorDonation(address, i)
         .call();
-      console.log(transaction);
-      transactions.push(transaction);
+      var transactionObject = {};
+      transactionObject.transactionId = transaction["0"];
+      transactionObject.donorAddress = transaction["1"];
+      transactionObject.campaignId = transaction["2"];
+      transactionObject.donatedAmount = transaction["3"];
+      transactionObject.campaignName = await charityContract.methods
+        .getCampaignName(transactionObject.campaignId)
+        .call();
+      // transactionObject.transactionDate = await charityContract.methods
+      // .getCampaignStartDate(campaignId)
+      // .call();
+      transactions.push(transactionObject);
     }
     return transactions;
   };
@@ -40,7 +50,9 @@ export default function TransactionHistory({
     <Box mt={10}>
       <Grid container spacing={5} justify="center">
         <Grid item xs={10}>
-          <EnhancedTable title={"Transaction history"} data={transactions} />
+          {transactions && (
+            <EnhancedTable title={"Transaction history"} rows={transactions} />
+          )}
         </Grid>
       </Grid>
     </Box>
