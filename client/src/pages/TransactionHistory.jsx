@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import EnhancedTable from "../components/EnhancedTable";
 
@@ -12,6 +13,7 @@ export default function TransactionHistory({
   isAuthed,
 }) {
   const [transactions, setTransactions] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   var getTransactions = async (address) => {
     const noOfTransactions = await donationContract.methods
@@ -33,7 +35,7 @@ export default function TransactionHistory({
       transactionObject.campaignName = await charityContract.methods
         .getCampaignName(transactionObject.campaignId)
         .call();
-      console.log(transactionObject);
+      console.log(transaction);
       transactions.push(transactionObject);
     }
     return transactions;
@@ -42,42 +44,28 @@ export default function TransactionHistory({
   useEffect(() => {
     (async () => {
       var transactions = await getTransactions(accounts[0]);
+      setIsLoading(false);
       setTransactions(transactions);
     })();
   }, []);
 
-  const rows = [
-    {
-      hash:
-        "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
-      campaignName: "campaigasd",
-      date: "20200412",
-      donatedAmount: 1,
-    },
-    {
-      hash:
-        "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
-      campaignName: "casdasdas",
-      date: "20200411",
-      donatedAmount: 2,
-    },
-    {
-      hash:
-        "1x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
-      campaignName: "aasdasdas",
-      date: "20200413",
-      donatedAmount: 3,
-    },
-  ];
-
   return (
     <Box mt={10}>
       <Grid container spacing={5} justify="center">
-        <Grid item xs={10}>
-          {transactions && (
-            <EnhancedTable title={"Transaction history"} rows={rows} />
-          )}
-        </Grid>
+        {isLoading ? (
+          <Grid item xs={10}>
+            <CircularProgress />
+          </Grid>
+        ) : (
+          <Grid item xs={10}>
+            {transactions && (
+              <EnhancedTable
+                title={"Transaction history"}
+                rows={transactions}
+              />
+            )}
+          </Grid>
+        )}
       </Grid>
     </Box>
   );
