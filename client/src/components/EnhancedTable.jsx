@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { lighten, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -13,6 +13,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Link from "@material-ui/core/Link";
+import moment from "moment";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -42,7 +43,7 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: "transactionHash",
+    id: "hash",
     numeric: false,
     disablePadding: false,
     label: "Transaction id",
@@ -158,32 +159,32 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EnhancedTable({ title, data }) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("date");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [emptyRows, setEmptyRows] = React.useState();
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("date");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [emptyRows, setEmptyRows] = useState();
 
   const rows = [
     {
-      transactionHash:
+      hash:
         "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
       campaignName: "campaigasd",
-      date: "asd",
+      date: "20200412",
       donatedAmount: 1,
     },
     {
-      transactionHash:
+      hash:
         "0x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
       campaignName: "casdasdas",
-      date: "asdasd",
+      date: "20200411",
       donatedAmount: 2,
     },
     {
-      transactionHash:
+      hash:
         "1x0dd6d3ffc25715716ebbc8ef347e33242400d86f08d5a9151dd795ce7ed46982",
       campaignName: "aasdasdas",
-      date: "bsdasd",
+      date: "20200413",
       donatedAmount: 3,
     },
   ];
@@ -232,18 +233,18 @@ export default function EnhancedTable({ title, data }) {
                       <TableRow hover tabIndex={-1} key={index}>
                         <TableCell align="left">
                           <Link
-                            href={
-                              "https://ropsten.etherscan.io/tx/" +
-                              row.transactionHash
-                            }
+                            href={"https://ropsten.etherscan.io/tx/" + row.hash}
                             target="_blank"
                             rel="noopener"
                           >
-                            {row.transactionHash}
+                            {row.hash}
                           </Link>
                         </TableCell>
                         <TableCell align="left">{row.campaignName}</TableCell>
-                        <TableCell align="left">{row.date}</TableCell>
+                        <TableCell align="left">
+                          {row.date}
+                          {/* {moment(row.date, "YYYYMMDD")} */}
+                        </TableCell>
                         <TableCell align="right">
                           {row.donatedAmount} wei
                         </TableCell>

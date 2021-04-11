@@ -91,10 +91,11 @@ contract Donation {
      * getCampaignDonation only retrieves a specific donation within a campaign. To retrieve the full donation
      * history of the campagin, it would require looping of entire Transaction[] mapped to campaignId
     */
-    function getCampaignDonation(uint campaignId, uint index) public view returns(uint, address, uint, uint){
+    function getCampaignDonation(uint campaignId, uint index) public view returns(uint, address, uint, uint, uint, string){
         require(charityContract.checkValidCampaign(campaignId) == true);
         return (campaignDonations[campaignId][index].transactionId, campaignDonations[campaignId][index].donor,
-        campaignDonations[campaignId][index].campaignId, campaignDonations[campaignId][index].amount);
+        campaignDonations[campaignId][index].campaignId, campaignDonations[campaignId][index].amount,
+        donorDonations[donor][index].date, donorDonations[donor][index].hash);
     }
     
     // use this function for looping on front-end
