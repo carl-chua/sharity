@@ -81,7 +81,6 @@ class CharityPage extends React.Component {
   }
 
   componentDidMount = async () => {
-    console.log(this.props.charityContract._address);
     var currentCampaigns = [];
     var pastCampaigns = [];
     const charityContract = this.props.charityContract;
