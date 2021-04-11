@@ -683,7 +683,7 @@ export default function CampaignPage({
         justify="center"
         style={{ marginTop: "18px" }}
       >
-        <Grid item xs={10}>
+        <Grid item xs={12}>
           {transactions && (
             <EnhancedTableForCampaign
               title={"Transaction history"}
