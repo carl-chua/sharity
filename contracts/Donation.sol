@@ -68,9 +68,10 @@ contract Donation {
      * getDonorDonation only retrieves a specific donation by a donor. To retrieve the full donation
      * history by donor, it would require looping of entire Transaction[] mapped to donor address
     */
-    function getDonorDonation(address donor, uint index) public view returns(uint, address, uint, uint){
+    function getDonorDonation(address donor, uint index) public view returns(uint, address, uint, uint, uint, string memory){
         return (donorDonations[donor][index].transactionId, donorDonations[donor][index].donor,
-        donorDonations[donor][index].campaignId, donorDonations[donor][index].amount);
+        donorDonations[donor][index].campaignId, donorDonations[donor][index].amount,
+        donorDonations[donor][index].date, donorDonations[donor][index].hash);
     }
     
     // use this function for looping on front-end
@@ -90,10 +91,11 @@ contract Donation {
      * getCampaignDonation only retrieves a specific donation within a campaign. To retrieve the full donation
      * history of the campagin, it would require looping of entire Transaction[] mapped to campaignId
     */
-    function getCampaignDonation(uint campaignId, uint index) public view returns(uint, address, uint, uint){
+    function getCampaignDonation(uint campaignId, uint index) public view returns(uint, address, uint, uint, uint, string memory){
         require(charityContract.checkValidCampaign(campaignId) == true);
         return (campaignDonations[campaignId][index].transactionId, campaignDonations[campaignId][index].donor,
-        campaignDonations[campaignId][index].campaignId, campaignDonations[campaignId][index].amount);
+        campaignDonations[campaignId][index].campaignId, campaignDonations[campaignId][index].amount,
+        campaignDonations[campaignId][index].date, campaignDonations[campaignId][index].hash);
     }
     
     // use this function for looping on front-end
