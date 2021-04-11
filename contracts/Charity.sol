@@ -45,7 +45,6 @@ contract Charity {
     mapping(address => uint256) charityAddressIdMap;
     mapping(address => charity) charityAddressMap;
     mapping(address => bool) charityOwnerRegistered;
-    mapping (uint256 => Transaction[]) charityRegReturn;
     address[] donors;
     uint256 noOfCharities = 0;
     uint contractMoney = 0;
