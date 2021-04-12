@@ -547,7 +547,7 @@ class CharityPage extends React.Component {
 
     return (
       <Grid container spacing={2} justify="center">
-          <Box textAlign="left"  fontSize={26}>
+          <Box textAlign="left" fontSize={14}>
             {profile()}
           </Box>
         {view()}
