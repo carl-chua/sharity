@@ -2,7 +2,7 @@
 IS4302 Group 5
 
 #Installing Metamask
-To use Sharity, you would need to install the Metamask Chrome extension at: https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en
+1. To use Sharity, you would need to install the Metamask Chrome extension at: https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en
 
 #Running the project
 1. Go into the project folder /sharity, and npm install
