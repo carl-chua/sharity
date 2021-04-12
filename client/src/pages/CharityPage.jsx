@@ -13,6 +13,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import defaultAvatarLogo from "../assets/Default Avatar logo.svg";
+import Link from "@material-ui/core/Link";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -447,7 +448,13 @@ class CharityPage extends React.Component {
             <p>Description: {this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
-            <p>Verification Link: {this.state.verificationLink}</p>
+            <p>Verification Link: <Link
+                            href={this.state.verificationLink}
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            {this.state.verificationLink}
+                          </Link></p>
             <p>Status: {this.state.status}</p>
             {this.state.isLoadingButton ? (
               <Grid item xs={12}>
@@ -496,7 +503,14 @@ class CharityPage extends React.Component {
             <p>Description: {this.state.description}</p>
             <p>Contact: {this.state.contact}</p>
             <p>Address: {this.state.address}</p>
-            <p>Verification Link: {this.state.verificationLink}</p>
+            
+            <p>Verification Link: <Link
+                            href={this.state.verificationLink}
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            {this.state.verificationLink}
+                          </Link></p>
             <p>Status: {this.state.status}</p>
             </Grid>
           </div>
