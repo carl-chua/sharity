@@ -2,5 +2,11 @@
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.2.2",
     "dotenv": "^8.2.0"
+  },
+  "scripts": {
+    "start": "cd client && npm start",
+    "build": "cd client && npm build",
+    "test": "cd client && npm test",
+    "eject": "cd client && npm eject"
   }
 }
