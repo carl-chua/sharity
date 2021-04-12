@@ -30,14 +30,6 @@ contract Charity {
         CampaignStatus campaignStatus;
     }
     
-    struct Transaction {
-        uint transactionId;
-        address donor;
-        uint campaignId;
-        uint amount;
-    }
-    
-
     address contractOwner = msg.sender;
     mapping(uint256 => bool) isVerifiedCharity;
     mapping(uint256 => charity) charities;
