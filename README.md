@@ -7,7 +7,7 @@ IS4302 Group 5
 #Running the project
 1. Go into the project folder /sharity, and npm install
 2. Go into the subfolder /sharity/client, and npm install
-3. npm start
+3. From /sharity/client, npm start
 4. Open browser at http://localhost:3000
 
 #Accessing Sharity as a Donor
@@ -21,3 +21,8 @@ IS4302 Group 5
 1. Register charity and provide all necessary information for verification. A registration fee of 0.5 ether is required.
 2. (Upon successful verification) Create campaign
 3. End campaign
+
+
+#In case you need to redeploy the contracts and reset the blockchain data
+1. Delete the .json files in /sharity/client/contracts
+2. Go into project folder /sharity and do a truffle migrate --network ropsten. 
