@@ -29,7 +29,12 @@ contract Donation {
     * This function is for donors to donate to a campaign that is still ongoing. The function assumes that
     * the uint amount == msg.value
     */
-    function donate(uint campaignId, uint amount, uint date) public payable returns (uint256) {
+    function donate(
+        uint campaignId, uint amount, uint date
+    ) 
+        public payable 
+        returns (uint256) 
+    {
         require(msg.value > 0, "Donation value needs to be more than 0 wei");
         require(charityContract.isStatusComplete(campaignId) == false, "Campaign has already ended");
         require(amount <= (getRemainingAmount(campaignId)), "Donation value is more than campaign's remaining amount");
@@ -64,23 +69,41 @@ contract Donation {
         return newTransactionId;
     }
     
-    /**
+    /*
      * getDonorDonation only retrieves a specific donation by a donor. To retrieve the full donation
      * history by donor, it would require looping of entire Transaction[] mapped to donor address
     */
-    function getDonorDonation(address donor, uint index) public view returns(uint, address, uint, uint, uint, string memory){
+    function getDonorDonation(
+        address donor, uint index
+    ) 
+        public 
+        view 
+        returns(uint, address, uint, uint, uint, string memory)
+    {
         return (donorDonations[donor][index].transactionId, donorDonations[donor][index].donor,
         donorDonations[donor][index].campaignId, donorDonations[donor][index].amount, 
         donorDonations[donor][index].date, donorDonations[donor][index].hash);
     }
     
     // use this function for looping on front-end
-    function getDonorTotalDonations(address donor) public view returns(uint){
+    function getDonorTotalDonations(
+        address donor
+    ) 
+        public 
+        view 
+        returns(uint) 
+    {
         return (donorDonations[donor].length);
     }
     
     // to view remaining amount for campaign
-    function getRemainingAmount(uint campaignId) public view returns(uint){
+    function getRemainingAmount(
+        uint campaignId
+    ) 
+        public 
+        view 
+        returns(uint)
+    {
         require(charityContract.checkValidCampaign(campaignId) == true);
         uint target = charityContract.getCampaignTargetDonation(campaignId);
         uint current = charityContract.getCampaignCurrentDonation(campaignId);
@@ -91,7 +114,14 @@ contract Donation {
      * getCampaignDonation only retrieves a specific donation within a campaign. To retrieve the full donation
      * history of the campagin, it would require looping of entire Transaction[] mapped to campaignId
     */
-    function getCampaignDonation(uint campaignId, uint index) public view returns(uint, address, uint, uint, uint, string memory){
+    function getCampaignDonation(
+        uint campaignId, 
+        uint index
+    ) 
+        public 
+        view 
+        returns(uint, address, uint, uint, uint, string memory) 
+    {
         require(charityContract.checkValidCampaign(campaignId) == true);
         return (campaignDonations[campaignId][index].transactionId, campaignDonations[campaignId][index].donor,
         campaignDonations[campaignId][index].campaignId, campaignDonations[campaignId][index].amount,
@@ -99,13 +129,26 @@ contract Donation {
     }
     
     // use this function for looping on front-end
-    function getCampaignTotalDonations(uint campaignId) public view returns(uint){
+    function getCampaignTotalDonations(
+        uint campaignId
+    ) 
+        public 
+        view 
+        returns(uint)
+    {
         require(charityContract.checkValidCampaign(campaignId) == true);
         return (campaignDonations[campaignId].length);
     }
     
     // function to check if donor has donated to campaign before
-    function checkPreviouslyDonated(address donor, uint campaignId) public view returns(bool){
+    function checkPreviouslyDonated(
+        address donor, 
+        uint campaignId
+    ) 
+        public 
+        view 
+        returns(bool)
+    {
         require(charityContract.checkValidCampaign(campaignId) == true);
         uint length = campaignDonations[campaignId].length;
         for (uint i = 0; i < length; i++) {
@@ -117,7 +160,14 @@ contract Donation {
     }
 
     // function to set the transaction hash
-    function setTransactionHash(uint id, uint campaignId, address donor, string memory hash) public {
+    function setTransactionHash(
+        uint id, 
+        uint campaignId, 
+        address donor, 
+        string memory hash
+    ) 
+        public 
+    {
         uint cLength = campaignDonations[campaignId].length;
         for (uint i = 0; i < cLength; i++) {
             if(campaignDonations[campaignId][i].transactionId == id) {
