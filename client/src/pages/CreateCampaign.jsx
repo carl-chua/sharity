@@ -15,7 +15,8 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 
-import firebase from "firebase";
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
 import FileUploader from "react-firebase-file-uploader";
 
 class CreateCampaign extends React.Component {

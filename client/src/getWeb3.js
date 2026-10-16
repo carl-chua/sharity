@@ -1,4 +1,8 @@
-import Web3 from "web3";
+import Web3, { FMT_BYTES, FMT_NUMBER } from "web3";
+
+// web3 v4 returns uints as BigInt; keep v1's decimal strings, which the
+// rest of the app relies on.
+const RETURN_FORMAT = { number: FMT_NUMBER.STR, bytes: FMT_BYTES.HEX };
 
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
@@ -7,6 +11,7 @@ const getWeb3 = () =>
       // Modern dapp browsers...
       if (window.ethereum) {
         const web3 = new Web3(window.ethereum);
+        web3.defaultReturnFormat = RETURN_FORMAT;
         try {
           // Request account access if needed
           await window.ethereum.enable();
@@ -29,6 +34,7 @@ const getWeb3 = () =>
           "http://127.0.0.1:7545"
         );
         const web3 = new Web3(provider);
+        web3.defaultReturnFormat = RETURN_FORMAT;
         console.log("No web3 instance injected, using Local web3.");
         resolve(web3);
       }

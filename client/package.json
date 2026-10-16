@@ -10,26 +10,21 @@
     "@metamask/onboarding": "^1.0.0",
     "bootstrap": "^4.6.0",
     "date-fns": "^2.19.0",
-    "ethers": "^5.1.0",
-    "firebase": "^8.3.0",
-    "install": "^0.13.0",
-    "moment": "^2.29.1",
-    "npm": "^7.8.0",
-    "react": "16.11.0",
+    "firebase": "^12.19.0",
+    "moment": "^2.31.0",
+    "react": "^16.14.0",
     "react-alert": "^7.0.2",
     "react-alert-template-basic": "^1.0.0",
-    "react-dom": "16.11.0",
+    "react-dom": "^16.14.0",
     "react-firebase-file-uploader": "^2.4.4",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.2.0",
-    "web3": "^1.2.2"
+    "web3": "^4.16.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -45,5 +40,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.13.6",
+    "react-firebase-file-uploader": {
+      "firebase": "$firebase"
+    }
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.2.0",
+    "vite": "^7.3.7"
   }
 }

@@ -7,7 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import firebase from "firebase";
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
 import FileUploader from "react-firebase-file-uploader";
 
 class RegisterCharity extends React.Component {
